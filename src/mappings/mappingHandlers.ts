@@ -3,6 +3,7 @@
 import {TransferEvent} from "../types/contracts/Erc721";
 import {Address, Collection, ContractType, Nft, Transfers} from "../types";
 import {Erc721__factory} from "../types/contracts";
+import {logger} from "ethers";
 
 export async function handleTransaction(event: TransferEvent): Promise<void> {
   logger.info(`Transfer detected. From: ${event.args.from} | To: ${event.args.to} | TokenID: ${event.args.tokenId}`);
@@ -42,8 +43,9 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
       networkId: network.id,
       contract_address: event.address,
       created_block: BigInt(event.blockNumber),
-      created_timestamp: BigInt((await event.getBlock()).timestamp),
-      minter_addressId: (await event.getTransaction()).from,
+      // created_timestamp: BigInt((await event.getTransaction()).timestamp),
+      // minter_addressId: (await event.getTransaction()).from,
+      minter_addressId: event.args.from,
       total_supply: (await instance.totalSupply()).toBigInt()
     })
   }
@@ -55,11 +57,11 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
       id: `${collection.id}-${event.args.tokenId}`,
       collectionId: collection.id,
       minted_block: BigInt(event.blockNumber),
-      minted_timestamp: BigInt((await event.getBlock()).timestamp),
+      // minted_timestamp: BigInt((await event.getTransaction()).timestamp),
       minter_addressId: event.address,
       current_ownerId: event.args.to,
       contract_type: ContractType.ERC721,
-      metadata_uri: "ha ha ha"
+      metadata_uri: 'change me later'
     })
   }
 
@@ -67,12 +69,13 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
 
   let transfer = await Transfers.get(transferId)
 
+  // logger.info(`aaa: ${ BigInt((await event.getTransaction()).timestamp)}`)
   if (transfer == null) {
     transfer = Transfers.create({
       id: transferId,
       networkId: network.id,
       block: BigInt(event.blockNumber),
-      timestamp: BigInt((await event.getTransaction()).timestamp),
+      // timestamp: BigInt((await event.getTransaction()).timestamp),
       transaction_id: event.transactionHash,
       nftId: nft.id,
       fromId: event.args.from,
@@ -84,7 +87,9 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
       collection.save(),
       nft.save(),
       transfer.save(),
-  ])
+  ]).then(()=>{
+    logger.info("saved!!")
+  })
 
 
 

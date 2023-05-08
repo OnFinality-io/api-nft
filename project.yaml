@@ -31,7 +31,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 12287507
+    startBlock: 12299047
 #    startBlock: 17196865
     options:
       # Must be a key of assets
