@@ -9,7 +9,7 @@ type AnyJson @jsonField {
 }
 
 type Nft @entity {
-  id: ID #CollectionID-TokenId
+  id: ID! #CollectionID-TokenId
   amount: String # What is this for?
   collection: Collection!
   minted_block: BigInt! # Should be bigInt
@@ -27,21 +27,21 @@ type Nft @entity {
 }
 
 type Collection @entity {
-  id: ID # chainID-contract adddress
+  id: ID! # chainID-contract adddress
   network: Network!
   contract_address: String!
-  created_block: Int!
-  created_timestamp: Int! # unix epoch timestamp
+  created_block: BigInt!
+  created_timestamp: BigInt! # unix epoch timestamp
   minter_address: Address!
-  total_supply: Int # hwo would this be set ?
+  total_supply: BigInt
 #  floor_price: Int # Later on
 }
 
 type Transfers @entity {
-  id: ID
+  id: ID!
   network: Network!
-  block: Int
-  timestamp: Int
+  block: BigInt
+  timestamp: BigInt
   transaction_id: String # Hash or extrinsic id
   nft: Nft
   from: Address
@@ -49,12 +49,12 @@ type Transfers @entity {
 }
 
 type Address @entity {
-  id: ID # network + address
+  id: ID! # network + address
   address: String!
   network: Network!
 }
 
 type Network @entity {
-  id: ID
+  id: ID!
   name: String
 }

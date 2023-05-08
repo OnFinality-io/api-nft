@@ -2,6 +2,7 @@
 // import {Contract, Owner, Token, Transfer} from "../types";
 import {TransferEvent} from "../types/contracts/Erc721";
 import {Address, Collection, ContractType, Nft, Transfers} from "../types";
+import {Erc721__factory} from "../types/contracts";
 
 export async function handleTransaction(event: TransferEvent): Promise<void> {
   logger.info(`Transfer detected. From: ${event.args.from} | To: ${event.args.to} | TokenID: ${event.args.tokenId}`);
@@ -23,6 +24,9 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
   let collection = await Collection.get(event.address)
   let address = await Address.get(`${network.id}-${event.address}`)
 
+  let instance = Erc721__factory.connect(event.address, api);
+
+
   if (address == null) {
     address = Address.create({
       id: `${network.id}-${event.address}`,
@@ -31,14 +35,16 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
     })
   }
 
+
   if (collection == null) {
     collection = Collection.create({
       id: event.address,
       networkId: network.id,
       contract_address: event.address,
-      created_block: event.blockNumber,
-      created_timestamp:(await event.getBlock()).timestamp,
-      minter_addressId: (await event.getTransaction()).from
+      created_block: BigInt(event.blockNumber),
+      created_timestamp: BigInt((await event.getBlock()).timestamp),
+      minter_addressId: (await event.getTransaction()).from,
+      total_supply: (await instance.totalSupply()).toBigInt()
     })
   }
 
@@ -65,14 +71,20 @@ export async function handleTransaction(event: TransferEvent): Promise<void> {
     transfer = Transfers.create({
       id: transferId,
       networkId: network.id,
-      block: event.blockNumber,
-      timestamp: (await event.getTransaction()).timestamp,
+      block: BigInt(event.blockNumber),
+      timestamp: BigInt((await event.getTransaction()).timestamp),
       transaction_id: event.transactionHash,
       nftId: nft.id,
       fromId: event.args.from,
       toId: event.args.to
     })
   }
+  await Promise.all([
+      address.save(),
+      collection.save(),
+      nft.save(),
+      transfer.save(),
+  ])
 
 
 
