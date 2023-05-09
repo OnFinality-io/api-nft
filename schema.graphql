@@ -1,5 +1,6 @@
 enum ContractType {
   ERC721,
+  ERC1155
   RMRK,
 }
 
@@ -10,10 +11,11 @@ type AnyJson @jsonField {
 
 type Nft @entity {
   id: ID! #CollectionID-TokenId
-  amount: String # What is this for?
+  tokenId: String!
+  amount: BigInt! #1 for Erc721. 1155 semi-fungible has other values
   collection: Collection!
   minted_block: BigInt! # Should be bigInt
-#  minted_timestamp: BigInt! # unix epoch timestamp
+  minted_timestamp: BigInt! # unix epoch timestamp
   minter_address: Address! #whoever called the tx
   current_owner: Address! # event to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
@@ -31,17 +33,21 @@ type Collection @entity {
   network: Network!
   contract_address: String!
   created_block: BigInt!
-#  created_timestamp: BigInt! # unix epoch timestamp
+  created_timestamp: BigInt! # unix epoch timestamp
   minter_address: Address!
   total_supply: BigInt
+  name: String
+  symbol: String
 #  floor_price: Int # Later on
 }
 
 type Transfers @entity {
   id: ID!
+  tokenId: String!
+  amount: BigInt! # Same as with NFT
   network: Network!
   block: BigInt
-#  timestamp: BigInt
+  timestamp: BigInt
   transaction_id: String # Hash or extrinsic id
   nft: Nft
   from: Address

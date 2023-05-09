@@ -31,31 +31,33 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 12299047
-#    startBlock: 17196865
+    startBlock: 13318505
     options:
-      # Must be a key of assets
       abi: erc721
-      address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
     assets:
       erc721:
         file: "./abis/erc721.json"
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleTransaction
+        - handler: handleERC721
           kind: ethereum/LogHandler
           filter:
-            ## The function can either be the function fragment or signature
-            # function: '0x095ea7b3'
-            # function: '0x7ff36ab500000000000000000000000000000000000000000000000000000000'
             topics:
               - Transfer(address, address, uint256)
-#        - handler: handleLog
+#  - kind: ethereum/Runtime
+#    startBlock: 17132841
+#    options:
+#      abi: erc1155
+#    assets:
+#      erc1155:
+#        file: "./abis/erc1155.json"
+#    mapping:
+#      file: "./dist/index.js"
+#      handlers:
+#        - handler: handleERC1155
 #          kind: ethereum/LogHandler
 #          filter:
 #            topics:
-#              ## Follows standard log filters https://docs.ethers.io/v5/concepts/events/
-#              - Transfer(address indexed from, address indexed to, uint256
-#                amount)
-#              # address: "0x60781C2586D68229fde47564546784ab3fACA982"
+#              - TransferSingle(address, address, address, uint256, uint256)
+#              - TransferBatch(address, address, address, uint256[], uint256[])
