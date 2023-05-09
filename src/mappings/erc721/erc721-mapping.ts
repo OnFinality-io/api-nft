@@ -1,7 +1,7 @@
-import {Address, Collection, ContractType, Network, Nft, Transfers} from "../types";
-import {Erc721__factory} from "../types/contracts";
-import {TransferLog} from "../types/abi-interfaces/Erc721";
-import {getAddressId, getCollectionId, getNftId, getTransferId} from "../utils/common";
+import {Address, Collection, ContractType, Network, Nft, Transfers} from "../../types";
+import {Erc721__factory} from "../../types/contracts";
+import {TransferLog} from "../../types/abi-interfaces/Erc721";
+import {getAddressId, getCollectionId, getNftId, getTransferId} from "../../utils/common";
 import {BigNumber} from "ethers";
 
 export async function handleERC721(event: TransferLog): Promise<void> {
@@ -143,9 +143,3 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     await transfer.save()
   }
 }
-
-// subqlTest(
-//     "handleTransaction",
-//
-//
-// )

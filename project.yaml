@@ -25,39 +25,44 @@ network:
   # When developing your project we suggest getting a private API key
   # You can get them from OnFinality for free https://app.onfinality.io
   # https://documentation.onfinality.io/support/the-enhanced-api-service
-  endpoint: "https://eth.api.onfinality.io/public"
+#  endpoint: "https://eth.api.onfinality.io/public"
   # Recommended to provide the HTTP endpoint of a full chain dictionary to speed up processing
   dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
 
+
 dataSources:
-  - kind: ethereum/Runtime
-    startBlock: 13318505
-    options:
-      abi: erc721
-    assets:
-      erc721:
-        file: "./abis/erc721.json"
-    mapping:
-      file: "./dist/index.js"
-      handlers:
-        - handler: handleERC721
-          kind: ethereum/LogHandler
-          filter:
-            topics:
-              - Transfer(address, address, uint256)
 #  - kind: ethereum/Runtime
-#    startBlock: 17132841
+#    startBlock: 13318505
 #    options:
-#      abi: erc1155
+#      abi: erc721
 #    assets:
-#      erc1155:
-#        file: "./abis/erc1155.json"
+#      erc721:
+#        file: "./abis/erc721.json"
 #    mapping:
 #      file: "./dist/index.js"
 #      handlers:
-#        - handler: handleERC1155
+#        - handler: handleERC721
 #          kind: ethereum/LogHandler
 #          filter:
 #            topics:
-#              - TransferSingle(address, address, address, uint256, uint256)
-#              - TransferBatch(address, address, address, uint256[], uint256[])
+#              - Transfer(address, address, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 17132841
+    options:
+      abi: erc1155
+    assets:
+      erc1155:
+        file: "./abis/erc1155.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC1155single
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferSingle(address, address, address, uint256, uint256)
+        - handler: handleERC1155batch
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferBatch(address, address, address, uint256[], uint256[])
