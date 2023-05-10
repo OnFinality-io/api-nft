@@ -1,4 +1,4 @@
-import {Address, Collection, ContractType, Network, Nft, Transfers} from "../../types";
+import {Address, AnyJson, Collection, ContractType, Network, Nft, Transfers} from "../../types";
 import {Erc721__factory} from "../../types/contracts";
 import {TransferLog} from "../../types/abi-interfaces/Erc721";
 import {getAddressId, getCollectionId, getNftId, getTransferId} from "../../utils/common";
@@ -97,6 +97,16 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   if (!nft) {
     logger.info(`nft created at ${event.blockNumber}`)
 
+
+    const metadataUri = isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : null
+
+    // prefixed with ipfs
+    // ipfs uri, fetch from ipfs rather than standard uri
+    const metadataJson = metadataUri && (await fetch(metadataUri)) as AnyJson
+
+    // ipfs client, required
+    //
+
     nft = Nft.create({
       id: nftId,
       tokenId: event.args.tokenId.toString(),
@@ -107,7 +117,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       minter_addressId: event.address,
       current_ownerId: event.args.to,
       contract_type: ContractType.ERC721,
-      metadata_uri: isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : 'unavailable',
+      metadata_uri: metadataUri,
+      metadata: metadataJson
     })
 
       // TODO total_supply, burn relation

@@ -17,7 +17,6 @@ import {Address, Collection, ContractType, Network, Nft, Transfers} from "../typ
 subqlTest(
     "handleERC721 success",
     13318656 ,
-    [],
     [
         Network.create({
             id: "1",
@@ -27,7 +26,9 @@ subqlTest(
             id: '1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
             address: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
             networkId: '1'
-        }),
+        })
+    ],
+    [
         Collection.create({
             id: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
             networkId: "1",
@@ -49,7 +50,7 @@ subqlTest(
             minter_addressId: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
             current_ownerId: "0x677420671845F3BB7a2f59a0cc530198e1f596e9",
             contract_type: ContractType.ERC721,
-            metadata_uri: "unavailable"
+            metadata_uri: null
         }),
         Transfers.create({
             id: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd-2",

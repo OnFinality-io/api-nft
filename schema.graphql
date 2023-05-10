@@ -24,7 +24,7 @@ type Nft @entity {
 #  token_uri: String
 #  image_uri: String
 #  description: String
-  metadata_uri: String!
+  metadata_uri: String
   metadata: AnyJson
 }
 

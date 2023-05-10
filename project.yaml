@@ -25,7 +25,7 @@ network:
   # When developing your project we suggest getting a private API key
   # You can get them from OnFinality for free https://app.onfinality.io
   # https://documentation.onfinality.io/support/the-enhanced-api-service
-#  endpoint: "https://eth.api.onfinality.io/public"
+  endpoint: "https://eth.api.onfinality.io/public"
   # Recommended to provide the HTTP endpoint of a full chain dictionary to speed up processing
   dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
 
@@ -47,7 +47,8 @@ dataSources:
 #            topics:
 #              - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 17132841
+#    startBlock: 17132841
+    startBlock: 17132896
     options:
       abi: erc1155
     assets:
@@ -66,3 +67,8 @@ dataSources:
           filter:
             topics:
               - TransferBatch(address, address, address, uint256[], uint256[])
+        - handler: handleERC1155Uri
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - URI(string, uint256)

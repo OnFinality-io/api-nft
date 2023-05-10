@@ -1,6 +1,6 @@
 import {Address, Collection, ContractType, Network, Nft, Transfers} from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
-import {getAddressId, getCollectionId, getNftId, getTransferId} from "../../utils/common";
+import {getAddressId, getCollectionId, getNftId, getTransferId, incrementBigInt} from "../../utils/common";
 import {BigNumber} from "ethers";
 import {TransferSingleLog} from "../../types/abi-interfaces/Erc1155";
 
@@ -23,14 +23,12 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
         logger.info(`tx: ${event.transactionHash}`)
 
     } catch (e) {
-        // logger.warn(`not erc1155`)
         return;
     }
 
     try {
         isERC1155Metadata = await instance.supportsInterface('0x0e89341c')
     } catch {
-        // empty
     }
 
     // TODO Network can be refactored
@@ -60,8 +58,6 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
     let collection = await Collection.get(collectionId)
 
     if (!collection) {
-
-
         collection = Collection.create({
             id: collectionId,
             networkId: network.id,
@@ -82,14 +78,20 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
 
     if (!nft) {
         logger.info(`nft created at ${event.blockNumber}`)
+        let metadataUri = null
 
-        const metadataUri = isERC1155Metadata
-            ? (await instance.uri(event.args.id)) : "unavailable"
+        if (isERC1155Metadata) {
+            try {
+                metadataUri = await instance.uri(tokenId)
+            } catch {
+                logger.warn(`Contract uri instance broken at address ${event.address}`)
+            }
+        }
 
         nft = Nft.create({
             id: nftId,
             tokenId: tokenId,
-            amount: BigInt(1),
+            amount: event.args.value.toBigInt(),
             collectionId: collection.id,
             minted_block: BigInt(event.blockNumber),
             minted_timestamp: event.block.timestamp,
@@ -99,8 +101,9 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
             metadata_uri: metadataUri,
         })
 
-        // TODO total_supply, burn relation
-        collection.total_supply = BigNumber.from(collection.total_supply).add(1).toBigInt()
+        logger.info(`totalSupply: ${collection.total_supply}`)
+        collection.total_supply = incrementBigInt(collection.total_supply)
+        logger.info(`new total: ${collection.total_supply}`)
 
         await Promise.all([
             collection.save(),

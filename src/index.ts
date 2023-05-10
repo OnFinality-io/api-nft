@@ -7,5 +7,8 @@ if (!global.atob) {
 }
 
 export * from "./mappings/erc721/erc721-mapping";
-export * from "./mappings/erc1155/erc1155-mapping";
+
+export * from "./mappings/erc1155/handleURI";
+export * from "./mappings/erc1155/handleBatch";
+export * from "./mappings/erc1155/handleSingle";
 
