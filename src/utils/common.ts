@@ -1,4 +1,4 @@
-import {Address, Network} from "../types";
+import {Address, AnyJson, Network} from "../types";
 import {BigNumber, BigNumberish} from "ethers";
 
 export function getCollectionId(
@@ -29,36 +29,39 @@ export function getAddressId(
     return `${networkId}-${address}`
 }
 
-export async function handleNetwork (id: string, name): Promise<Network> {
-    let network = await Network.get(id)
-
-    if (!network) {
-        network = Network.create({
-            id,
-            name
-        })
-        logger.info(`new network: ${name} has been added`)
-        await network.save()
-    }
-    return network
+export function extractIpfsHash(metadataUri: string): string {
+    const hashStartIndex = "ipfs://".length
+    return metadataUri.slice(hashStartIndex);
 }
 
-export async function handleAddress(eventAddress: string, networkId: string): Promise<Address> {
-    const addressId = getAddressId(networkId, eventAddress)
-    let address = await Address.get(addressId)
+export async function decodeMetadata(metadataUri): Promise<AnyJson> {
+    const metadataHost = 'https://unauthipfs.subquery.network/ipfs/api/v0/cat?arg=';
 
-    if (!address) {
-        address = Address.create({
-            id: addressId,
-            address: eventAddress,
-            networkId: networkId
-        })
-        await address.save()
+    if (metadataUri.startsWith("ipfs://")) {
+        const metadataCID = extractIpfsHash(metadataUri)
+        const url = `${metadataHost}${metadataCID}`
+        try {
+            const response = await fetch(
+                url,
+                {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            )
+            return (await response.json()) as AnyJson
+        } catch (e) {
+            logger.error(`Failed to fetch metadata from ipfs URI: ${metadataUri}, ${e.message}`)
+        }
     }
-    return address
+    try {
+        return (await fetch(metadataUri)) as AnyJson
+    } catch (e) {
+        logger.error(`Failed to fetch metadata from URI: ${metadataUri}, ${e.message}`)
+    }
 }
 
 export function incrementBigInt(value: bigint): bigint {
-    logger.info(value)
-    return BigNumber.from(value).add(1).toBigInt()
+    return BigInt(1) + value
 }
