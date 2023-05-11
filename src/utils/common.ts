@@ -1,5 +1,6 @@
 import {Address, AnyJson, Network} from "../types";
 import {BigNumber, BigNumberish} from "ethers";
+import {FetchError} from "node-fetch";
 
 export function getCollectionId(
     networkId: string,
@@ -16,10 +17,10 @@ export function getNftId(
 }
 
 export function getTransferId(
-    transactionHash: string,
-    transactionIndex: number
+    networkId: string,
+    transactionHash: string
 ): string {
-    return `${transactionHash}-${transactionIndex}`
+    return `${transactionHash}-${networkId}`
 }
 
 export function getAddressId(
@@ -34,7 +35,7 @@ export function extractIpfsHash(metadataUri: string): string {
     return metadataUri.slice(hashStartIndex);
 }
 
-export async function decodeMetadata(metadataUri): Promise<AnyJson> {
+export async function decodeMetadata(metadataUri: string): Promise<AnyJson | undefined> {
     const metadataHost = 'https://unauthipfs.subquery.network/ipfs/api/v0/cat?arg=';
 
     if (metadataUri.startsWith("ipfs://")) {
@@ -51,14 +52,16 @@ export async function decodeMetadata(metadataUri): Promise<AnyJson> {
                 }
             )
             return (await response.json()) as AnyJson
-        } catch (e) {
-            logger.error(`Failed to fetch metadata from ipfs URI: ${metadataUri}, ${e.message}`)
+        } catch (e: unknown) {
+            const fetchError: FetchError = e as FetchError;
+            logger.error(`Failed to fetch metadata from ipfs URI: ${metadataUri}, ${fetchError.message}`)
         }
     }
     try {
         return (await fetch(metadataUri)) as AnyJson
     } catch (e) {
-        logger.error(`Failed to fetch metadata from URI: ${metadataUri}, ${e.message}`)
+        const fetchError: FetchError = e as FetchError;
+        logger.error(`Failed to fetch metadata from URI: ${metadataUri}, ${fetchError.message}`)
     }
 }
 

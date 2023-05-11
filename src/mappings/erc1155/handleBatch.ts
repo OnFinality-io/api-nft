@@ -8,11 +8,13 @@ import {
 import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
 import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
 import {enumNetwork} from "../../utils/network-enum";
+import assert from "assert";
 
 export async function handleERC1155batch(
     event: TransferBatchLog,
     _network: enumNetwork
 ): Promise<void> {
+    assert(event.args, 'No event args')
 
     let instance = Erc1155__factory.connect(event.address, api);
 
@@ -20,8 +22,8 @@ export async function handleERC1155batch(
     let isERC1155 = false
     let isERC1155Metadata = false
 
-    // refactor this
     try {
+        // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155 = await instance.supportsInterface('0xd9b67a26');
 
         if (!isERC1155){
@@ -36,6 +38,7 @@ export async function handleERC1155batch(
     }
 
     try {
+        // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155Metadata = await instance.supportsInterface('0x0e89341c')
     } catch {
         isERC1155Metadata = false
@@ -46,76 +49,72 @@ export async function handleERC1155batch(
     await handleAddress(event.address, network.id)
 
     let collection = await handleCollection<TransferBatchLog>(
-        network.id,
+       network.id,
         event,
         totalSupply,
-        null,
-        null
+        undefined,
+        undefined
     )
 
     const tokenIds = event.args.ids
 
-    let nfts = await Promise.all(tokenIds.map(
-        async (tokenId, idx) => {
-            const nftId = getNftId(collection.id, tokenId.toString())
-            let metadataUri = null
-            let ntf = await Nft.get(nftId)
+    const nfts = (await Promise.all(tokenIds.map(async (tokenId, idx) =>{
+        assert(event.args, "No event.ags")
+        const nftId = getNftId(collection.id, tokenId.toString())
+        let metadataUri
+        let ntf = await Nft.get(nftId)
 
-            if (isERC1155Metadata) {
-                try {
-                    metadataUri = await instance.uri(tokenId)
-                } catch {
-                    logger.warn(`Contract uri instance broken at address ${event.address}`)
-                }
+        if (isERC1155Metadata) {
+            try {
+                metadataUri = await instance.uri(tokenId)
+            } catch {
+                logger.warn(`Contract uri instance broken at address ${event.address}`)
             }
-
-            // using third arg, conflicts between object and array
-            const _amount = event.args[3][idx]
-
-            if (!ntf) {
-                ntf = Nft.create({
-                    id: nftId,
-                    tokenId: tokenId.toString(),
-                    amount: _amount.toBigInt(),
-                    collectionId: collection.id,
-                    minted_block: BigInt(event.blockNumber),
-                    minted_timestamp: event.block.timestamp,
-                    minter_addressId: event.address,
-                    current_ownerId: event.args.to,
-                    contract_type: ContractType.ERC1155,
-                    metadata_uri: metadataUri,
-                })
-                collection.total_supply = incrementBigInt(collection.total_supply)
-                await Promise.all([
-                    collection.save(),
-                    ntf.save()
-                ]).then(()=> {
-                    logger.info("updated collections")
-                    logger.info("saved new NFT")
-                })
-            }
-            return ntf
         }
-    ))
+        // using third arg, conflicts between object and array
+        const _amount = event.args[3][idx]
 
-    const transferId = getTransferId(event.transactionHash, event.transactionIndex)
-    let transfer = await Transfers.get(transferId)
+        if (!ntf) {
+            collection.total_supply = incrementBigInt(collection.total_supply ?? BigInt(0))
 
-    if (!transfer) {
-        let transfers = tokenIds.map( (tokenId, idx) => {
-            return Transfers.create({
-                id: transferId,
+            return Nft.create({
+                id: nftId,
                 tokenId: tokenId.toString(),
-                amount: event.args[3][idx].toBigInt(), // object/array conflicts
-                networkId: network.id,
-                block: BigInt(event.blockNumber),
-                timestamp: event.block.timestamp,
-                transaction_id: event.transactionHash,
-                nftId: nfts[idx].id,
-                fromId: event.args.from,
-                toId: event.args.to
+                amount: _amount.toBigInt(),
+                collectionId: collection.id,
+                minted_block: BigInt(event.blockNumber),
+                minted_timestamp: event.block.timestamp,
+                minter_addressId: event.address,
+                current_ownerId: event.args.to,
+                contract_type: ContractType.ERC1155,
+                metadata_uri: metadataUri,
             })
+        }
+        return undefined
+    }))).filter(Boolean) as Nft[]
+
+
+    const transferId = getTransferId(network.id, event.transactionHash)
+
+    let transfers = tokenIds.map( (tokenId, idx) => {
+        assert(event.args, 'No event args')
+        return Transfers.create({
+            id: transferId,
+            tokenId: tokenId.toString(),
+            amount: event.args[3][idx].toBigInt(), // object/array conflicts
+            networkId: network.id,
+            block: BigInt(event.blockNumber),
+            timestamp: event.block.timestamp,
+            transaction_id: event.transactionHash,
+            nftId: getNftId(collection.id, tokenId.toString()),
+            fromId: event.args.from,
+            toId: event.args.to
         })
-        await Promise.all(transfers.map(async (transfer)=> await transfer.save() ))
-    }
+    })
+
+    await Promise.all([
+        store.bulkUpdate('Nft', nfts) ,
+        store.bulkUpdate('Transfer', transfers),
+        collection.save()
+    ])
 }

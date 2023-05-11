@@ -17,7 +17,7 @@ export async function handleAddress(eventAddress: string, networkId: string): Pr
     // return address
 }
 
-export async function handleNetwork (id: string, name): Promise<Network> {
+export async function handleNetwork (id: string, name: string): Promise<Network> {
     let network = await Network.get(id)
 
     if (!network) {
@@ -35,8 +35,8 @@ export async function handleCollection<T>(
     networkId: string,
     event:  T extends EthereumLog ? T : never,
     totalSupply: bigint,
-    name: string | null,
-    symbol: string | null
+    name: string | undefined,
+    symbol: string | undefined
 ): Promise<Collection> {
     const collectionId = getCollectionId(networkId, event.address)
     let collection = await Collection.get(collectionId)
@@ -50,8 +50,8 @@ export async function handleCollection<T>(
             created_timestamp: event.block.timestamp,
             minter_addressId: event.transaction.from,
             total_supply: totalSupply,
-            name: name && name,
-            symbol: symbol && symbol
+            name: name,
+            symbol: symbol
         })
         await collection.save()
     }

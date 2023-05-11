@@ -5,11 +5,14 @@ import {BigNumber} from "ethers";
 import {TransferSingleLog} from "../../types/abi-interfaces/Erc1155";
 import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
 import {enumNetwork} from "../../utils/network-enum";
+import assert from "assert";
 
 export async function handleERC1155single(
     event: TransferSingleLog,
     _network: enumNetwork
 ): Promise<void> {
+    assert(event.args, 'No event args')
+
     let instance = Erc1155__factory.connect(event.address, api);
 
     let totalSupply = BigInt(0)
@@ -17,6 +20,7 @@ export async function handleERC1155single(
     let isERC1155Metadata = false
 
     try {
+        // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155 = await instance.supportsInterface('0xd9b67a26');
 
         if (!isERC1155){
@@ -31,6 +35,7 @@ export async function handleERC1155single(
     }
 
     try {
+        // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155Metadata = await instance.supportsInterface('0x0e89341c')
     } catch {
     }
@@ -44,8 +49,8 @@ export async function handleERC1155single(
         network.id,
         event,
         totalSupply,
-        null,
-        null
+        undefined,
+        undefined
     )
 
     const tokenId = event.args.id.toString()
@@ -54,7 +59,7 @@ export async function handleERC1155single(
 
     if (!nft) {
         logger.info(`nft created at ${event.blockNumber}`)
-        let metadataUri = null
+        let metadataUri
 
         if (isERC1155Metadata) {
             try {
@@ -77,7 +82,7 @@ export async function handleERC1155single(
             metadata_uri: metadataUri,
         })
 
-        collection.total_supply = incrementBigInt(collection.total_supply)
+        collection.total_supply = incrementBigInt(collection.total_supply ?? BigInt(0))
 
         await Promise.all([
             collection.save(),
@@ -85,7 +90,7 @@ export async function handleERC1155single(
         ])
     }
 
-    const transferId = getTransferId(event.transactionHash, event.transactionIndex)
+    const transferId = getTransferId(network.id ,event.transactionHash)
     let transfer = await Transfers.get(transferId)
 
     if (!transfer) {
