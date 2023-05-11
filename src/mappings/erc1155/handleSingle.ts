@@ -3,9 +3,13 @@ import {Erc1155__factory} from "../../types/contracts";
 import {getAddressId, getCollectionId, getNftId, getTransferId, incrementBigInt} from "../../utils/common";
 import {BigNumber} from "ethers";
 import {TransferSingleLog} from "../../types/abi-interfaces/Erc1155";
+import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
+import {enumNetwork} from "../../utils/network-enum";
 
-export async function handleERC1155single(event: TransferSingleLog): Promise<void> {
-
+export async function handleERC1155single(
+    event: TransferSingleLog,
+    _network: enumNetwork
+): Promise<void> {
     let instance = Erc1155__factory.connect(event.address, api);
 
     let totalSupply = BigInt(0)
@@ -31,46 +35,18 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
     } catch {
     }
 
-    // TODO Network can be refactored
-    let network = await Network.get("1")
 
-    if (!network) {
-        network = new Network( "1")
-        network.name = "ethereum"
-        await network.save()
-    }
 
-    // TODO Address can be refactored
-    // Address would be operator ?
-    const addressId = getAddressId(network.id, event.address)
-    let address = await Address.get(addressId)
+    let network = await handleNetwork(_network.chainId, _network.name)
+    await handleAddress(event.address, network.id)
 
-    if (!address) {
-        address = Address.create({
-            id: addressId,
-            address: event.address,
-            networkId: network.id
-        })
-        await address.save()
-    }
-
-    const collectionId = getCollectionId(network.id, event.address)
-    let collection = await Collection.get(collectionId)
-
-    if (!collection) {
-        collection = Collection.create({
-            id: collectionId,
-            networkId: network.id,
-            contract_address: event.address,
-            created_block: BigInt(event.blockNumber),
-            created_timestamp: event.block.timestamp,
-            minter_addressId: event.transaction.from,
-            total_supply: totalSupply,
-            name: "TODO metadata",
-            symbol: "TODO metadata"
-        })
-        await collection.save()
-    }
+    let collection = await handleCollection<TransferSingleLog>(
+        network.id,
+        event,
+        totalSupply,
+        null,
+        null
+    )
 
     const tokenId = event.args.id.toString()
     const nftId = getNftId(collection.id, tokenId)
@@ -101,17 +77,12 @@ export async function handleERC1155single(event: TransferSingleLog): Promise<voi
             metadata_uri: metadataUri,
         })
 
-        logger.info(`totalSupply: ${collection.total_supply}`)
         collection.total_supply = incrementBigInt(collection.total_supply)
-        logger.info(`new total: ${collection.total_supply}`)
 
         await Promise.all([
             collection.save(),
             nft.save()
-        ]).then(()=> {
-            logger.info("updated collections")
-            logger.info("saved new NFT")
-        })
+        ])
     }
 
     const transferId = getTransferId(event.transactionHash, event.transactionIndex)

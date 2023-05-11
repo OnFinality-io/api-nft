@@ -1,16 +1,20 @@
 import {URILog} from "../../types/abi-interfaces/Erc1155";
 import {Erc1155__factory} from "../../types/contracts";
 import {Nft} from "../../types";
-import {getCollectionId, getNftId, handleNetwork} from "../../utils/common";
+import {getCollectionId, getNftId} from "../../utils/common";
+import {handleNetwork} from "../../utils/utilHandlers";
+import {enumNetwork} from "../../utils/network-enum";
 
 
-export async function handleERC1155Uri(event: URILog): Promise<void> {
+export async function handleERC1155Uri(
+    event: URILog,
+    _network: enumNetwork
+): Promise<void> {
 
     let isERC1155 = false
     let instance = Erc1155__factory.connect(event.address, api);
 
-    let network = await handleNetwork("1", "ethereum")
-
+    let network = await handleNetwork(_network.chainId, _network.name)
 
     try {
         isERC1155 = await instance.supportsInterface('0xd9b67a26');

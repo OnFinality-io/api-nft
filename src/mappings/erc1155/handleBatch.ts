@@ -1,17 +1,18 @@
-import {Address, Collection, ContractType, Network, Nft, Transfers} from "../../types";
+import {ContractType, Nft, Transfers} from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
 import {
-    getCollectionId,
     getNftId,
     getTransferId,
-    handleAddress,
-    handleNetwork,
     incrementBigInt
 } from "../../utils/common";
-import {BigNumber} from "ethers";
 import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
+import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
+import {enumNetwork} from "../../utils/network-enum";
 
-export async function handleERC1155batch(event: TransferBatchLog): Promise<void> {
+export async function handleERC1155batch(
+    event: TransferBatchLog,
+    _network: enumNetwork
+): Promise<void> {
 
     let instance = Erc1155__factory.connect(event.address, api);
 
@@ -40,36 +41,23 @@ export async function handleERC1155batch(event: TransferBatchLog): Promise<void>
         isERC1155Metadata = false
     }
 
-    let network = await handleNetwork("1", "ethereum")
+    let network = await handleNetwork(_network.chainId, _network.name)
+
     await handleAddress(event.address, network.id)
 
-    const collectionId = getCollectionId(network.id, event.address)
-    let collection = await Collection.get(collectionId)
-    // logger.info(collection)
-
-    if (!collection) {
-        logger.info('creating new collection')
-        collection = Collection.create({
-            id: collectionId,
-            networkId: network.id,
-            contract_address: event.address,
-            created_block: BigInt(event.blockNumber),
-            created_timestamp: event.block.timestamp,
-            minter_addressId: event.transaction.from,
-            total_supply: totalSupply,
-            name: "TODO metadata",
-            symbol: "TODO metadata"
-        })
-        await collection.save().then(()=>{
-            logger.info('collection saved')
-        })
-    }
+    let collection = await handleCollection<TransferBatchLog>(
+        network.id,
+        event,
+        totalSupply,
+        null,
+        null
+    )
 
     const tokenIds = event.args.ids
 
     let nfts = await Promise.all(tokenIds.map(
         async (tokenId, idx) => {
-            const nftId = getNftId(collectionId, tokenId.toString())
+            const nftId = getNftId(collection.id, tokenId.toString())
             let metadataUri = null
             let ntf = await Nft.get(nftId)
 
@@ -83,14 +71,13 @@ export async function handleERC1155batch(event: TransferBatchLog): Promise<void>
 
             // using third arg, conflicts between object and array
             const _amount = event.args[3][idx]
-            logger.info(`amount: ${_amount}`)
 
             if (!ntf) {
                 ntf = Nft.create({
                     id: nftId,
                     tokenId: tokenId.toString(),
                     amount: _amount.toBigInt(),
-                    collectionId,
+                    collectionId: collection.id,
                     minted_block: BigInt(event.blockNumber),
                     minted_timestamp: event.block.timestamp,
                     minter_addressId: event.address,
@@ -98,12 +85,7 @@ export async function handleERC1155batch(event: TransferBatchLog): Promise<void>
                     contract_type: ContractType.ERC1155,
                     metadata_uri: metadataUri,
                 })
-
-                logger.info(`collections: ${collection}`)
-                logger.info(`batch totalSupplu ${collection.total_supply}`)
                 collection.total_supply = incrementBigInt(collection.total_supply)
-                logger.info(`new totalSupply ${collection.total_supply}`)
-
                 await Promise.all([
                     collection.save(),
                     ntf.save()

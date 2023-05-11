@@ -1,11 +1,15 @@
 import {Address, AnyJson, Collection, ContractType, Network, Nft, Transfers} from "../../types";
 import {Erc721__factory} from "../../types/contracts";
 import {TransferLog} from "../../types/abi-interfaces/Erc721";
-import {getAddressId, getCollectionId, getNftId, getTransferId} from "../../utils/common";
+import {decodeMetadata, getAddressId, getCollectionId, getNftId, getTransferId} from "../../utils/common";
 import {BigNumber} from "ethers";
+import {enumNetwork} from "../../utils/network-enum";
+import {handleNetwork} from "../../utils/utilHandlers";
 
-export async function handleERC721(event: TransferLog): Promise<void> {
-  // logger.info(`Transfer detected. From: ${event.args.from} | To: ${event.args.to} | TokenID: ${event.args.tokenId}`);
+export async function handleERC721(
+    event: TransferLog,
+    _network: enumNetwork
+): Promise<void> {
 
   let instance = Erc721__factory.connect(event.address, api);
   let totalSupply = BigInt(0)
@@ -21,7 +25,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     logger.info(`address: ${event.address}`)
 
   } catch (e) {
-    // logger.warn(`not erc721`)
     return;
   }
 
@@ -34,17 +37,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       instance.supportsInterface('0x5b5e139f')
     ])
   } catch {
-
   }
 
-
-  let network = await Network.get("1")
-
-  if (!network) {
-    network = new Network( "1")
-    network.name = "ethereum"
-    await network.save()
-  }
+  let network = await handleNetwork(_network.chainId, _network.name)
 
   const addressId = getAddressId(network.id, event.address)
   let address = await Address.get(addressId)
@@ -58,6 +53,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     await address.save()
   }
 
+  // TODO Refactor
   const collectionId = getCollectionId(network.id, event.address)
   let collection = await Collection.get(collectionId)
 
@@ -98,14 +94,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     logger.info(`nft created at ${event.blockNumber}`)
 
 
+
     const metadataUri = isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : null
-
-    // prefixed with ipfs
-    // ipfs uri, fetch from ipfs rather than standard uri
-    const metadataJson = metadataUri && (await fetch(metadataUri)) as AnyJson
-
-    // ipfs client, required
-    //
+    const metadataJson = metadataUri && await decodeMetadata(metadataUri)
 
     nft = Nft.create({
       id: nftId,
@@ -118,10 +109,11 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       current_ownerId: event.args.to,
       contract_type: ContractType.ERC721,
       metadata_uri: metadataUri,
-      metadata: metadataJson
+      metadata: metadataJson,
     })
 
-      // TODO total_supply, burn relation
+
+
     collection.total_supply = isERC721Enumerable
         ? (await instance.totalSupply()).toBigInt()
         : BigNumber.from(collection.total_supply).add(1).toBigInt()

@@ -19,13 +19,13 @@ type Nft @entity {
   minter_address: Address! #whoever called the tx
   current_owner: Address! # event to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
+  metadata_uri: String
+  metadata: AnyJson
 #  name: String
 #  symbol: String
 #  token_uri: String
 #  image_uri: String
 #  description: String
-  metadata_uri: String
-  metadata: AnyJson
 }
 
 type Collection @entity {
