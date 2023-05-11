@@ -125,7 +125,7 @@ export async function handleERC721(
 
     collection.total_supply = isERC721Enumerable
         ? (await instance.totalSupply()).toBigInt()
-        : incrementBigInt(collection.total_supply ?? BigInt(0))
+        : incrementBigInt(collection.total_supply)
 
     await Promise.all([
         collection.save(),

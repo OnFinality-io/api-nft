@@ -34,8 +34,8 @@ type Collection @entity {
   contract_address: String!
   created_block: BigInt!
   created_timestamp: BigInt! # unix epoch timestamp
-  minter_address: Address
-  total_supply: BigInt
+  minter_address: Address!
+  total_supply: BigInt!
   name: String
   symbol: String
 #  floor_price: Int # Later on

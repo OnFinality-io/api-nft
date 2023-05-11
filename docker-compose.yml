@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
 
-  subquery-node:
+  subquery-node-moonbeam:
     image: onfinality/subql-node-ethereum:latest
     depends_on:
       "postgres":
@@ -32,10 +32,35 @@ services:
     volumes:
       - ./:/app
     command:
-      - -f=/app
+      - --multi-chain
+      - -f=/app/project-moonbeam.yaml
       - --db-schema=app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
+      test: ["CMD", "curl", "-f", "http://subquery-node-moonbeam:3000/ready"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  subquery-node-moonriver:
+    image: onfinality/subql-node-ethereum:latest
+    depends_on:
+      "postgres":
+        condition: service_healthy
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - --multi-chain
+      - -f=/app/project-moonriver.yaml
+      - --db-schema=app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
       interval: 3s
       timeout: 5s
       retries: 10

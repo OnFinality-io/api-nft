@@ -48,6 +48,7 @@ export async function handleERC1155batch(
 
     await handleAddress(event.address, network.id)
 
+    // name and symbol do not exist on erc1155
     let collection = await handleCollection<TransferBatchLog>(
        network.id,
         event,
@@ -75,7 +76,7 @@ export async function handleERC1155batch(
         const _amount = event.args[3][idx]
 
         if (!ntf) {
-            collection.total_supply = incrementBigInt(collection.total_supply ?? BigInt(0))
+            collection.total_supply = incrementBigInt(collection.total_supply)
 
             return Nft.create({
                 id: nftId,

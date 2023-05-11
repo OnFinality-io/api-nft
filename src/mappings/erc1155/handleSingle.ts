@@ -1,7 +1,6 @@
-import {Address, Collection, ContractType, Network, Nft, Transfers} from "../../types";
+import { ContractType, Nft, Transfers} from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
-import {getAddressId, getCollectionId, getNftId, getTransferId, incrementBigInt} from "../../utils/common";
-import {BigNumber} from "ethers";
+import { getNftId, getTransferId, incrementBigInt} from "../../utils/common";
 import {TransferSingleLog} from "../../types/abi-interfaces/Erc1155";
 import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
 import {enumNetwork} from "../../utils/network-enum";
@@ -82,7 +81,7 @@ export async function handleERC1155single(
             metadata_uri: metadataUri,
         })
 
-        collection.total_supply = incrementBigInt(collection.total_supply ?? BigInt(0))
+        collection.total_supply = incrementBigInt(collection.total_supply)
 
         await Promise.all([
             collection.save(),
