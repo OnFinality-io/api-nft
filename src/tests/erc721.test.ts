@@ -21,7 +21,7 @@ subqlTest(
             created_block: BigInt(13318656),
             created_timestamp: BigInt(1632890925),
             minter_addressId: "0xF9E13d8FC6c8F74449a9Cee1088822b817526588",
-            // total_supply: BigInt(10000),
+            total_supply: BigInt(10000),
             // name: "BoredApeYachtClub",
             // symbol: "BAYC"
         }),

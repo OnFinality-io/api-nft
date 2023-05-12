@@ -17,17 +17,17 @@ schema:
   file: "./schema.graphql"
 
 network:
-#  chainId: "0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b"
 #  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
   # chainId is the EVM Chain ID, for Ethereum this is 1
   # https://chainlist.org/chain/1
-  chainId: "1"
-  dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
+  endpoint: "https://rpc.api.moonriver.moonbeam.network"
+  chainId: "1285"
+#  dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
 
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 13318505
+    startBlock: 1805480
     options:
       abi: erc721
     assets:
@@ -42,7 +42,7 @@ dataSources:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 17132896
+    startBlock: 4198917
     options:
       abi: erc1155
     assets:

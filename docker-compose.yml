@@ -35,6 +35,8 @@ services:
       - --multi-chain
       - -f=/app/project-moonbeam.yaml
       - --db-schema=app
+      - --debug
+      - --batch-size=30
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-moonbeam:3000/ready"]
       interval: 3s
@@ -59,6 +61,8 @@ services:
       - --multi-chain
       - -f=/app/project-moonriver.yaml
       - --db-schema=app
+      - --debug
+      - --batch-size=30
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
       interval: 3s
@@ -72,8 +76,10 @@ services:
     depends_on:
       "postgres":
         condition: service_healthy
-      "subquery-node":
-        condition: service_healthy
+#      "subquery-node-moonriver":
+#        condition: service_healthy
+#      "subquery-node-moonbeam":
+#        condition: service_healthy
     restart: always
     environment:
       DB_USER: postgres
@@ -84,4 +90,4 @@ services:
     command:
       - --name=app
       - --playground
-      - --indexer=http://subquery-node:3000
+#      - --indexer=http://subquery-node-moonbeam:3000

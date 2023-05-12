@@ -16,7 +16,7 @@ type Nft @entity {
   collection: Collection!
   minted_block: BigInt! # Should be bigInt
   minted_timestamp: BigInt! # unix epoch timestamp
-  minter_address: Address! #whoever called the tx
+  minter_address: Address! # event from
   current_owner: Address! # event to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
   metadata_uri: String

@@ -1,6 +1,7 @@
 import {Address, AnyJson, Network} from "../types";
 import {BigNumber, BigNumberish} from "ethers";
 import {FetchError} from "node-fetch";
+import { namehash } from "ethers/lib/utils";
 
 export function getCollectionId(
     networkId: string,

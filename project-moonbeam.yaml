@@ -6,6 +6,8 @@ runner:
   node:
     name: "@subql/node-ethereum"
     version: "*"
+    options:
+      historical: false
   query:
     name: "@subql/query"
     version: "*"
@@ -17,14 +19,14 @@ schema:
   file: "./schema.graphql"
 
 network:
-  chainId: "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d"
-  endpoint: "wss://moonbeam.api.onfinality.io/public-ws"
-  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+  endpoint: "https://rpc.api.moonbeam.network"
+  chainId: "1284"
+#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
 
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 13318505
+    startBlock: 3186424
     options:
       abi: erc721
     assets:
@@ -39,7 +41,7 @@ dataSources:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 17132896
+    startBlock: 3186424
     options:
       abi: erc1155
     assets:

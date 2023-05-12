@@ -11,7 +11,6 @@ export async function handleERC1155Uri(
     event: URILog,
     _network: enumNetwork
 ): Promise<void> {
-    assert(event.args, 'No event args')
 
     let isERC1155 = false
     let instance = Erc1155__factory.connect(event.address, api);
@@ -29,6 +28,7 @@ export async function handleERC1155Uri(
     } catch (e) {
         return;
     }
+    assert(event.args, 'No event args on erc1155')
 
     const collectionId = getCollectionId(network.id, event.address)
     const nftId = getNftId(collectionId, event && event.args.id.toString())

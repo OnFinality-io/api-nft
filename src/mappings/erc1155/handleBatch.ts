@@ -9,13 +9,12 @@ import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
 import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
 import {enumNetwork} from "../../utils/network-enum";
 import assert from "assert";
+import { BigNumber } from "ethers";
 
 export async function handleERC1155batch(
     event: TransferBatchLog,
     _network: enumNetwork
 ): Promise<void> {
-    assert(event.args, 'No event args')
-
     let instance = Erc1155__factory.connect(event.address, api);
 
     let totalSupply = BigInt(0)
@@ -36,6 +35,9 @@ export async function handleERC1155batch(
     } catch (e) {
         return;
     }
+
+    assert(event.args, 'No event args on erc1155')
+
 
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
@@ -60,7 +62,7 @@ export async function handleERC1155batch(
     const tokenIds = event.args.ids
 
     const nfts = (await Promise.all(tokenIds.map(async (tokenId, idx) =>{
-        assert(event.args, "No event.ags")
+        assert(event.args, 'No event args')
         const nftId = getNftId(collection.id, tokenId.toString())
         let metadataUri
         let ntf = await Nft.get(nftId)
@@ -72,8 +74,10 @@ export async function handleERC1155batch(
                 logger.warn(`Contract uri instance broken at address ${event.address}`)
             }
         }
+
         // using third arg, conflicts between object and array
         const _amount = event.args[3][idx]
+        // const _amount = (event.args.values as BigNumber[])[idx]
 
         if (!ntf) {
             collection.total_supply = incrementBigInt(collection.total_supply)
@@ -91,9 +95,8 @@ export async function handleERC1155batch(
                 metadata_uri: metadataUri,
             })
         }
-        return undefined
+        // return undefined
     }))).filter(Boolean) as Nft[]
-
 
     const transferId = getTransferId(network.id, event.transactionHash)
 

@@ -10,7 +10,6 @@ export async function handleERC1155single(
     event: TransferSingleLog,
     _network: enumNetwork
 ): Promise<void> {
-    assert(event.args, 'No event args')
 
     let instance = Erc1155__factory.connect(event.address, api);
 
@@ -32,6 +31,8 @@ export async function handleERC1155single(
     } catch (e) {
         return;
     }
+
+    assert(event.args, 'No event args on erc1155')
 
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
