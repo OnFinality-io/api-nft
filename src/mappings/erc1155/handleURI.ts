@@ -3,19 +3,17 @@ import {Erc1155__factory} from "../../types/contracts";
 import {Nft} from "../../types";
 import {getCollectionId, getNftId} from "../../utils/common";
 import {handleNetwork} from "../../utils/utilHandlers";
-import {enumNetwork} from "../../utils/network-enum";
 import assert from "assert";
 
 
 export async function handleERC1155Uri(
     event: URILog,
-    _network: enumNetwork
 ): Promise<void> {
 
     let isERC1155 = false
-    let instance = Erc1155__factory.connect(event.address, api);
+    const instance = Erc1155__factory.connect(event.address, api);
 
-    let network = await handleNetwork(_network.chainId, _network.name)
+    const network = await handleNetwork(chainId)
 
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
@@ -33,7 +31,7 @@ export async function handleERC1155Uri(
     const collectionId = getCollectionId(network.id, event.address)
     const nftId = getNftId(collectionId, event && event.args.id.toString())
 
-    let nft = await Nft.get(nftId)
+    const nft = await Nft.get(nftId)
 
     if (!nft) {
         logger.warn(`NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`)

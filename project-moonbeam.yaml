@@ -6,8 +6,6 @@ runner:
   node:
     name: "@subql/node-ethereum"
     version: "*"
-    options:
-      historical: false
   query:
     name: "@subql/query"
     version: "*"
@@ -21,12 +19,12 @@ schema:
 network:
   endpoint: "https://rpc.api.moonbeam.network"
   chainId: "1284"
-#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
 
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 3186424
+    startBlock: 171985
     options:
       abi: erc721
     assets:
@@ -41,7 +39,7 @@ dataSources:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 3186424
+    startBlock: 171985
     options:
       abi: erc1155
     assets:

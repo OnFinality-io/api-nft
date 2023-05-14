@@ -1,7 +1,5 @@
-import {Address, AnyJson, Network} from "../types";
-import {BigNumber, BigNumberish} from "ethers";
+import {AnyJson} from "../types";
 import {FetchError} from "node-fetch";
-import { namehash } from "ethers/lib/utils";
 
 export function getCollectionId(
     networkId: string,
@@ -24,12 +22,6 @@ export function getTransferId(
     return `${transactionHash}-${networkId}`
 }
 
-export function getAddressId(
-    networkId: string,
-    address: string
-): string {
-    return `${networkId}-${address}`
-}
 
 export function extractIpfsHash(metadataUri: string): string {
     const hashStartIndex = "ipfs://".length

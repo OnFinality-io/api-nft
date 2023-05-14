@@ -1,7 +1,6 @@
 enum ContractType {
   ERC721,
   ERC1155
-  RMRK,
 }
 
 type AnyJson @jsonField {
@@ -16,11 +15,12 @@ type Nft @entity {
   collection: Collection!
   minted_block: BigInt! # Should be bigInt
   minted_timestamp: BigInt! # unix epoch timestamp
-  minter_address: Address! # event from
-  current_owner: Address! # event to
+  minter_address: String! # event transaction from
+  current_owner: String! # event args to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
   metadata_uri: String
   metadata: AnyJson
+  metadata_status: String
 #  name: String
 #  symbol: String
 #  token_uri: String
@@ -31,10 +31,10 @@ type Nft @entity {
 type Collection @entity {
   id: ID! # chainID-contract adddress
   network: Network!
-  contract_address: String!
+  contract_address: String! # event address
   created_block: BigInt!
   created_timestamp: BigInt! # unix epoch timestamp
-  minter_address: Address!
+  creator_address: String! # event transaction from
   total_supply: BigInt!
   name: String
   symbol: String
@@ -48,19 +48,12 @@ type Transfers @entity {
   network: Network!
   block: BigInt
   timestamp: BigInt
-  transaction_id: String # Hash or extrinsic id
+  transaction_hash: String # event transaction hash
   nft: Nft
-  from: Address
-  to: Address
-}
-
-type Address @entity {
-  id: ID! # network + address
-  address: String!
-  network: Network!
+  from: String!
+  to: String!
 }
 
 type Network @entity {
   id: ID!
-  name: String
 }

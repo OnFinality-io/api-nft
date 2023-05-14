@@ -35,6 +35,7 @@ services:
       - --multi-chain
       - -f=/app/project-moonbeam.yaml
       - --db-schema=app
+      - --disable-historical
       - --debug
       - --batch-size=30
     healthcheck:
@@ -62,9 +63,10 @@ services:
       - -f=/app/project-moonriver.yaml
       - --db-schema=app
       - --debug
+      - --disable-historical
       - --batch-size=30
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
+      test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3001/ready"]
       interval: 3s
       timeout: 5s
       retries: 10

@@ -1,24 +1,20 @@
-import {Address, AnyJson, Collection, ContractType, Nft, Transfers} from "../../types";
+import { AnyJson, Collection, ContractType, Nft, Transfers} from "../../types";
 import {Erc721__factory} from "../../types/contracts";
 import {TransferLog} from "../../types/abi-interfaces/Erc721";
 import {
-  decodeMetadata,
-  getAddressId,
   getCollectionId,
   getNftId,
   getTransferId,
   incrementBigInt
 } from "../../utils/common";
-import {enumNetwork} from "../../utils/network-enum";
 import {handleNetwork} from "../../utils/utilHandlers";
 import assert from "assert";
 
 export async function handleERC721(
     event: TransferLog,
-    _network: enumNetwork
 ): Promise<void> {
 
-  let instance = Erc721__factory.connect(event.address, api);
+  const instance = Erc721__factory.connect(event.address, api);
   let totalSupply = BigInt(0)
   let isERC721 = false
 
@@ -47,21 +43,10 @@ export async function handleERC721(
       instance.supportsInterface('0x5b5e139f')
     ])
   } catch {
+
   }
 
-  let network = await handleNetwork(_network.chainId, _network.name)
-
-  const addressId = getAddressId(network.id, event.address)
-  let address = await Address.get(addressId)
-
-  if (!address) {
-    address = Address.create({
-      id: addressId,
-      address: event.address,
-      networkId: network.id
-    })
-    await address.save()
-  }
+  const network = await handleNetwork(chainId)
 
   // TODO Refactor
   const collectionId = getCollectionId(network.id, event.address)
@@ -93,7 +78,7 @@ export async function handleERC721(
       contract_address: event.address,
       created_block: BigInt(event.blockNumber),
       created_timestamp: event.block.timestamp,
-      minter_addressId: event.args.from,
+      creator_address: event.transaction.from,
       total_supply: totalSupply,
       name,
       symbol
@@ -102,6 +87,7 @@ export async function handleERC721(
   }
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString())
+  logger.info(`about to get NFT ${nftId}`)
   let nft = await Nft.get(nftId)
 
   if (!nft) {
@@ -113,7 +99,7 @@ export async function handleERC721(
       logger.warn(`metadata URI not available`)
     }
 
-    logger.info(`event: ${event.args.tokenId}`)
+    logger.info(`event: ${event.args.tokenId.toString()}`)
     logger.info(`event: ${event.args.to}`)
     logger.info(`event: ${event.args.from}`)
 
@@ -126,24 +112,25 @@ export async function handleERC721(
       collectionId: collection.id,
       minted_block: BigInt(event.blockNumber),
       minted_timestamp: event.block.timestamp,
-      minter_addressId: event.args.from,
-      current_ownerId: event.args.to,
+      minter_address: event.transaction.from,
+      current_owner: event.args.to,
       contract_type: ContractType.ERC721,
       metadata_uri: metadataUri,
-      // metadata: metadataJson,
     } as Nft)
 
     logger.info(`new nft, collection id: ${collection.id}`)
     logger.info(`total supply: ${collection.total_supply}`)
-    const newTotalSupply = isERC721Enumerable
-        ? (await instance.totalSupply()).toBigInt()
-        : incrementBigInt(collection.total_supply)
+    try {
+      collection.total_supply = isERC721Enumerable
+        ?(await instance.totalSupply()).toBigInt()
+        : collection.total_supply = incrementBigInt(collection.total_supply)
+    } catch (e) {
+      collection.total_supply = incrementBigInt(collection.total_supply)
+    }
 
-    logger.info(`new total supply ${newTotalSupply}`)
     await Promise.all([
-        collection.save(),
-        // store.set(`Collection`, collectionId, {total_supply: newTotalSupply} as Collection),
-        nft.save()
+      collection.save(),
+      nft.save()
     ])
   }
 
@@ -156,10 +143,10 @@ export async function handleERC721(
     networkId: network.id,
     block: BigInt(event.blockNumber),
     timestamp: event.block.timestamp,
-    transaction_id: event.transactionHash,
+    transaction_hash: event.transactionHash,
     nftId: nft.id,
-    fromId: event.args.from,
-    toId: event.args.to
+    from: event.args.from,
+    to: event.args.to
   })
 
   await transfer.save()

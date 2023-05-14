@@ -6,18 +6,15 @@ import {
     incrementBigInt
 } from "../../utils/common";
 import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
-import {handleAddress, handleCollection, handleNetwork} from "../../utils/utilHandlers";
-import {enumNetwork} from "../../utils/network-enum";
+import {handleCollection, handleNetwork} from "../../utils/utilHandlers";
 import assert from "assert";
-import { BigNumber } from "ethers";
 
 export async function handleERC1155batch(
     event: TransferBatchLog,
-    _network: enumNetwork
 ): Promise<void> {
-    let instance = Erc1155__factory.connect(event.address, api);
+    const instance = Erc1155__factory.connect(event.address, api);
 
-    let totalSupply = BigInt(0)
+    const totalSupply = BigInt(0)
     let isERC1155 = false
     let isERC1155Metadata = false
 
@@ -46,17 +43,13 @@ export async function handleERC1155batch(
         isERC1155Metadata = false
     }
 
-    let network = await handleNetwork(_network.chainId, _network.name)
-
-    await handleAddress(event.address, network.id)
+    const network = await handleNetwork(chainId)
 
     // name and symbol do not exist on erc1155
-    let collection = await handleCollection<TransferBatchLog>(
+    const collection = await handleCollection<TransferBatchLog>(
        network.id,
         event,
-        totalSupply,
-        undefined,
-        undefined
+        totalSupply
     )
 
     const tokenIds = event.args.ids
@@ -65,7 +58,7 @@ export async function handleERC1155batch(
         assert(event.args, 'No event args')
         const nftId = getNftId(collection.id, tokenId.toString())
         let metadataUri
-        let ntf = await Nft.get(nftId)
+        const ntf = await Nft.get(nftId)
 
         if (isERC1155Metadata) {
             try {
@@ -89,18 +82,24 @@ export async function handleERC1155batch(
                 collectionId: collection.id,
                 minted_block: BigInt(event.blockNumber),
                 minted_timestamp: event.block.timestamp,
-                minter_addressId: event.address,
-                current_ownerId: event.args.to,
+                minter_address: event.transaction.from,
+                current_owner: event.args.to,
                 contract_type: ContractType.ERC1155,
                 metadata_uri: metadataUri,
             })
         }
         // return undefined
     }))).filter(Boolean) as Nft[]
+    nfts.map((it, idx) => {
+        if (!it) {
+            logger.info(`nft: idx: ${idx} undefined`)
+        }
+        return
+    })
 
     const transferId = getTransferId(network.id, event.transactionHash)
 
-    let transfers = tokenIds.map( (tokenId, idx) => {
+    const transfers = tokenIds.map( (tokenId, idx) => {
         assert(event.args, 'No event args')
         return Transfers.create({
             id: transferId,
@@ -109,10 +108,10 @@ export async function handleERC1155batch(
             networkId: network.id,
             block: BigInt(event.blockNumber),
             timestamp: event.block.timestamp,
-            transaction_id: event.transactionHash,
+            transaction_hash: event.transactionHash,
             nftId: getNftId(collection.id, tokenId.toString()),
-            fromId: event.args.from,
-            toId: event.args.to
+            from: event.args.from,
+            to: event.args.to
         })
     })
 
