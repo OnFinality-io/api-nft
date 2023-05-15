@@ -100,6 +100,7 @@ export async function handleERC721(
       current_owner: event.args.to,
       contract_type: ContractType.ERC721,
       metadata_uri: metadataUri,
+      metadata_status: "PENDING"
     } as Nft)
 
     try {

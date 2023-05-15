@@ -19,7 +19,7 @@ schema:
   file: "./schema.graphql"
 
 network:
-  endpoint: "https://astar.api.onfinality.io/public	"
+  endpoint: "https://astar.api.onfinality.io/public"
   chainId: "592"
 #  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
 

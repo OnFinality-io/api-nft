@@ -81,6 +81,7 @@ export async function handleERC1155batch(
                 current_owner: event.args.to,
                 contract_type: ContractType.ERC1155,
                 metadata_uri: metadataUri,
+                metadata_status: "PENDING"
             })
         }
         // return undefined

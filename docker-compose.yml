@@ -33,6 +33,7 @@ services:
       - ./:/app
     command:
       - --multi-chain
+      - --disable-historical
       - -f=/app/project-moonbeam.yaml
       - --db-schema=app
       - --batch-size=30
@@ -60,6 +61,7 @@ services:
       - --multi-chain
       - -f=/app/project-moonriver.yaml
       - --db-schema=app
+      - --disable-historical
       - --batch-size=30
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
@@ -82,6 +84,7 @@ services:
     volumes:
       - ./:/app
     command:
+      - --disable-historical
       - --multi-chain
       - -f=/app/project-acala.yaml
       - --db-schema=app
@@ -111,6 +114,7 @@ services:
       - -f=/app/project-astar.yaml
       - --db-schema=app
       - --batch-size=30
+      - --disable-historical
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-astar:3000/ready"]
       interval: 3s
@@ -136,6 +140,7 @@ services:
       - -f=/app/project-moonriver.yaml
       - --db-schema=app
       - --batch-size=30
+      - --disable-historical
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-shiden:3000/ready"]
       interval: 3s
