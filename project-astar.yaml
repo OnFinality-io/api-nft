@@ -6,6 +6,8 @@ runner:
   node:
     name: "@subql/node-ethereum"
     version: "*"
+    options:
+      historical: false
   query:
     name: "@subql/query"
     version: "*"

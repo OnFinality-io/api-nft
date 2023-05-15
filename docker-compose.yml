@@ -36,7 +36,6 @@ services:
       - -f=/app/project-moonbeam.yaml
       - --db-schema=app
       - --disable-historical
-      - --debug
       - --batch-size=30
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-moonbeam:3000/ready"]
@@ -62,11 +61,89 @@ services:
       - --multi-chain
       - -f=/app/project-moonriver.yaml
       - --db-schema=app
+      - --disable-historical
+      - --batch-size=30
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  subquery-node-acala:
+    image: onfinality/subql-node-ethereum:v2.1.3-1
+    depends_on:
+      "postgres":
+        condition: service_healthy
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - --multi-chain
+      - -f=/app/project-acala.yaml
+      - --db-schema=app
       - --debug
       - --disable-historical
       - --batch-size=30
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3001/ready"]
+      test: ["CMD", "curl", "-f", "http://subquery-node-acala:3000/ready"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  subquery-node-astar:
+    image: onfinality/subql-node-ethereum:v2.1.3-1
+    depends_on:
+      "postgres":
+        condition: service_healthy
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - --multi-chain
+      - -f=/app/project-astar.yaml
+      - --db-schema=app
+      - --disable-historical
+      - --batch-size=30
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://subquery-node-astar:3000/ready"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+  subquery-node-shiden:
+    image: onfinality/subql-node-ethereum:v2.1.3-1
+    depends_on:
+      "postgres":
+        condition: service_healthy
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - --multi-chain
+      - -f=/app/project-moonriver.yaml
+      - --db-schema=app
+      - --disable-historical
+      - --batch-size=30
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://subquery-node-shiden:3000/ready"]
       interval: 3s
       timeout: 5s
       retries: 10

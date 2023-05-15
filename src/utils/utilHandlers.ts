@@ -9,7 +9,6 @@ export async function handleNetwork (id: string): Promise<Network> {
         network = Network.create({
             id,
         })
-        logger.info(`new network: ${id} has been added`)
         await network.save()
     }
     return network
@@ -19,8 +18,6 @@ export async function handleCollection<T>(
     networkId: string,
     event:  T extends EthereumLog ? T : never,
     totalSupply: bigint,
-    // name: string | undefined,
-    // symbol: string | undefined
 ): Promise<Collection> {
     const collectionId = getCollectionId(networkId, event.address)
     let collection = await Collection.get(collectionId)
@@ -34,8 +31,8 @@ export async function handleCollection<T>(
             created_timestamp: event.block.timestamp,
             creator_address: event.transaction.from,
             total_supply: totalSupply,
-            name: "name",
-            symbol: "symbol"
+            name: undefined, // erc1155 does not have name and symbol
+            symbol: undefined // ^
         })
         await collection.save()
     }

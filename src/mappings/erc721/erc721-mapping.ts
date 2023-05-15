@@ -24,10 +24,8 @@ export async function handleERC721(
     if (!isERC721){
       return
     }
-    logger.info(`isERC721 ${isERC721}`)
-    logger.info(`address: ${event.address}`)
-    logger.info(`tx: ${event.transactionHash}`)
   } catch (e) {
+    // If it is not an ERC721 interface, should just return
     return;
   }
 
@@ -52,12 +50,9 @@ export async function handleERC721(
   const collectionId = getCollectionId(network.id, event.address)
   let collection = await Collection.get(collectionId)
 
-  logger.info(` collection id: ${collectionId}`)
   if (!collection) {
     let name: string | undefined
     let symbol: string | undefined
-
-    logger.info(`isERC721Metadata ${isERC721Metadata}`)
 
     if (isERC721Metadata) {
       [name, symbol] = await Promise.all([
@@ -66,10 +61,8 @@ export async function handleERC721(
       ])
     }
 
-    logger.info(`isEnumerable ${isERC721Enumerable}`)
     if (isERC721Enumerable) {
       totalSupply = (await instance.totalSupply()).toBigInt()
-      logger.info(`Enumerable, total supply ${totalSupply}`)
     }
 
     collection = Collection.create({
@@ -87,23 +80,14 @@ export async function handleERC721(
   }
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString())
-  logger.info(`about to get NFT ${nftId}`)
   let nft = await Nft.get(nftId)
 
   if (!nft) {
-    logger.info(`nft created at ${event.blockNumber}`)
     let metadataUri
     try {
       metadataUri = isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : undefined
     } catch (e) {
-      logger.warn(`metadata URI not available`)
     }
-
-    logger.info(`event: ${event.args.tokenId.toString()}`)
-    logger.info(`event: ${event.args.to}`)
-    logger.info(`event: ${event.args.from}`)
-
-    // const metadataJson = metadataUri ? await decodeMetadata(metadataUri) : undefined
 
     nft = Nft.create({
       id: nftId,
@@ -118,8 +102,6 @@ export async function handleERC721(
       metadata_uri: metadataUri,
     } as Nft)
 
-    logger.info(`new nft, collection id: ${collection.id}`)
-    logger.info(`total supply: ${collection.total_supply}`)
     try {
       collection.total_supply = isERC721Enumerable
         ?(await instance.totalSupply()).toBigInt()

@@ -22,12 +22,7 @@ export async function handleERC1155single(
         if (!isERC1155){
             return
         }
-        logger.info(`isERC1155 ${isERC1155} singleTransfer`)
-        logger.info(`address: ${event.address}`)
-        logger.info(`tx: ${event.transactionHash}`)
-
     } catch (e) {
-        logger.info(`not it`)
         return;
     }
 
@@ -50,10 +45,8 @@ export async function handleERC1155single(
     const tokenId = event.args.id.toString()
     const nftId = getNftId(collection.id, tokenId)
     let nft = await Nft.get(nftId)
-    logger.info('get nft')
 
     if (!nft) {
-        logger.info(`nft created at ${event.blockNumber}`)
         let metadataUri
 
         if (isERC1155Metadata) {
@@ -64,9 +57,6 @@ export async function handleERC1155single(
                 metadataUri = undefined
             }
         }
-
-        logger.info('hi before create')
-
         nft = Nft.create({
             id: nftId,
             tokenId: tokenId,
@@ -78,11 +68,11 @@ export async function handleERC1155single(
             current_owner: event.args.to,
             contract_type: ContractType.ERC1155,
             metadata_uri: metadataUri,
+            metadata_status: "PENDING"
         })
 
         collection.total_supply = incrementBigInt(collection.total_supply)
 
-        logger.info(`collection: ${collection.total_supply}`)
         await Promise.all([
             collection.save(),
             nft.save()

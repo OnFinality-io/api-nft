@@ -25,10 +25,6 @@ export async function handleERC1155batch(
         if (!isERC1155){
             return
         }
-        logger.info(`isERC1155 ${isERC1155} batchTransfer`)
-        logger.info(`address: ${event.address}`)
-        logger.info(`tx: ${event.transactionHash}`)
-
     } catch (e) {
         return;
     }
@@ -89,12 +85,6 @@ export async function handleERC1155batch(
         }
         // return undefined
     }))).filter(Boolean) as Nft[]
-    nfts.map((it, idx) => {
-        if (!it) {
-            logger.info(`nft: idx: ${idx} undefined`)
-        }
-        return
-    })
 
     const transferId = getTransferId(network.id, event.transactionHash)
 
