@@ -17,12 +17,9 @@ schema:
   file: "./schema.graphql"
 
 network:
+  endpoint: "wss://shiden.api.onfinality.io/public-ws"
+  chainId: "336"
 #  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
-  # chainId is the EVM Chain ID, for Ethereum this is 1
-  # https://chainlist.org/chain/1
-  endpoint: "https://rpc.api.moonriver.moonbeam.network"
-  chainId: "1285"
-#  dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
 
 
 dataSources:

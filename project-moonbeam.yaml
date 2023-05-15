@@ -24,7 +24,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 171985
+    startBlock: 1
     options:
       abi: erc721
     assets:
@@ -33,13 +33,13 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonbeamERC721
+        - handler: handleERC721
           kind: ethereum/LogHandler
           filter:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 171985
+    startBlock: 1
     options:
       abi: erc1155
     assets:
@@ -48,17 +48,17 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonbeamERC1155Single
+        - handler: handleERC1155Single
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferSingle(address, address, address, uint256, uint256)
-        - handler: handleMoonbeamERC1155Batch
+        - handler: handleERC1155Batch
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferBatch(address, address, address, uint256[], uint256[])
-        - handler: handleMoonbeamERC1155Uri
+        - handler: handleERC1155Uri
           kind: ethereum/LogHandler
           filter:
             topics:

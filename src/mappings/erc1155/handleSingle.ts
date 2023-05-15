@@ -80,11 +80,11 @@ export async function handleERC1155single(
             metadata_uri: metadataUri,
         })
 
-        // collection.total_supply = incrementBigInt(collection.total_supply)
+        collection.total_supply = incrementBigInt(collection.total_supply)
 
         logger.info(`collection: ${collection.total_supply}`)
         await Promise.all([
-            // collection.save(),
+            collection.save(),
             nft.save()
         ])
     }

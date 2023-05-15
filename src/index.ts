@@ -6,5 +6,5 @@ if (!global.atob) {
     global.atob = atob as any;
 }
 
-export * from "./mappings/moonriver/index"
-export * from "./mappings/moonbeam/index"
+export * from "./mappings/erc721/index"
+export * from "./mappings/erc1155/index"

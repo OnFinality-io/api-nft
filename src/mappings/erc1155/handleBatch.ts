@@ -70,7 +70,6 @@ export async function handleERC1155batch(
 
         // using third arg, conflicts between object and array
         const _amount = event.args[3][idx]
-        // const _amount = (event.args.values as BigNumber[])[idx]
 
         if (!ntf) {
             collection.total_supply = incrementBigInt(collection.total_supply)

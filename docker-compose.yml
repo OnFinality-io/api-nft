@@ -18,7 +18,7 @@ services:
       retries: 5
 
   subquery-node-moonbeam:
-    image: onfinality/subql-node-ethereum:latest
+    image: onfinality/subql-node-ethereum:v2.1.3-1
     depends_on:
       "postgres":
         condition: service_healthy
@@ -45,7 +45,7 @@ services:
       retries: 10
 
   subquery-node-moonriver:
-    image: onfinality/subql-node-ethereum:latest
+    image: onfinality/subql-node-ethereum:v2.1.3-1
     depends_on:
       "postgres":
         condition: service_healthy
@@ -78,10 +78,6 @@ services:
     depends_on:
       "postgres":
         condition: service_healthy
-#      "subquery-node-moonriver":
-#        condition: service_healthy
-#      "subquery-node-moonbeam":
-#        condition: service_healthy
     restart: always
     environment:
       DB_USER: postgres
