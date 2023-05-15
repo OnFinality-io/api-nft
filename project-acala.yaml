@@ -21,11 +21,10 @@ schema:
 network:
   endpoint:
     [
-      "wss://acala-polkadot.api.onfinality.io/public-ws",
-      "wss://acala-rpc-0.aca-api.network",
+      "https://eth-rpc-acala-testnet.aca-staging.network"
     ]
   # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
-  chainId: "787"
+  chainId: "597"
 #  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
 
 dataSources:
