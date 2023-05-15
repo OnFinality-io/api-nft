@@ -4,7 +4,6 @@ import {EthereumLog} from "@subql/types-ethereum";
 
 export async function handleNetwork (id: string): Promise<Network> {
     let network = await Network.get(id)
-
     if (!network) {
         network = Network.create({
             id,

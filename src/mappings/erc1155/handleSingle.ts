@@ -18,7 +18,6 @@ export async function handleERC1155single(
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155 = await instance.supportsInterface('0xd9b67a26');
-
         if (!isERC1155){
             return
         }
@@ -80,21 +79,17 @@ export async function handleERC1155single(
     }
 
     const transferId = getTransferId(network.id ,event.transactionHash)
-    let transfer = await Transfers.get(transferId)
-
-    if (!transfer) {
-        transfer = Transfers.create({
-            id: transferId,
-            tokenId,
-            amount: event.args.value.toBigInt(),
-            networkId: network.id,
-            block: BigInt(event.blockNumber),
-            timestamp: event.block.timestamp,
-            transaction_hash: event.transactionHash,
-            nftId: nft.id,
-            from: event.args.from,
-            to: event.args.to
-        })
-        await transfer.save()
-    }
+    const transfer = Transfers.create({
+        id: transferId,
+        tokenId,
+        amount: event.args.value.toBigInt(),
+        networkId: network.id,
+        block: BigInt(event.blockNumber),
+        timestamp: event.block.timestamp,
+        transaction_hash: event.transactionHash,
+        nftId: nft.id,
+        from: event.args.from,
+        to: event.args.to
+    })
+    await transfer.save()
 }
