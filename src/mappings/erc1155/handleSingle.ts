@@ -1,11 +1,11 @@
-import { ContractType, Nft, Transfers} from "../../types";
+import { Collection, ContractType, Nft, Transfers } from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
-import { getNftId, getTransferId, incrementBigInt} from "../../utils/common";
+import { getCollectionId, getNftId, getTransferId, incrementBigInt } from "../../utils/common";
 import {TransferSingleLog} from "../../types/abi-interfaces/Erc1155";
-import {handleCollection, handleNetwork} from "../../utils/utilHandlers";
+import {handleNetwork} from "../../utils/utilHandlers";
 import assert from "assert";
 
-export async function handleERC1155single(
+export async function handleERC1155Single(
     event: TransferSingleLog,
 ): Promise<void> {
 
@@ -35,11 +35,23 @@ export async function handleERC1155single(
 
     const network = await handleNetwork(chainId)
 
-    const collection = await handleCollection<TransferSingleLog>(
-        network.id,
-        event,
-        totalSupply,
-    )
+    const collectionId = getCollectionId(network.id, event.address)
+    let collection = await Collection.get(collectionId)
+
+    if (!collection) {
+        collection = Collection.create({
+            id: collectionId,
+            networkId: network.id,
+            contract_address: event.address,
+            created_block: BigInt(event.blockNumber),
+            created_timestamp: event.block.timestamp,
+            creator_address: event.transaction.from,
+            total_supply: totalSupply,
+            name: undefined, // erc1155 does not have name and symbol
+            symbol: undefined // ^
+        })
+        await collection.save()
+    }
 
     const tokenId = event.args.id.toString()
     const nftId = getNftId(collection.id, tokenId)

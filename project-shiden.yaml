@@ -21,8 +21,7 @@ schema:
 network:
   endpoint: "wss://shiden.api.onfinality.io/public-ws"
   chainId: "336"
-#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
-
+  dictionary: "https://api.subquery.network/sq/subquery/shiden-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime

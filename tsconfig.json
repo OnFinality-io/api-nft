@@ -10,9 +10,10 @@
     "outDir": "dist",
     "target": "es2017",
     "rootDir": "src",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true
+    "strict": true,
+//    "noImplicitAny": true,
+//    "noImplicitThis": true,
+//    "strictNullChecks": true
   },
   "include": ["src/**/*", "node_modules/@subql/types-ethereum/dist/global.d.ts"]
 }

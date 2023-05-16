@@ -1,12 +1,13 @@
-import {ContractType, Nft, Transfers} from "../../types";
+import { Collection, ContractType, Nft, Transfers } from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
 import {
+    getCollectionId,
     getNftId,
     getTransferId,
     incrementBigInt
 } from "../../utils/common";
 import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
-import {handleCollection, handleNetwork} from "../../utils/utilHandlers";
+import { handleNetwork} from "../../utils/utilHandlers";
 import assert from "assert";
 
 export async function handleERC1155batch(
@@ -42,16 +43,29 @@ export async function handleERC1155batch(
     const network = await handleNetwork(chainId)
 
     // name and symbol do not exist on erc1155
-    const collection = await handleCollection<TransferBatchLog>(
-       network.id,
-        event,
-        totalSupply
-    )
+    const collectionId = getCollectionId(network.id, event.address)
+    let collection = await Collection.get(collectionId)
+
+    if (!collection) {
+        collection = Collection.create({
+            id: collectionId,
+            networkId: network.id,
+            contract_address: event.address,
+            created_block: BigInt(event.blockNumber),
+            created_timestamp: event.block.timestamp,
+            creator_address: event.transaction.from,
+            total_supply: totalSupply,
+            name: undefined, // erc1155 does not have name and symbol
+            symbol: undefined // ^
+        })
+        await collection.save()
+    }
 
     const tokenIds = event.args.ids
 
     const nfts = (await Promise.all(tokenIds.map(async (tokenId, idx) =>{
         assert(event.args, 'No event args')
+        assert(collection, "missing collection")
         const nftId = getNftId(collection.id, tokenId.toString())
         let metadataUri
         const ntf = await Nft.get(nftId)
@@ -68,6 +82,7 @@ export async function handleERC1155batch(
         const _amount = event.args[3][idx]
 
         if (!ntf) {
+            assert(collection, "missing collections")
             collection.total_supply = incrementBigInt(collection.total_supply)
 
             return Nft.create({
@@ -91,6 +106,7 @@ export async function handleERC1155batch(
 
     const transfers = tokenIds.map( (tokenId, idx) => {
         assert(event.args, 'No event args')
+        assert(collection, "missing collection")
         return Transfers.create({
             id: transferId,
             tokenId: tokenId.toString(),

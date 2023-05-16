@@ -2,5 +2,5 @@ dist
 .data
 src/types
 node_modules
-chaintypes.js
+#chaintypes.js
 .eslintrc.js

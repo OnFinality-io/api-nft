@@ -21,11 +21,11 @@ schema:
 network:
   endpoint:
     [
-      "https://eth-rpc-acala-testnet.aca-staging.network"
+      "https://eth-rpc-acala.aca-staging.network"
     ]
   # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
-  chainId: "597"
-#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+  chainId: "787"
+  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime

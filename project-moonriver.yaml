@@ -24,7 +24,7 @@ network:
   # https://chainlist.org/chain/1
   endpoint: "https://rpc.api.moonriver.moonbeam.network"
   chainId: "1285"
-#  dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
+  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
 
 
 dataSources:
