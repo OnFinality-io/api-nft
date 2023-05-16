@@ -1,8 +1,12 @@
 name: PR
+
 on:
-  pull_request:
+  push:
+    branches:
+      - main
     paths-ignore:
-      - ".github/workflows/**"
+      - '.github/workflows/**'
+
 jobs:
   pr:
     name: pr
