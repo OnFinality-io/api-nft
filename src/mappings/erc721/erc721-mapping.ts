@@ -1,4 +1,4 @@
-import { AnyJson, Collection, ContractType, Nft, Transfers} from "../../types";
+import { AnyJson, Collection, ContractType, Nft, Transfer} from "../../types";
 import {Erc721__factory} from "../../types/contracts";
 import {TransferLog} from "../../types/abi-interfaces/Erc721";
 import {
@@ -119,7 +119,7 @@ export async function handleERC721(
 
   const transferId = getTransferId(network.id, event.transactionHash)
 
-  const transfer = Transfers.create({
+  const transfer = Transfer.create({
     id: transferId,
     tokenId: event.args.tokenId.toString(),
     amount: BigInt(1),

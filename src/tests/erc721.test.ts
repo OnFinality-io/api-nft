@@ -1,5 +1,5 @@
 import {subqlTest} from "@subql/testing";
-import { Collection, ContractType, Network, Nft, Transfers } from "../types";
+import { Collection, ContractType, Network, Nft, Transfer } from "../types";
 
 subqlTest(
     "handleERC721 success",
@@ -31,7 +31,7 @@ subqlTest(
             contract_type: ContractType.ERC721,
             metadata_uri: undefined
         }),
-        Transfers.create({
+        Transfer.create({
             id: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd-2",
             tokenId: "6708",
             amount: BigInt(1),
@@ -68,7 +68,7 @@ subqlTest(
             contract_type: ContractType.ERC721,
             metadata_uri: "https://moonarines.mypinata.cloud/ipfs/QmUNQ9iB9PCGWwNYZWxAfn81GG8dfW1QC1VE2tgQCGBb36/1.json"
         }),
-        Transfers.create({
+        Transfer.create({
             id: "0xc1ba07ebaae73b5aca4a3482e793d89524f57f925501a32c5aaee76c3acc324c-1284",
             tokenId: "2",
             amount: BigInt(1),

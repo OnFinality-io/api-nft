@@ -41,7 +41,7 @@ type Collection @entity {
 #  floor_price: Int # Later on
 }
 
-type Transfers @entity {
+type Transfer @entity {
   id: ID!
   tokenId: String!
   amount: BigInt! # Same as with NFT

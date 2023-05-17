@@ -1,11 +1,9 @@
-import { Collection, ContractType, Nft, Transfers } from "../../types";
 import {Erc1155__factory} from "../../types/contracts";
-import { getCollectionId, getNftId, getTransferId, incrementBigInt } from "../../utils/common";
 import { TransferBatchLog, TransferSingleLog } from "../../types/abi-interfaces/Erc1155";
-import { handle1155Collections, handle1155Nfts, handleNetwork } from "../../utils/utilHandlers";
 import assert from "assert";
 import { handleERC1155batch } from "./handleBatch";
 import { BigNumber } from "ethers";
+import { TransferBatchEventObject, TransferSingleEventObject } from "../../types/contracts/Erc1155";
 
 export async function handleERC1155Single(
     event: TransferSingleLog,
@@ -20,19 +18,12 @@ export async function handleERC1155Single(
     } catch (e) {
         return;
     }
-    // assert(event.args, 'No event args on erc1155')
-    // const newArgs =[...event.args]
-    // const newArg_3: BigNumber[] = [BigNumber.from(event.args[3])]
-    // const newArg_4: BigNumber[] = [BigNumber.from(event.args[4])]
-    //
-    // newArgs[3] = newArg_3
-    // newArgs[4] = newArg_4
-    //
-    // const batchEvent = {
-    //     ...event,
-    //     args:  newArgs
-    // };
-    // logger.info(`org: ${JSON.stringify(event.args)}`)
-    // logger.info(`new: ${JSON.stringify(batchEvent.args)}`)
-    // await handleERC1155batch(batchEvent as unknown as TransferBatchLog)
+    assert(event.args, 'No event args on erc1155')
+    const [a,b,c,d,e] = event.args
+    const newArgs: [string, string, string, BigNumber[], BigNumber[]] = [a,b,c,[BigNumber.from(d)],[BigNumber.from(e)]]
+    const batchEvent = {
+        ...event,
+        args: newArgs
+    };
+    await handleERC1155batch(batchEvent as TransferBatchLog)
 }

@@ -6,6 +6,7 @@ import {
 import {TransferBatchLog} from "../../types/abi-interfaces/Erc1155";
 import { handle1155Collections, handle1155Nfts, handle1155Transfer, handleNetwork } from "../../utils/utilHandlers";
 import assert from "assert";
+import { BigNumber } from "ethers";
 
 export async function handleERC1155batch(
     event: TransferBatchLog,
@@ -34,7 +35,14 @@ export async function handleERC1155batch(
 
     const network = await handleNetwork(chainId)
     const collection = await handle1155Collections(network, event)
-    const tokenIds = event.args.ids
+
+    // TransferSingle (
+    // 0 index_topic_ address operator,1
+    // 1 index_topic_2 address from,
+    // 2 index_topic_3 address to,
+    // 3 uint256 id,
+    // 4 uint256 value )
+    const tokenIds: BigNumber[] = event.args[3]
 
     const nfts = (await Promise.all(tokenIds.map(async (tokenId, idx) =>{
         assert(event.args, 'No event args on erc1155')
@@ -44,7 +52,7 @@ export async function handleERC1155batch(
         return handle1155Nfts(
           collection,
           tokenId,
-          event.args[3][idx].toBigInt(),
+          event.args[4][idx].toBigInt(), //values
           event,
           isERC1155Metadata,
           instance
@@ -58,7 +66,7 @@ export async function handleERC1155batch(
           network,
           event,
           tokenId.toString(),
-          event.args[3][idx].toBigInt(),
+          event.args[4][idx].toBigInt(), //values
           getNftId(collection.id, tokenId.toString())
         )
     })
@@ -66,6 +74,5 @@ export async function handleERC1155batch(
     await Promise.all([
         store.bulkUpdate('Nft', nfts) ,
         store.bulkUpdate('Transfer', transfers),
-        // collection.save()
     ])
 }
