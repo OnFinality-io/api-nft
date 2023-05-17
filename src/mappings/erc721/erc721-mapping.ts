@@ -105,8 +105,8 @@ export async function handleERC721(
 
     try {
       collection.total_supply = isERC721Enumerable
-        ?(await instance.totalSupply()).toBigInt()
-        : collection.total_supply = incrementBigInt(collection.total_supply)
+        ? (await instance.totalSupply()).toBigInt()
+        : incrementBigInt(collection.total_supply)
     } catch (e) {
       collection.total_supply = incrementBigInt(collection.total_supply)
     }

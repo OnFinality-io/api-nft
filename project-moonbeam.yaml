@@ -26,7 +26,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 3556807
     options:
       abi: erc721
     assets:
@@ -41,7 +41,7 @@ dataSources:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 3556807
     options:
       abi: erc1155
     assets:
