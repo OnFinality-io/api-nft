@@ -40,9 +40,6 @@ export async function handleERC1155Single(
     values: [value],
   });
 
-  logger.info(`old: ${JSON.stringify(event.args)}`);
-  logger.info(`new: ${JSON.stringify(newArgs)}`);
-
   const batchEvent = {
     ...event,
     args: newNewArgs,
