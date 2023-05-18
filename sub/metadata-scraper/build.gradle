@@ -1,0 +1,42 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'application'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation 'org.apache.flink:flink-streaming-java:1.16.1'
+    implementation 'org.apache.flink:flink-table-api-java:1.16.1'
+    implementation 'org.apache.flink:flink-table-api-java-bridge:1.16.1'
+    implementation 'org.apache.flink:flink-table-planner-blink_2.12:1.13.6'
+    implementation 'org.apache.flink:flink-connector-jdbc:1.16.1'
+    implementation 'org.apache.flink:flink-connector-base:1.16.1'
+    implementation 'org.postgresql:postgresql:42.3.1'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
+    implementation 'org.apache.flink:flink-clients:1.16.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+application {
+    mainClassName = 'MainKt'
+}
