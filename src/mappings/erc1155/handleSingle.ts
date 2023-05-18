@@ -6,6 +6,7 @@ import {
 import assert from 'assert';
 import { handleERC1155batch } from './handleBatch';
 import { BigNumber } from 'ethers';
+import { TransferBatchEventObject } from '../../types/contracts/Erc1155';
 
 export async function handleERC1155Single(
   event: TransferSingleLog
@@ -31,17 +32,19 @@ export async function handleERC1155Single(
     [value],
   ];
 
-  // const x = { operator, from, to, ids: [id], values: [value] };
+
+  // const x:[string, string, string, BigNumber[], BigNumber[]]& TransferBatchEventObject = { operator, from, to, ids: [id], values: [value] as BigNumber[] };
 
   // const newArgs = Object.assign(event.args, {a,b,c, ids: [d] ,values: [e]});
   // const newArgs = Object.assign(...event.args, ...x);
-  // const newArgs = { ...event.args, ...x };
+  // const newArgs: TransferBatchLog = { ...event, args : x };
 
-  // logger.info(`new: ${JSON.stringify(newArgs)}`);
+  logger.info(`old: ${JSON.stringify(event.args)}`);
+  logger.info(`new: ${JSON.stringify(newArgs)}`);
 
   const batchEvent = {
     ...event,
     args: newArgs,
   };
-  await handleERC1155batch(batchEvent as any);
+  await handleERC1155batch(batchEvent as TransferBatchLog);
 }

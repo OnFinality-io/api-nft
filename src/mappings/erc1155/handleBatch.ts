@@ -51,8 +51,6 @@ export async function handleERC1155batch(
       tokenIds.map(async (tokenId, idx) => {
         assert(event.args, 'No event args on erc1155');
 
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.info(`at ${idx} :  ${event.args.length}`);
         return handle1155Nfts(
           collection,
           tokenId,
