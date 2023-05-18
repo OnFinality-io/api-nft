@@ -13,28 +13,28 @@ export async function handleERC1155batch(
 ): Promise<void> {
     const instance = Erc1155__factory.connect(event.address, api);
 
-    let isERC1155 = false
-    let isERC1155Metadata = false
+    let isERC1155 = false;
+    let isERC1155Metadata = false;
 
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
         isERC1155 = await instance.supportsInterface('0xd9b67a26');
         if (!isERC1155){
-            return
+            return;
         }
     } catch (e) {
         return;
     }
 
-    assert(event.args, 'No event args on erc1155')
+    assert(event.args, 'No event args on erc1155');
     try {
         // https://eips.ethereum.org/EIPS/eip-1155#abstract
-        isERC1155Metadata = await instance.supportsInterface('0x0e89341c')
+        isERC1155Metadata = await instance.supportsInterface('0x0e89341c');
     } catch {
     }
 
-    const network = await handleNetwork(chainId)
-    const collection = await handle1155Collections(network, event)
+    const network = await handleNetwork(chainId);
+    const collection = await handle1155Collections(network, event);
 
     // TransferSingle (
     // 0 index_topic_ address operator,1
@@ -42,13 +42,13 @@ export async function handleERC1155batch(
     // 2 index_topic_3 address to,
     // 3 uint256 id,
     // 4 uint256 value )
-    const tokenIds: BigNumber[] = event.args[3]
+    const tokenIds: BigNumber[] = event.args[3];
 
     const nfts = (await Promise.all(tokenIds.map(async (tokenId, idx) =>{
-        assert(event.args, 'No event args on erc1155')
+        assert(event.args, 'No event args on erc1155');
 
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.info(`at ${idx} :  ${event.args.length}`)
+        logger.info(`at ${idx} :  ${event.args.length}`);
         return handle1155Nfts(
           collection,
           tokenId,
@@ -56,11 +56,11 @@ export async function handleERC1155batch(
           event,
           isERC1155Metadata,
           instance
-        )
-    }))).filter(Boolean) as Nft[]
+        );
+    }))).filter(Boolean) as Nft[];
 
     const transfers = tokenIds.map( (tokenId, idx) => {
-        assert(event.args, 'No event args on erc1155')
+        assert(event.args, 'No event args on erc1155');
 
         return handle1155Transfer(
           network,
@@ -68,11 +68,11 @@ export async function handleERC1155batch(
           tokenId.toString(),
           event.args[4][idx].toBigInt(), //values
           getNftId(collection.id, tokenId.toString())
-        )
-    })
+        );
+    });
 
     await Promise.all([
         store.bulkUpdate('Nft', nfts) ,
         store.bulkUpdate('Transfer', transfers),
-    ])
+    ]);
 }

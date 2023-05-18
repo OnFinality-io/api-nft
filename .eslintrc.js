@@ -15,8 +15,9 @@ module.exports = {
         sourceType: 'module',
         project: ['tsconfig.json']
     },
-    plugins: ['@typescript-eslint', 'header'],
+    plugins: ['@typescript-eslint'],
     rules: {
+        semi: ['error', 'always'],
         '@typescript-eslint/restrict-template-expressions': ['error', {
             allowNumber: true,
             allowBoolean: true,

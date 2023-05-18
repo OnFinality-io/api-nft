@@ -6,23 +6,23 @@ import assert from "assert";
 import { TransferBatchLog } from "../types/abi-interfaces/Erc1155";
 
 export async function handleNetwork (id: string): Promise<Network> {
-    let network = await Network.get(id)
+    let network = await Network.get(id);
     if (!network) {
         network = Network.create({
             id,
-        })
-        await network.save()
+        });
+        await network.save();
     }
-    return network
+    return network;
 }
 
 export async function handle1155Collections(
   network: Network,
   event: TransferBatchLog
 ): Promise<Collection> {
-    const totalSupply = BigInt(0)
-    const collectionId = getCollectionId(network.id, event.address)
-    let collection = await Collection.get(collectionId)
+    const totalSupply = BigInt(0);
+    const collectionId = getCollectionId(network.id, event.address);
+    let collection = await Collection.get(collectionId);
 
     if (!collection) {
         collection = Collection.create({
@@ -33,10 +33,10 @@ export async function handle1155Collections(
             created_timestamp: event.block.timestamp,
             creator_address: event.transaction.from,
             total_supply: totalSupply,
-        })
-        await collection.save()
+        });
+        await collection.save();
     }
-    return collection
+    return collection;
 }
 
 export async function handle1155Nfts(
@@ -47,26 +47,25 @@ export async function handle1155Nfts(
   isERC1155Metadata: boolean,
   instance: Erc1155,
 ): Promise<Nft | undefined> {
-    assert(event.args, 'No event args on erc1155')
+    assert(event.args, 'No event args on erc1155');
 
-    const nftId = getNftId(collection.id, tokenId.toString())
-    const nft = await Nft.get(nftId)
+    const nftId = getNftId(collection.id, tokenId.toString());
+    const nft = await Nft.get(nftId);
 
     if (!nft) {
-        let metadataUri
+        let metadataUri;
 
         if (isERC1155Metadata) {
             try {
-                metadataUri = await instance.uri(tokenId)
+                metadataUri = await instance.uri(tokenId);
             } catch {
-                logger.warn(`Contract uri instance broken at address ${event.address}`)
-                metadataUri = undefined
+                logger.warn(`Contract uri instance broken at address ${event.address}`);
             }
         }
-        collection.total_supply = incrementBigInt(collection.total_supply)
+        collection.total_supply = incrementBigInt(collection.total_supply);
 
         // must be saved everytime new NFT is created
-        await collection.save()
+        await collection.save();
 
         return Nft.create({
             id: nftId,
@@ -80,7 +79,7 @@ export async function handle1155Nfts(
             contract_type: ContractType.ERC1155,
             metadata_uri: metadataUri,
             metadata_status: "PENDING"
-        })
+        });
     }
 }
 
@@ -92,9 +91,9 @@ export function handle1155Transfer(
   amount: bigint,
   nftId: string
 ): Transfer {
-    assert(event.args, 'No event args')
+    assert(event.args, 'No event args');
 
-    const transferId = getTransferId(network.id ,event.transactionHash)
+    const transferId = getTransferId(network.id ,event.transactionHash);
     return Transfer.create({
         id: transferId,
         tokenId,
@@ -106,5 +105,5 @@ export function handle1155Transfer(
         nftId: nftId,
         from: event.args[1], // from
         to: event.args[2]
-    })
+    });
 }

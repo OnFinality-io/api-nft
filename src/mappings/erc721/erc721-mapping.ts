@@ -15,54 +15,54 @@ export async function handleERC721(
 ): Promise<void> {
 
   const instance = Erc721__factory.connect(event.address, api);
-  let totalSupply = BigInt(0)
-  let isERC721 = false
+  let totalSupply = BigInt(0);
+  let isERC721 = false;
 
   try {
     isERC721 = await instance.supportsInterface('0x80ac58cd');
 
     if (!isERC721){
-      return
+      return;
     }
   } catch (e) {
     // If it is not an ERC721 interface, should just return
     return;
   }
 
-  assert(event.args, 'No event args on erc721')
+  assert(event.args, 'No event args on erc721');
 
-  let isERC721Metadata = false
-  let isERC721Enumerable = false
+  let isERC721Metadata = false;
+  let isERC721Enumerable = false;
 
   try {
     // interface defined: https://eips.ethereum.org/EIPS/eip-721
     [isERC721Enumerable, isERC721Metadata] = await Promise.all([
       instance.supportsInterface('0x780e9d63'),
       instance.supportsInterface('0x5b5e139f')
-    ])
+    ]);
   } catch {
 
   }
 
-  const network = await handleNetwork(chainId)
+  const network = await handleNetwork(chainId);
 
   // TODO Refactor
-  const collectionId = getCollectionId(network.id, event.address)
-  let collection = await Collection.get(collectionId)
+  const collectionId = getCollectionId(network.id, event.address);
+  let collection = await Collection.get(collectionId);
 
   if (!collection) {
-    let name: string | undefined
-    let symbol: string | undefined
+    let name: string | undefined;
+    let symbol: string | undefined;
 
     if (isERC721Metadata) {
       [name, symbol] = await Promise.all([
         instance.name(),
         instance.symbol(),
-      ])
+      ]);
     }
 
     if (isERC721Enumerable) {
-      totalSupply = (await instance.totalSupply()).toBigInt()
+      totalSupply = (await instance.totalSupply()).toBigInt();
     }
 
     collection = Collection.create({
@@ -75,17 +75,17 @@ export async function handleERC721(
       total_supply: totalSupply,
       name,
       symbol
-    })
-    await collection.save()
+    });
+    await collection.save();
   }
 
-  const nftId = getNftId(collection.id, event.args.tokenId.toString())
-  let nft = await Nft.get(nftId)
+  const nftId = getNftId(collection.id, event.args.tokenId.toString());
+  let nft = await Nft.get(nftId);
 
   if (!nft) {
-    let metadataUri
+    let metadataUri;
     try {
-      metadataUri = isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : undefined
+      metadataUri = isERC721Metadata ? (await instance.tokenURI(event.args.tokenId)) : undefined;
     } catch (e) {
     }
 
@@ -101,23 +101,23 @@ export async function handleERC721(
       contract_type: ContractType.ERC721,
       metadata_uri: metadataUri,
       metadata_status: "PENDING"
-    } as Nft)
+    } as Nft);
 
     try {
       collection.total_supply = isERC721Enumerable
         ? (await instance.totalSupply()).toBigInt()
-        : incrementBigInt(collection.total_supply)
+        : incrementBigInt(collection.total_supply);
     } catch (e) {
-      collection.total_supply = incrementBigInt(collection.total_supply)
+      collection.total_supply = incrementBigInt(collection.total_supply);
     }
 
     await Promise.all([
       collection.save(),
       nft.save()
-    ])
+    ]);
   }
 
-  const transferId = getTransferId(network.id, event.transactionHash)
+  const transferId = getTransferId(network.id, event.transactionHash);
 
   const transfer = Transfer.create({
     id: transferId,
@@ -130,7 +130,7 @@ export async function handleERC721(
     nftId: nft.id,
     from: event.args.from,
     to: event.args.to
-  })
+  });
 
-  await transfer.save()
+  await transfer.save();
 }

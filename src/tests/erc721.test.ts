@@ -82,4 +82,4 @@ subqlTest(
         })
     ],
     "handleMoonriverERC721",
-)
+);
