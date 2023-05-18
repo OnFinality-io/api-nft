@@ -110,7 +110,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   const transferId = getTransferId(
     network.id,
     event.transactionHash,
-    event.logIndex.toString()
+    event.logIndex.toString(),
+    0
   );
 
   const transfer = Transfer.create({

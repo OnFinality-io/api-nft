@@ -44,7 +44,9 @@ export async function handleERC1155batch(
   // 2 index_topic_3 address to,
   // 3 uint256 id,
   // 4 uint256 value )
-  const tokenIds: BigNumber[] = event.args[3];
+
+  // const tokenIds: BigNumber[] = event.args[3];
+  const tokenIds: BigNumber[] = event.args.ids;
 
   const nfts = (
     await Promise.all(
@@ -71,7 +73,8 @@ export async function handleERC1155batch(
       event,
       tokenId.toString(),
       event.args[4][idx].toBigInt(), //values
-      getNftId(collection.id, tokenId.toString())
+      getNftId(collection.id, tokenId.toString()),
+      idx
     );
   });
 

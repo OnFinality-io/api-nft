@@ -80,7 +80,7 @@ export async function handle1155Nfts(
       minted_block: BigInt(event.blockNumber),
       minted_timestamp: event.block.timestamp,
       minter_address: event.address,
-      current_owner: event.args[2],
+      current_owner: event.args.to,
       contract_type: ContractType.ERC1155,
       metadata_uri: metadataUri,
       metadata_status: 'PENDING',
@@ -93,14 +93,16 @@ export function handle1155Transfer(
   event: TransferBatchLog,
   tokenId: string,
   amount: bigint,
-  nftId: string
+  nftId: string,
+  batchIndex = 0
 ): Transfer {
   assert(event.args, 'No event args');
 
   const transferId = getTransferId(
     network.id,
     event.transactionHash,
-    event.logIndex.toString()
+    event.logIndex.toString(),
+    batchIndex
   );
   return Transfer.create({
     id: transferId,
@@ -111,7 +113,7 @@ export function handle1155Transfer(
     timestamp: event.block.timestamp,
     transaction_hash: event.transactionHash,
     nftId: nftId,
-    from: event.args[1], // from
-    to: event.args[2],
+    from: event.args.from, // from
+    to: event.args.to,
   });
 }

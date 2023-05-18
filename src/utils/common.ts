@@ -12,9 +12,10 @@ export function getNftId(collectionId: string, tokenId: string): string {
 export function getTransferId(
   networkId: string,
   transactionHash: string,
-  logIndex: string
+  logIndex: string,
+  batchIndex: number
 ): string {
-  return `${transactionHash}-${logIndex}-${networkId}`;
+  return `${transactionHash}-${logIndex}-${batchIndex}-${networkId}`;
 }
 
 export function extractIpfsHash(metadataUri: string): string {

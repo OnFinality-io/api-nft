@@ -5,8 +5,8 @@ import {
 } from '../../types/abi-interfaces/Erc1155';
 import assert from 'assert';
 import { handleERC1155batch } from './handleBatch';
-import { BigNumber } from 'ethers';
 import { TransferBatchEventObject } from '../../types/contracts/Erc1155';
+import { BigNumber } from 'ethers';
 
 export async function handleERC1155Single(
   event: TransferSingleLog
@@ -22,7 +22,6 @@ export async function handleERC1155Single(
     return;
   }
   assert(event.args, 'No event args on erc1155');
-  // const [a,b,c,d,e] = event.args;
   const [operator, from, to, id, value] = event.args;
   const newArgs: [string, string, string, BigNumber[], BigNumber[]] = [
     operator,
@@ -32,19 +31,21 @@ export async function handleERC1155Single(
     [value],
   ];
 
-
-  // const x:[string, string, string, BigNumber[], BigNumber[]]& TransferBatchEventObject = { operator, from, to, ids: [id], values: [value] as BigNumber[] };
-
-  // const newArgs = Object.assign(event.args, {a,b,c, ids: [d] ,values: [e]});
-  // const newArgs = Object.assign(...event.args, ...x);
-  // const newArgs: TransferBatchLog = { ...event, args : x };
+  const newNewArgs: [string, string, string, BigNumber[], BigNumber[]] & TransferBatchEventObject = Object.assign(newArgs, {
+    operator,
+    from,
+    to,
+    ids: [id],
+    values: [value],
+  });
 
   logger.info(`old: ${JSON.stringify(event.args)}`);
   logger.info(`new: ${JSON.stringify(newArgs)}`);
 
   const batchEvent = {
     ...event,
-    args: newArgs,
+    args: newNewArgs,
   };
+
   await handleERC1155batch(batchEvent as TransferBatchLog);
 }
