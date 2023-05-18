@@ -2,84 +2,83 @@ import {subqlTest} from "@subql/testing";
 import { Collection, ContractType, Network, Nft, Transfer } from "../types";
 
 subqlTest(
-    "handleERC721 success",
-    13318656 ,
+    "test erc1155",
+  3556807 ,
     [
       Network.create({
           id: "1284"
       }),
         Collection.create({
-            id: "1284-0xEE36C5225bd868Be5Ed329DC62F4B3d09c62c320",
-            networkId: "1284",
-            contract_address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            created_block: BigInt(171725),
-            created_timestamp: BigInt(1641903660),
-            creator_address: "0xcc5433cc33f9d1618cec56c25d26653680f41ae1",
-            total_supply: BigInt(96),
-            name: "Polkis",
-            symbol: "POLKI"
+            id: "",
+            networkId: "",
+            contract_address: "",
+            created_block: BigInt(0),
+            created_timestamp: BigInt(0),
+            creator_address: "",
+            total_supply: BigInt(0),
+            name: "",
+            symbol: ""
         }),
         Nft.create({
-            id: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708",
-            tokenId: "6708",
-            amount: BigInt(1),
-            collectionId: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            minted_block: BigInt(13318656),
-            minted_timestamp: BigInt(1632890925),
-            minter_address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            current_owner: "0x677420671845F3BB7a2f59a0cc530198e1f596e9",
+            id: "",
+            tokenId: "",
+            amount: BigInt(0),
+            collectionId: "",
+            minted_block: BigInt(0),
+            minted_timestamp: BigInt(0),
+            minter_address: "",
+            current_owner: "",
             contract_type: ContractType.ERC721,
-            metadata_uri: undefined
         }),
         Transfer.create({
-            id: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd-2",
-            tokenId: "6708",
-            amount: BigInt(1),
-            networkId: "1",
-            block: BigInt(13318656),
-            timestamp: BigInt(1632890925),
-            transaction_hash: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd",
-            nftId: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708",
-            from: "0xF9E13d8FC6c8F74449a9Cee1088822b817526588",
-            to: "0x677420671845F3BB7a2f59a0cc530198e1f596e9"
+            id: "",
+            tokenId: "",
+            amount: BigInt(0),
+            networkId: "",
+            block: BigInt(0),
+            timestamp: BigInt(0),
+            transaction_hash: "",
+            nftId: "",
+            from: "",
+            to: ""
         })
     ],
     [
         Collection.create({
-            id: "1284-0xEE36C5225bd868Be5Ed329DC62F4B3d09c62c320",
+            id: "1284-0xF37626E2284742305858052615E94B380B23B3b7",
             networkId: "1284",
-            contract_address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            created_block: BigInt(171725),
-            created_timestamp: BigInt(1641903660),
-            creator_address: "0xcc5433cc33f9d1618cec56c25d26653680f41ae1",
-            total_supply: BigInt(96),
-            name: "Polkis",
-            symbol: "POLKI"
+            contract_address: "0xF37626E2284742305858052615E94B380B23B3b7",
+            created_block: BigInt(3556807),
+            created_timestamp: BigInt(1684026600),
+            creator_address: "0x9d3bcf6095791216cb9e39acb3c59b53fdc3b717",
+            total_supply: BigInt(4),
+            // name: null,
+            // symbol: "POLKI"
         }),
         Nft.create({
             id: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708",
-            tokenId: "1",
-            amount: BigInt(1),
-            collectionId: "1284-0xEE36C5225bd868Be5Ed329DC62F4B3d09c62c320-1",
-            minted_block: BigInt(171725),
-            minted_timestamp: BigInt(1641903660),
-            minter_address: "0xcc5433cc33f9d1618cec56c25d26653680f41ae1",
-            current_owner: "0xcC5433cC33F9d1618CeC56C25d26653680f41Ae1",
-            contract_type: ContractType.ERC721,
-            metadata_uri: "https://moonarines.mypinata.cloud/ipfs/QmUNQ9iB9PCGWwNYZWxAfn81GG8dfW1QC1VE2tgQCGBb36/1.json"
+            tokenId: "3",
+            amount: BigInt(30),
+            collectionId: "1284-0xF37626E2284742305858052615E94B380B23B3b7",
+            minted_block: BigInt(3556807),
+            minted_timestamp: BigInt(1684026600),
+            minter_address: "0xF37626E2284742305858052615E94B380B23B3b7",
+            current_owner: "0xEc7D2c7D082c196e2704d9cFc149CacbF8463380",
+            contract_type: ContractType.ERC1155,
+            metadata_uri: "ipfs://QmSLWoCPAeSxXhPg8TLf3TyH8Kusj7u8ULow2NNgCRheAH/3"
         }),
         Transfer.create({
-            id: "0xc1ba07ebaae73b5aca4a3482e793d89524f57f925501a32c5aaee76c3acc324c-1284",
-            tokenId: "2",
-            amount: BigInt(1),
+            id: "0x47bbf5ebedcd34403c215c52ddfd9a2c5b55bc9a7a8428bd2c9c8ffd0b1f7a43-1284",
+            tokenId: "3",
+            amount: BigInt(30),
             networkId: "1284",
-            block: BigInt(171725),
-            timestamp: BigInt(1641903660),
-            transaction_hash: "0xc1ba07ebaae73b5aca4a3482e793d89524f57f925501a32c5aaee76c3acc324c",
-            nftId: "1284-0xEE36C5225bd868Be5Ed329DC62F4B3d09c62c320-2",
-            from: "0x0000000000000000000000000000000000000000",
-            to: "0xcC5433cC33F9d1618CeC56C25d26653680f41Ae1"
+            block: BigInt(3556807),
+            timestamp: BigInt(1684026600),
+            transaction_hash: "0x47bbf5ebedcd34403c215c52ddfd9a2c5b55bc9a7a8428bd2c9c8ffd0b1f7a43",
+            nftId: "1284-0xF37626E2284742305858052615E94B380B23B3b7-3",
+            from: "0x9D3BCf6095791216CB9e39aCB3C59B53Fdc3B717",
+            to: "0xEc7D2c7D082c196e2704d9cFc149CacbF8463380"
         })
     ],
-    "handleMoonriverERC721",
+    "handleERC1155Single",
 );

@@ -17,9 +17,10 @@ export function getNftId(
 
 export function getTransferId(
     networkId: string,
-    transactionHash: string
+    transactionHash: string,
+    logIndex: string
 ): string {
-    return `${transactionHash}-${networkId}`;
+    return `${transactionHash}-${logIndex}-${networkId}`;
 }
 
 

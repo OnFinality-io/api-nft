@@ -117,7 +117,7 @@ export async function handleERC721(
     ]);
   }
 
-  const transferId = getTransferId(network.id, event.transactionHash);
+  const transferId = getTransferId(network.id, event.transactionHash, event.logIndex.toString());
 
   const transfer = Transfer.create({
     id: transferId,

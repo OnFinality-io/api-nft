@@ -93,7 +93,7 @@ export function handle1155Transfer(
 ): Transfer {
     assert(event.args, 'No event args');
 
-    const transferId = getTransferId(network.id ,event.transactionHash);
+    const transferId = getTransferId(network.id ,event.transactionHash, event.logIndex.toString());
     return Transfer.create({
         id: transferId,
         tokenId,

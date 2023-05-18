@@ -34,7 +34,7 @@ export async function handleERC1155Uri(
 
     if (!nft) {
         // I think this should throw, possible missing data
-        logger.warn(`NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`);
+        logger.error(`NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`);
         return;
     }
     nft.metadata_uri = event.args.value;

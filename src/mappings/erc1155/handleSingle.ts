@@ -20,6 +20,9 @@ export async function handleERC1155Single(
     assert(event.args, 'No event args on erc1155');
     const [a,b,c,d,e] = event.args;
     const newArgs: [string, string, string, BigNumber[], BigNumber[]] = [a,b,c,[d],[e]];
+
+    // const newArgs = Object.assign(event.args, { a, b, c, d ,e});
+
     const batchEvent = {
         ...event,
         args: newArgs
