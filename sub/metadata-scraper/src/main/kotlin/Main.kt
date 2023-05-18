@@ -2,10 +2,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.apache.flink.api.java.typeutils.RowTypeInfo
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
-import org.apache.flink.table.api.*
 import java.io.BufferedReader
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -16,18 +14,8 @@ import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.util.*
 import kotlin.random.Random
-import org.apache.flink.api.common.typeinfo.Types;
-//import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.datastream.DataStream;
-//import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.connector.jdbc.JdbcInputFormat;
-//import org.apache.flink.api.java.io.jdbc.JDBCInputFormat;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.utils.ParameterTool
-import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
-//import org.apache.flink.api.java.typeutils.RowTypeInfo;
-import org.apache.flink.types.Row;
+import org.apache.flink.table.api.EnvironmentSettings
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment
 
 
 
@@ -45,58 +33,63 @@ enum class Status {
 fun main(args: Array<String>) {
 
     // Setup the stream execution environment
-//    val env = StreamExecutionEnvironment.getExecutionEnvironment()
-//    val settings = EnvironmentSettings.newInstance().inStreamingMode().build()
-//    val tEnv = StreamTableEnvironment.create(env, settings)
-//
-//    val ddl = """
-//        CREATE TABLE data (
-//            id INT,
-//            metadata STRING,
-//            metadata_url STRING,
-//            -- define other fields here
-//            PRIMARY KEY (id) NOT ENFORCED
-//        ) WITH (
-//            'connector' = 'jdbc',
-//            'url' = 'jdbc:postgresql://localhost:5432/testdb',
-//            'table-name' = 'my_schema.data',
-//            'username' = 'moss',
-//            'password' = 'moss'
-//        )
-//    """.trimIndent()
-//
-//    tEnv.executeSql(ddl)
-//
-//    val result = tEnv.sqlQuery("SELECT * FROM data")
-//
-//    result.execute().print()
-
     val env = StreamExecutionEnvironment.getExecutionEnvironment()
-    val params = ParameterTool.fromArgs(args)
-    env.config.globalJobParameters = params
+    val settings = EnvironmentSettings
+        .newInstance()
+        .inStreamingMode()
+        .build()
 
-    val fakeDataStream: DataStream<Metadata> = env.fromElements(
-        Metadata(1, "ipfs://QmQGsXVt5o8Qf2J3to21RJYdHsNZQaVFosPYNSMS5CHW7U/2.json", "", "PENDING"),
-        Metadata(2, "https://arweave.net/KTpuWvFpa8Fgj7t1dUVwZ2yhpfHWMcN8vkziGrwxbcg", "", "PENDING"),
-        Metadata(3, "data:application/json;base64,eyJpZCI6IDEyM30K", "", "PENDING"),
-    )
+    val tEnv = StreamTableEnvironment.create(env, settings)
 
-    val httpHostUrls = listOf(
-        "https://cloudflare-ipfs.com/",
-        "https://cf-ipfs.com/",
-        "https://gateway.pinata.cloud/",
-        "https://4everland.io/",
-        "https://ipfs.yt/",
-        "https://gateway.ipfs.io/",
-        "https://ipfs.io/",
-    )
-    val random = Random.Default
+    val ddl = """
+        CREATE TABLE data (
+            id STRING,
+            metadata STRING,
+            metadata_url STRING,
+            metadata_status STRING,
+            -- define other fields here
+            PRIMARY KEY (id) NOT ENFORCED
+        ) WITH (
+            'connector' = 'jdbc',
+            'url' = 'jdbc:postgresql://localhost:5432/postgres',
+            'table-name' = 'my_schema.data',
+            'username' = 'postgres',
+            'password' = 'postgres'
+        )
+    """.trimIndent()
 
-    val afterBase64 = fakeDataStream.map { decodeBase64(it) }
-    val afterIPFSStream: DataStream<Metadata> = afterBase64.map { resolveIpfs(it, random, httpHostUrls) }
-    val modifiedDataStream: DataStream<Metadata> = afterIPFSStream.map { resolveHttp(it) }
-    modifiedDataStream.addSink(PostgresSink())
-    env.execute("Flink Kotlin PostgreSQL Demo")
+    tEnv.executeSql(ddl)
+
+    val result = tEnv.sqlQuery("SELECT * FROM data")
+
+    result.execute().print()
+
+//    val env = StreamExecutionEnvironment.getExecutionEnvironment()
+//    val params = ParameterTool.fromArgs(args)
+//    env.config.globalJobParameters = params
+//
+//    val fakeDataStream: DataStream<Metadata> = env.fromElements(
+//        Metadata(1, "ipfs://QmQGsXVt5o8Qf2J3to21RJYdHsNZQaVFosPYNSMS5CHW7U/2.json", "", "PENDING"),
+//        Metadata(2, "https://arweave.net/KTpuWvFpa8Fgj7t1dUVwZ2yhpfHWMcN8vkziGrwxbcg", "", "PENDING"),
+//        Metadata(3, "data:application/json;base64,eyJpZCI6IDEyM30K", "", "PENDING"),
+//    )
+//
+//    val httpHostUrls = listOf(
+//        "https://cloudflare-ipfs.com/",
+//        "https://cf-ipfs.com/",
+//        "https://gateway.pinata.cloud/",
+//        "https://4everland.io/",
+//        "https://ipfs.yt/",
+//        "https://gateway.ipfs.io/",
+//        "https://ipfs.io/",
+//    )
+//    val random = Random.Default
+//
+//    val afterBase64 = fakeDataStream.map { decodeBase64(it) }
+//    val afterIPFSStream: DataStream<Metadata> = afterBase64.map { resolveIpfs(it, random, httpHostUrls) }
+//    val modifiedDataStream: DataStream<Metadata> = afterIPFSStream.map { resolveHttp(it) }
+//    modifiedDataStream.addSink(PostgresSink())
+//    env.execute("Flink Kotlin PostgreSQL Demo")
 }
 
 fun decodeBase64(metadata: Metadata): Metadata {

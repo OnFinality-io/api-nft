@@ -10,19 +10,27 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    flinkVersion = "1.16.1"
+}
+
+
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation 'org.apache.flink:flink-streaming-java:1.16.1'
-    implementation 'org.apache.flink:flink-table-api-java:1.16.1'
-    implementation 'org.apache.flink:flink-table-api-java-bridge:1.16.1'
-    implementation 'org.apache.flink:flink-table-planner-blink_2.12:1.13.6'
-    implementation 'org.apache.flink:flink-connector-jdbc:1.16.1'
-    implementation 'org.apache.flink:flink-connector-base:1.16.1'
+    implementation "org.apache.flink:flink-streaming-java:${flinkVersion}"
+    implementation "org.apache.flink:flink-table-api-java:${flinkVersion}"
+    implementation "org.apache.flink:flink-table-api-java-bridge:${flinkVersion}"
+    implementation "org.apache.flink:flink-connector-jdbc:${flinkVersion}"
+    implementation "org.apache.flink:flink-connector-base:${flinkVersion}"
+    implementation "org.apache.flink:flink-table-planner-loader:${flinkVersion}"
+    implementation "org.apache.flink:flink-table-runtime:${flinkVersion}"
+    implementation "org.apache.flink:flink-clients:${flinkVersion}"
+    implementation 'org.apache.flink:flink-shaded-guava:18.0-13.0'
     implementation 'org.postgresql:postgresql:42.3.1'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
-    implementation 'org.apache.flink:flink-clients:1.16.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.10'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+    implementation 'org.slf4j:slf4j-log4j12:2.0.5'
 }
 
 test {
