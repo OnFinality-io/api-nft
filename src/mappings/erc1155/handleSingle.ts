@@ -31,7 +31,8 @@ export async function handleERC1155Single(
     [value],
   ];
 
-  const newNewArgs: [string, string, string, BigNumber[], BigNumber[]] & TransferBatchEventObject = Object.assign(newArgs, {
+  const newNewArgs: [string, string, string, BigNumber[], BigNumber[]] &
+    TransferBatchEventObject = Object.assign(newArgs, {
     operator,
     from,
     to,
