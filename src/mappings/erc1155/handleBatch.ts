@@ -1,9 +1,9 @@
-import { Nft } from '../../types';
+import { Collection, Nft } from '../../types';
 import { Erc1155__factory } from '../../types/contracts';
-import { getNftId } from '../../utils/common';
+import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
 import {
-  handle1155Collections,
+  // handle1155Collections,
   handle1155Nfts,
   handle1155Transfer,
   handleNetwork,
@@ -19,24 +19,44 @@ export async function handleERC1155batch(
   let isERC1155 = false;
   let isERC1155Metadata = false;
 
-  try {
-    // https://eips.ethereum.org/EIPS/eip-1155#abstract
-    isERC1155 = await instance.supportsInterface('0xd9b67a26');
-    if (!isERC1155) {
+  const totalSupply = BigInt(0);
+
+  const network = await handleNetwork(chainId);
+
+  const collectionId = getCollectionId(network.id, event.address);
+  let collection = await Collection.get(collectionId);
+
+  if (!collection) {
+    try {
+      // https://eips.ethereum.org/EIPS/eip-1155#abstract
+      isERC1155 = await instance.supportsInterface('0xd9b67a26');
+      if (!isERC1155) {
+        return;
+      }
+    } catch (e) {
       return;
     }
-  } catch (e) {
-    return;
+
+    collection = Collection.create({
+      id: collectionId,
+      networkId: network.id,
+      contract_address: event.address,
+      created_block: BigInt(event.blockNumber),
+      created_timestamp: event.block.timestamp,
+      creator_address: event.transaction.from,
+      total_supply: totalSupply,
+    });
+
+    await collection.save();
   }
 
+
+  // assert(collection, "Collection is undefined");
   assert(event.args, 'No event args on erc1155');
   try {
     // https://eips.ethereum.org/EIPS/eip-1155#abstract
     isERC1155Metadata = await instance.supportsInterface('0x0e89341c');
   } catch {}
-
-  const network = await handleNetwork(chainId);
-  const collection = await handle1155Collections(network, event);
 
   // TransferSingle (
   // 0 index_topic_ address operator,1
@@ -45,7 +65,6 @@ export async function handleERC1155batch(
   // 3 uint256 id,
   // 4 uint256 value )
 
-  // const tokenIds: BigNumber[] = event.args[3];
   const tokenIds: BigNumber[] = event.args.ids;
 
   const nfts = (
@@ -54,7 +73,7 @@ export async function handleERC1155batch(
         assert(event.args, 'No event args on erc1155');
 
         return handle1155Nfts(
-          collection,
+          collection!,
           tokenId,
           event.args[4][idx].toBigInt(), //values
           event,
@@ -73,7 +92,7 @@ export async function handleERC1155batch(
       event,
       tokenId.toString(),
       event.args[4][idx].toBigInt(), //values
-      getNftId(collection.id, tokenId.toString()),
+      getNftId(collectionId, tokenId.toString()),
       idx
     );
   });

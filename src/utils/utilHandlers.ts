@@ -21,28 +21,13 @@ export async function handleNetwork(id: string): Promise<Network> {
   return network;
 }
 
-export async function handle1155Collections(
-  network: Network,
-  event: TransferBatchLog
-): Promise<Collection> {
-  const totalSupply = BigInt(0);
-  const collectionId = getCollectionId(network.id, event.address);
-  let collection = await Collection.get(collectionId);
-
-  if (!collection) {
-    collection = Collection.create({
-      id: collectionId,
-      networkId: network.id,
-      contract_address: event.address,
-      created_block: BigInt(event.blockNumber),
-      created_timestamp: event.block.timestamp,
-      creator_address: event.transaction.from,
-      total_supply: totalSupply,
-    });
-    await collection.save();
-  }
-  return collection;
-}
+// export async function handle1155Collections(
+//   network: Network,
+//   event: TransferBatchLog
+// ): Promise<Collection> {
+//
+//   return collection;
+// }
 
 export async function handle1155Nfts(
   collection: Collection,

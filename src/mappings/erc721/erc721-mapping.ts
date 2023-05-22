@@ -1,4 +1,4 @@
-import { AnyJson, Collection, ContractType, Nft, Transfer } from '../../types';
+import { Collection, ContractType, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import {
@@ -11,41 +11,42 @@ import { handleNetwork } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
+  const network = await handleNetwork(chainId);
   const instance = Erc721__factory.connect(event.address, api);
   let totalSupply = BigInt(0);
   let isERC721 = false;
 
-  try {
-    isERC721 = await instance.supportsInterface('0x80ac58cd');
-
-    if (!isERC721) {
-      return;
-    }
-  } catch (e) {
-    // If it is not an ERC721 interface, should just return
-    return;
-  }
-
-  assert(event.args, 'No event args on erc721');
-
   let isERC721Metadata = false;
   let isERC721Enumerable = false;
 
-  try {
-    // interface defined: https://eips.ethereum.org/EIPS/eip-721
-    [isERC721Enumerable, isERC721Metadata] = await Promise.all([
-      instance.supportsInterface('0x780e9d63'),
-      instance.supportsInterface('0x5b5e139f'),
-    ]);
-  } catch {}
 
-  const network = await handleNetwork(chainId);
-
-  // TODO Refactor
+  // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(network.id, event.address);
   let collection = await Collection.get(collectionId);
 
+
   if (!collection) {
+    try {
+      isERC721 = await instance.supportsInterface('0x80ac58cd');
+
+      if (!isERC721) {
+        return;
+      }
+    } catch (e) {
+      // If it is not an ERC721 interface, should just return
+      return;
+    }
+
+    assert(event.args, 'No event args on erc721');
+
+    try {
+      // interface defined: https://eips.ethereum.org/EIPS/eip-721
+      [isERC721Enumerable, isERC721Metadata] = await Promise.all([
+        instance.supportsInterface('0x780e9d63'),
+        instance.supportsInterface('0x5b5e139f'),
+      ]);
+    } catch {}
+
     let name: string | undefined;
     let symbol: string | undefined;
 
@@ -70,6 +71,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     });
     await collection.save();
   }
+
+  assert(event.args, 'No event args on erc721');
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString());
   let nft = await Nft.get(nftId);
