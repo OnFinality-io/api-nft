@@ -1,0 +1,70 @@
+specVersion: "1.0.0"
+
+name: "multichain-erc721-erc1155"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-ethereum"
+    version: "*"
+    options:
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This project can be use as a starting point for developing your
+  new Ethereum SubQuery project"
+repository: "https://github.com/subquery/ethereum-subql-starter"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+  # chainId is the EVM Chain ID, for Ethereum this is 1
+  # https://chainlist.org/chain/1
+  endpoint: "https://rpc.api.moonriver.moonbeam.network"
+  chainId: "1285"
+  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
+
+
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 1
+    options:
+      abi: erc721
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC721
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address, address, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 1
+    options:
+      abi: erc1155
+    assets:
+      erc1155:
+        file: "./abis/erc1155.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC1155Single
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferSingle(address, address, address, uint256, uint256)
+        - handler: handleERC1155Batch
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferBatch(address, address, address, uint256[], uint256[])
+        - handler: handleERC1155Uri
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - URI(string, uint256)

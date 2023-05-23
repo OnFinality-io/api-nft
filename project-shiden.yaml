@@ -6,6 +6,8 @@ runner:
   node:
     name: "@subql/node-ethereum"
     version: "*"
+    options:
+      historical: false
   query:
     name: "@subql/query"
     version: "*"
@@ -17,14 +19,13 @@ schema:
   file: "./schema.graphql"
 
 network:
-  chainId: "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d"
-  endpoint: "wss://moonbeam.api.onfinality.io/public-ws"
-  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
-
+  endpoint: "wss://shiden.api.onfinality.io/public-ws"
+  chainId: "336"
+  dictionary: "https://api.subquery.network/sq/subquery/shiden-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 13318505
+    startBlock: 1
     options:
       abi: erc721
     assets:
@@ -33,13 +34,13 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonbeamERC721
+        - handler: handleERC721
           kind: ethereum/LogHandler
           filter:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 17132896
+    startBlock: 1
     options:
       abi: erc1155
     assets:
@@ -48,17 +49,17 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonbeamERC1155Single
+        - handler: handleERC1155Single
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferSingle(address, address, address, uint256, uint256)
-        - handler: handleMoonbeamERC1155Batch
+        - handler: handleERC1155Batch
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferBatch(address, address, address, uint256[], uint256[])
-        - handler: handleMoonbeamERC1155Uri
+        - handler: handleERC1155Uri
           kind: ethereum/LogHandler
           filter:
             topics:

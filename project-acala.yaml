@@ -6,6 +6,8 @@ runner:
   node:
     name: "@subql/node-ethereum"
     version: "*"
+    options:
+      historical: false
   query:
     name: "@subql/query"
     version: "*"
@@ -17,23 +19,17 @@ schema:
   file: "./schema.graphql"
 
 network:
-#  chainId: "0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b"
-#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
-  # chainId is the EVM Chain ID, for Ethereum this is 1
-  # https://chainlist.org/chain/1
-  chainId: "1"
-  # This endpoint must be a public non-pruned archive node
-  # Public nodes may be rate limited, which can affect indexing speed
-  # When developing your project we suggest getting a private API key
-  # You can get them from OnFinality for free https://app.onfinality.io
-  # https://documentation.onfinality.io/support/the-enhanced-api-service
-  # Recommended to provide the HTTP endpoint of a full chain dictionary to speed up processing
-  dictionary: "https://gx.api.subquery.network/sq/subquery/eth-dictionary"
-
+  endpoint:
+    [
+      "https://eth-rpc-acala.aca-staging.network"
+    ]
+  # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
+  chainId: "787"
+  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 13318505
+    startBlock: 1
     options:
       abi: erc721
     assets:
@@ -42,13 +38,13 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonriverERC721
+        - handler: handleERC721
           kind: ethereum/LogHandler
           filter:
             topics:
               - Transfer(address, address, uint256)
   - kind: ethereum/Runtime
-    startBlock: 17132896
+    startBlock: 1
     options:
       abi: erc1155
     assets:
@@ -57,17 +53,17 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleMoonriverERC1155Single
+        - handler: handleERC1155Single
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferSingle(address, address, address, uint256, uint256)
-        - handler: handleMoonriverERC1155Batch
+        - handler: handleERC1155Batch
           kind: ethereum/LogHandler
           filter:
             topics:
               - TransferBatch(address, address, address, uint256[], uint256[])
-        - handler: handleMoonriverERC1155Uri
+        - handler: handleERC1155Uri
           kind: ethereum/LogHandler
           filter:
             topics:

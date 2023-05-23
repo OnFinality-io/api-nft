@@ -1,69 +1,85 @@
-
-// https://etherscan.io/tx/0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd
-
-// 0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd
-// network_id 1
-// 13318656
-// 1632890925
-// 0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd
-// 1-0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D-6708
-
-// 0xF9E13d8FC6c8F74449a9Cee1088822b817526588
-// 0x677420671845F3BB7a2f59a0cc530198e1f596e9
-
-import {subqlTest} from "@subql/testing";
-import {Address, Collection, ContractType, Network, Nft, Transfers} from "../types";
+import { subqlTest } from '@subql/testing';
+import { Collection, ContractType, Network, Nft, Transfer } from '../types';
 
 subqlTest(
-    "handleERC721 success",
-    13318656 ,
-    [
-        Network.create({
-            id: "1",
-            name: "ethereum"
-        }),
-        Address.create({
-            id: '1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
-            address: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
-            networkId: '1'
-        })
-    ],
-    [
-        Collection.create({
-            id: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            networkId: "1",
-            contract_address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            created_block: BigInt(13318656),
-            created_timestamp: BigInt(1632890925),
-            minter_addressId: "0xF9E13d8FC6c8F74449a9Cee1088822b817526588",
-            total_supply: BigInt(10000),
-            name: "BoredApeYachtClub",
-            symbol: "BAYC"
-        }),
-        Nft.create({
-            id: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708",
-            tokenId: "6708",
-            amount: BigInt(1),
-            collectionId: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            minted_block: BigInt(13318656),
-            minted_timestamp: BigInt(1632890925),
-            minter_addressId: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-            current_ownerId: "0x677420671845F3BB7a2f59a0cc530198e1f596e9",
-            contract_type: ContractType.ERC721,
-            metadata_uri: null
-        }),
-        Transfers.create({
-            id: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd-2",
-            tokenId: "6708",
-            amount: BigInt(1),
-            networkId: "1",
-            block: BigInt(13318656),
-            timestamp: BigInt(1632890925),
-            transaction_id: "0x5b143c6613d98c4b189f8ed167e1be4a5de1e771cf1cf34dd4c7f2c84dc261cd",
-            nftId: "1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708",
-            fromId: "0xF9E13d8FC6c8F74449a9Cee1088822b817526588",
-            toId: "0x677420671845F3BB7a2f59a0cc530198e1f596e9"
-        })
-    ],
-    "handleERC721",
-)
+  'test erc1155',
+  3556807,
+  [
+    Network.create({
+      id: '1284',
+    }),
+    Collection.create({
+      id: '',
+      networkId: '',
+      contract_address: '',
+      created_block: BigInt(0),
+      created_timestamp: BigInt(0),
+      creator_address: '',
+      total_supply: BigInt(0),
+      name: '',
+      symbol: '',
+    }),
+    Nft.create({
+      id: '',
+      tokenId: '',
+      amount: BigInt(0),
+      collectionId: '',
+      minted_block: BigInt(0),
+      minted_timestamp: BigInt(0),
+      minter_address: '',
+      current_owner: '',
+      contract_type: ContractType.ERC721,
+    }),
+    Transfer.create({
+      id: '',
+      tokenId: '',
+      amount: BigInt(0),
+      networkId: '',
+      block: BigInt(0),
+      timestamp: BigInt(0),
+      transaction_hash: '',
+      nftId: '',
+      from: '',
+      to: '',
+    }),
+  ],
+  [
+    Collection.create({
+      id: '1284-0xF37626E2284742305858052615E94B380B23B3b7',
+      networkId: '1284',
+      contract_address: '0xF37626E2284742305858052615E94B380B23B3b7',
+      created_block: BigInt(3556807),
+      created_timestamp: BigInt(1684026600),
+      creator_address: '0x9d3bcf6095791216cb9e39acb3c59b53fdc3b717',
+      total_supply: BigInt(4),
+      // name: null,
+      // symbol: "POLKI"
+    }),
+    Nft.create({
+      id: '1-0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d-6708',
+      tokenId: '3',
+      amount: BigInt(30),
+      collectionId: '1284-0xF37626E2284742305858052615E94B380B23B3b7',
+      minted_block: BigInt(3556807),
+      minted_timestamp: BigInt(1684026600),
+      minter_address: '0xF37626E2284742305858052615E94B380B23B3b7',
+      current_owner: '0xEc7D2c7D082c196e2704d9cFc149CacbF8463380',
+      contract_type: ContractType.ERC1155,
+      metadata_uri: 'ipfs://QmSLWoCPAeSxXhPg8TLf3TyH8Kusj7u8ULow2NNgCRheAH/3',
+    }),
+    Transfer.create({
+      id: '0x47bbf5ebedcd34403c215c52ddfd9a2c5b55bc9a7a8428bd2c9c8ffd0b1f7a43-1284',
+      tokenId: '3',
+      amount: BigInt(30),
+      networkId: '1284',
+      block: BigInt(3556807),
+      timestamp: BigInt(1684026600),
+      transaction_hash:
+        '0x47bbf5ebedcd34403c215c52ddfd9a2c5b55bc9a7a8428bd2c9c8ffd0b1f7a43',
+      nftId: '1284-0xF37626E2284742305858052615E94B380B23B3b7-3',
+      from: '0x9D3BCf6095791216CB9e39aCB3C59B53Fdc3B717',
+      to: '0xEc7D2c7D082c196e2704d9cFc149CacbF8463380',
+    }),
+  ],
+  'handleERC1155Single'
+);
