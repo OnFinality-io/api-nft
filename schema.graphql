@@ -1,0 +1,59 @@
+enum ContractType {
+  ERC721,
+  ERC1155
+}
+
+type AnyJson @jsonField {
+  # Need a value for codegen but type is any
+  _: String
+}
+
+type Nft @entity {
+  id: ID! #CollectionID-TokenId
+  tokenId: String!
+  amount: BigInt! #1 for Erc721. 1155 semi-fungible has other values
+  collection: Collection!
+  minted_block: BigInt! # Should be bigInt
+  minted_timestamp: BigInt! # unix epoch timestamp
+  minter_address: String! # event transaction from
+  current_owner: String! # event args to
+  contract_type: ContractType # e.g. ERC721, RMRK Hardcode
+  metadata_uri: String
+  metadata: AnyJson
+  metadata_status: String
+  #  name: String
+  #  symbol: String
+  #  token_uri: String
+  #  image_uri: String
+  #  description: String
+}
+
+type Collection @entity {
+  id: ID! # chainID-contract adddress
+  network: Network!
+  contract_address: String! # event address
+  created_block: BigInt!
+  created_timestamp: BigInt! # unix epoch timestamp
+  creator_address: String! # event transaction from
+  total_supply: BigInt!
+  name: String
+  symbol: String
+  #  floor_price: Int # Later on
+}
+
+type Transfer @entity {
+  id: ID!
+  tokenId: String!
+  amount: BigInt! # Same as with NFT
+  network: Network!
+  block: BigInt
+  timestamp: BigInt
+  transaction_hash: String # event transaction hash
+  nft: Nft
+  from: String!
+  to: String!
+}
+
+type Network @entity {
+  id: ID!
+}
