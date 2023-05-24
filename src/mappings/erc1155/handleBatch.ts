@@ -16,7 +16,7 @@ export async function handleERC1155batch(
 ): Promise<void> {
   const instance = Erc1155__factory.connect(event.address, api);
 
-  let isERC1155 = false;
+  const isERC1155 = false;
   let isERC1155Metadata = false;
 
   const totalSupply = BigInt(0);
@@ -27,15 +27,15 @@ export async function handleERC1155batch(
   let collection = await Collection.get(collectionId);
 
   if (!collection) {
-    try {
-      // https://eips.ethereum.org/EIPS/eip-1155#abstract
-      isERC1155 = await instance.supportsInterface('0xd9b67a26');
-      if (!isERC1155) {
-        return;
-      }
-    } catch (e) {
-      return;
-    }
+    // try {
+    //   // https://eips.ethereum.org/EIPS/eip-1155#abstract
+    //   isERC1155 = await instance.supportsInterface('0xd9b67a26');
+    //   if (!isERC1155) {
+    //     return;
+    //   }
+    // } catch (e) {
+    //   return;
+    // }
 
     collection = Collection.create({
       id: collectionId,

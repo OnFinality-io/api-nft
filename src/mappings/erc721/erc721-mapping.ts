@@ -9,28 +9,29 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   const network = await handleNetwork(chainId);
   const instance = Erc721__factory.connect(event.address, api);
   let totalSupply = BigInt(0);
-  let isERC721 = false;
+  // const isERC721 = false;
 
   let isERC721Metadata = false;
   let isERC721Enumerable = false;
 
 
+  logger.info(`hit erc721 address=${event.address}`);
   // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(network.id, event.address);
   let collection = await Collection.get(collectionId);
 
 
   if (!collection) {
-    try {
-      isERC721 = await instance.supportsInterface('0x80ac58cd');
-
-      if (!isERC721) {
-        return;
-      }
-    } catch (e) {
-      // If it is not an ERC721 interface, should just return
-      return;
-    }
+    // try {
+    //   isERC721 = await instance.supportsInterface('0x80ac58cd');
+    //
+    //   if (!isERC721) {
+    //     return;
+    //   }
+    // } catch (e) {
+    //   // If it is not an ERC721 interface, should just return
+    //   return;
+    // }
 
     assert(event.args, 'No event args on erc721');
 

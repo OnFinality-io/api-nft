@@ -26,7 +26,20 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 2847517
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            function: "0x60806040"
+#            to: "10"
+
+templates:
+  - name: ERC721
+    kind: ethereum/Runtime
+    startBlock: 2847517
     options:
       abi: erc721
     assets:
@@ -40,9 +53,9 @@ dataSources:
           filter:
             topics:
               - Transfer(address, address, uint256)
-  - kind: ethereum/Runtime
-#    startBlock: 3556807
-    startBlock: 1
+  - name: ERC1155
+    kind: ethereum/Runtime
+    startBlock: 2847517
     options:
       abi: erc1155
     assets:
