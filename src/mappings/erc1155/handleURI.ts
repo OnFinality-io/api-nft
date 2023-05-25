@@ -38,6 +38,6 @@ export async function handleERC1155Uri(event: URILog): Promise<void> {
     );
     return;
   }
-  nft.metadata_uri = event.args.value;
+  nft.metadata_uriId = event.args.value;
   await nft.save();
 }

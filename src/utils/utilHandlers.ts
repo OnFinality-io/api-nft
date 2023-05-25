@@ -67,8 +67,8 @@ export async function handle1155Nfts(
       minter_address: event.address,
       current_owner: event.args.to,
       contract_type: ContractType.ERC1155,
-      metadata_uri: metadataUri,
-      metadata_status: 'PENDING',
+      metadata_uriId: metadataUri,
+      metadata_status: "PENDING"
     });
   }
 }

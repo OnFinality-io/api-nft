@@ -95,9 +95,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       minter_address: event.transaction.from,
       current_owner: event.args.to,
       contract_type: ContractType.ERC721,
-      metadata_uri: metadataUri,
+      metadata_uriId: metadataUri,
       metadata_status: 'PENDING',
-    } as Nft);
+    });
 
     try {
       collection.total_supply = isERC721Enumerable
