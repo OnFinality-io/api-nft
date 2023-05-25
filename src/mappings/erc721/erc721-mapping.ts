@@ -15,7 +15,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   let isERC721Enumerable = false;
 
 
-  logger.info(`hit erc721 address=${event.address}`);
+  // logger.info(`hit erc721 address=${event.address}`);
   // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(network.id, event.address);
   let collection = await Collection.get(collectionId);

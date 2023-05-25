@@ -2,7 +2,7 @@ import { subqlTest } from '@subql/testing';
 import { Collection, ContractType, Network, Nft, Transfer } from '../types';
 
 subqlTest(
-  'test erc1155',
+  'Contract create',
   3556807,
   [
     Network.create({

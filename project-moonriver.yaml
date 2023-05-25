@@ -26,10 +26,29 @@ network:
   chainId: "1285"
   dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
 
-
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 414831
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            function: "0x60806040"
+  - kind: ethereum/Runtime
+    startBlock: 414831
+#    startBlock: 576425
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            function: "0x60016009"
+templates:
+  - name: ERC721
+    kind: ethereum/Runtime
     options:
       abi: erc721
     assets:
@@ -43,8 +62,8 @@ dataSources:
           filter:
             topics:
               - Transfer(address, address, uint256)
-  - kind: ethereum/Runtime
-    startBlock: 1
+  - name: ERC1155
+    kind: ethereum/Runtime
     options:
       abi: erc1155
     assets:

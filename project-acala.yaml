@@ -23,13 +23,14 @@ network:
     [
       "https://eth-rpc-acala.aca-staging.network"
     ]
+
   # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
   chainId: "787"
   dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 2847517
+    startBlock: 1144182
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -41,7 +42,6 @@ dataSources:
 templates:
   - name: ERC721
     kind: ethereum/Runtime
-    startBlock: 2847517
     options:
       abi: erc721
     assets:
@@ -57,7 +57,6 @@ templates:
               - Transfer(address, address, uint256)
   - name: ERC1155
     kind: ethereum/Runtime
-    startBlock: 2847517
     options:
       abi: erc1155
     assets:
