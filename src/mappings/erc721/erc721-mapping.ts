@@ -1,8 +1,8 @@
-import { Collection, ContractType, Nft, StatusType, Transfer } from '../../types';
+import { Collection, ContractType, Metadata, Nft, StatusType, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
-import { handleNetwork } from '../../utils/utilHandlers';
+import { handleMetadata, handleNetwork } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
@@ -75,11 +75,18 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   if (!nft) {
     let metadataUri;
     try {
+      // metadata possibly undefined
+      // nft can share same metadata
       metadataUri = isERC721Metadata
         ? await instance.tokenURI(event.args.tokenId)
         : undefined;
     } catch (e) {}
 
+    if (metadataUri){
+      await handleMetadata(metadataUri);
+    }
+
+    logger.info(`metaData: ${metadataUri}`);
     nft = Nft.create({
       id: nftId,
       tokenId: event.args.tokenId.toString(),

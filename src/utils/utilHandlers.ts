@@ -1,9 +1,21 @@
-import { Collection, ContractType, Network, Nft, StatusType, Transfer } from '../types';
+import { Collection, ContractType, Metadata, Network, Nft, StatusType, Transfer } from '../types';
 import { BigNumber } from 'ethers';
 import { getNftId, getTransferId, incrementBigInt } from './common';
 import { Erc1155 } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
+
+
+export async function handleMetadata(id: string): Promise<void> {
+  let metdata = await Metadata.get(id);
+
+  if (!metdata) {
+    metdata = Metadata.create({
+      id
+    });
+    await metdata.save();
+  }
+}
 
 export async function handleNetwork(id: string): Promise<Network> {
   let network = await Network.get(id);
