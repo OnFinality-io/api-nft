@@ -65,7 +65,7 @@ subqlTest(
       minter_address: '0xF37626E2284742305858052615E94B380B23B3b7',
       current_owner: '0xEc7D2c7D082c196e2704d9cFc149CacbF8463380',
       contract_type: ContractType.ERC1155,
-      metadata_uriId: 'ipfs://QmSLWoCPAeSxXhPg8TLf3TyH8Kusj7u8ULow2NNgCRheAH/3',
+      metadataId: 'ipfs://QmSLWoCPAeSxXhPg8TLf3TyH8Kusj7u8ULow2NNgCRheAH/3',
     }),
     Transfer.create({
       id: '0x47bbf5ebedcd34403c215c52ddfd9a2c5b55bc9a7a8428bd2c9c8ffd0b1f7a43-1284',

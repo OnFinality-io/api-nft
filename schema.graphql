@@ -5,8 +5,11 @@ enum ContractType {
 
 enum StatusType {
   PENDING,
-  PARSED,
-  ERROR,
+  PROCESSING,
+  COMPLETED,
+  FAILED,
+  UNKNOWN,
+  INVALID
 }
 
 type AnyJson @jsonField {
@@ -24,9 +27,8 @@ type Nft @entity {
   minter_address: String! # event transaction from
   current_owner: String! # event args to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
-  metadata_uri: Metadata
-#  metadata: AnyJson
-  metadata_status: String
+  metadata: Metadata
+  metadata_status: StatusType
 #  name: String
 #  symbol: String
 #  token_uri: String
