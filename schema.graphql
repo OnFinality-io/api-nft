@@ -3,6 +3,15 @@ enum ContractType {
   ERC1155
 }
 
+enum StatusType {
+  PENDING,
+  PROCESSING,
+  COMPLETED,
+  FAILED,
+  UNKNOWN,
+  INVALID
+}
+
 type AnyJson @jsonField {
   # Need a value for codegen but type is any
   _: String
@@ -18,9 +27,8 @@ type Nft @entity {
   minter_address: String! # event transaction from
   current_owner: String! # event args to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
-  metadata_uri: String
-  metadata: AnyJson
-  metadata_status: String
+  metadata: Metadata
+  metadata_status: StatusType
 #  name: String
 #  symbol: String
 #  token_uri: String
@@ -56,4 +64,25 @@ type Transfer @entity {
 
 type Network @entity {
   id: ID!
+}
+
+type Metadata @entity {
+  id: ID! #metadata_uri
+  name: String
+  symbol: String
+  token_uri: String
+  image_uri: String
+  description: String
+  raw: AnyJson
+}
+
+type Address @entity {
+  id: ID! #network account address ?
+  network: Network!
+  account: Account!
+}
+
+type Account @entity {
+  """Id is a base58 encoded public key"""
+  id: ID! # base58 encoded public key (only substrate chains ?)
 }

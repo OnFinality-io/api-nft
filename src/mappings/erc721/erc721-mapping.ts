@@ -1,12 +1,7 @@
-import { Collection, ContractType, Nft, Transfer } from '../../types';
+import { Collection, ContractType, Nft, StatusType, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
-import {
-  getCollectionId,
-  getNftId,
-  getTransferId,
-  incrementBigInt,
-} from '../../utils/common';
+import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
 import { handleNetwork } from '../../utils/utilHandlers';
 import assert from 'assert';
 
@@ -95,9 +90,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       minter_address: event.transaction.from,
       current_owner: event.args.to,
       contract_type: ContractType.ERC721,
-      metadata_uri: metadataUri,
-      metadata_status: 'PENDING',
-    } as Nft);
+      metadataId: metadataUri,
+      metadata_status: StatusType.PENDING
+    });
 
     try {
       collection.total_supply = isERC721Enumerable

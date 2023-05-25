@@ -1,11 +1,6 @@
-import { Collection, ContractType, Network, Nft, Transfer } from '../types';
+import { Collection, ContractType, Network, Nft, StatusType, Transfer } from '../types';
 import { BigNumber } from 'ethers';
-import {
-  getCollectionId,
-  getNftId,
-  getTransferId,
-  incrementBigInt,
-} from './common';
+import { getNftId, getTransferId, incrementBigInt } from './common';
 import { Erc1155 } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
@@ -67,8 +62,8 @@ export async function handle1155Nfts(
       minter_address: event.address,
       current_owner: event.args.to,
       contract_type: ContractType.ERC1155,
-      metadata_uri: metadataUri,
-      metadata_status: 'PENDING',
+      metadataId: metadataUri,
+      metadata_status: StatusType.PENDING
     });
   }
 }
