@@ -31,7 +31,7 @@ type Nft @entity {
 }
 
 type Metadata @entity {
-  ID: ID! #metadata_uri
+  id: ID! #metadata_uri
   name: String
   symbol: String
   token_uri: String
