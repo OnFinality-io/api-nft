@@ -74,6 +74,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
 
   if (!nft) {
     let metadataUri;
+    let metadata: Metadata;
     try {
       // metadata possibly undefined
       // nft can share same metadata

@@ -59,6 +59,10 @@ export async function handle1155Nfts(
         logger.warn(`Contract uri instance broken at address ${event.address}`);
       }
     }
+
+    if (metadataUri) {
+      await handleMetadata(metadataUri);
+    }
     collection.total_supply = incrementBigInt(collection.total_supply);
 
     // must be saved everytime new NFT is created
