@@ -1,4 +1,4 @@
-import { Collection, ContractType, Metadata, Nft, StatusType, Transfer } from '../../types';
+import { Collection, ContractType, Metadata, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
@@ -74,7 +74,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
 
   if (!nft) {
     let metadataUri;
-    let metadata: Metadata;
     try {
       // metadata possibly undefined
       // nft can share same metadata
@@ -99,7 +98,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       current_owner: event.args.to,
       contract_type: ContractType.ERC721,
       metadataId: metadataUri,
-      metadata_status: StatusType.PENDING
     });
 
     try {

@@ -11,7 +11,8 @@ export async function handleMetadata(id: string): Promise<void> {
 
   if (!metdata) {
     metdata = Metadata.create({
-      id
+      id,
+      metadata_status: StatusType.PENDING
     });
     await metdata.save();
   }
@@ -79,7 +80,6 @@ export async function handle1155Nfts(
       current_owner: event.args.to,
       contract_type: ContractType.ERC1155,
       metadataId: metadataUri,
-      metadata_status: StatusType.PENDING
     });
   }
 }
