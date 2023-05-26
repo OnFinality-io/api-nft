@@ -8,7 +8,7 @@ import { getCollectionId } from '../utils/common';
 export async function handleTransaction(tx: EthereumTransaction ):Promise<void> {
   logger.info(`tx ${tx.to}`);
 
-  const network = await handleNetwork(chainId);
+  // const network = await handleNetwork(chainId);
 
   // if tx has creates on it then that should be the address of a contract creation
   // then we must check if the contract creation is of erc721 or erc1155

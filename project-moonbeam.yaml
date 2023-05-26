@@ -33,7 +33,8 @@ dataSources:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            function: "0x60806040"
+            # removed 0x prefix
+            function: "60806040"
 
 templates:
   - name: ERC721

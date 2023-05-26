@@ -30,7 +30,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1144182
+    startBlock: 1
     mapping:
       file: "./dist/index.js"
       handlers:
