@@ -28,12 +28,6 @@ type Nft @entity {
   current_owner: String! # event args to
   contract_type: ContractType # e.g. ERC721, RMRK Hardcode
   metadata: Metadata
-  metadata_status: StatusType
-#  name: String
-#  symbol: String
-#  token_uri: String
-#  image_uri: String
-#  description: String
 }
 
 type Collection @entity {
@@ -68,6 +62,7 @@ type Network @entity {
 
 type Metadata @entity {
   id: ID! #metadata_uri
+  metadata_status: StatusType!
   name: String
   symbol: String
   token_uri: String

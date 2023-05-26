@@ -1,9 +1,22 @@
-import { Collection, ContractType, Network, Nft, StatusType, Transfer } from '../types';
+import { Collection, ContractType, Metadata, Network, Nft, StatusType, Transfer } from '../types';
 import { BigNumber } from 'ethers';
 import { getNftId, getTransferId, incrementBigInt } from './common';
 import { Erc1155 } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
+
+
+export async function handleMetadata(id: string): Promise<void> {
+  let metdata = await Metadata.get(id);
+
+  if (!metdata) {
+    metdata = Metadata.create({
+      id,
+      metadata_status: StatusType.PENDING
+    });
+    await metdata.save();
+  }
+}
 
 export async function handleNetwork(id: string): Promise<Network> {
   let network = await Network.get(id);
@@ -47,6 +60,10 @@ export async function handle1155Nfts(
         logger.warn(`Contract uri instance broken at address ${event.address}`);
       }
     }
+
+    if (metadataUri) {
+      await handleMetadata(metadataUri);
+    }
     collection.total_supply = incrementBigInt(collection.total_supply);
 
     // must be saved everytime new NFT is created
@@ -63,7 +80,6 @@ export async function handle1155Nfts(
       current_owner: event.args.to,
       contract_type: ContractType.ERC1155,
       metadataId: metadataUri,
-      metadata_status: StatusType.PENDING
     });
   }
 }
