@@ -38,7 +38,15 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             function: "0x60806040"
-
+  - kind: ethereum/Runtime
+    startBlock: 1
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/EventHandler
+          topics:
+             - "0x60806040"
 templates:
   - name: ERC721
     kind: ethereum/Runtime
