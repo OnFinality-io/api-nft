@@ -85,7 +85,7 @@ export async function handle1155Nfts(
 }
 
 export function handle1155Transfer(
-  network: Network,
+  networkId: string,
   event: TransferBatchLog,
   tokenId: string,
   amount: bigint,
@@ -95,7 +95,7 @@ export function handle1155Transfer(
   assert(event.args, 'No event args');
 
   const transferId = getTransferId(
-    network.id,
+    networkId,
     event.transactionHash,
     event.logIndex.toString(),
     batchIndex
@@ -104,7 +104,7 @@ export function handle1155Transfer(
     id: transferId,
     tokenId,
     amount: amount,
-    networkId: network.id,
+    networkId: networkId,
     block: BigInt(event.blockNumber),
     timestamp: event.block.timestamp,
     transaction_hash: event.transactionHash,

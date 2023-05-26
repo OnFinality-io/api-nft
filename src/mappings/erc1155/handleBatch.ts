@@ -16,14 +16,14 @@ export async function handleERC1155batch(
 ): Promise<void> {
   const instance = Erc1155__factory.connect(event.address, api);
 
-  const isERC1155 = false;
   let isERC1155Metadata = false;
 
   const totalSupply = BigInt(0);
+  const networkId = chainId;
 
-  const network = await handleNetwork(chainId);
+  // const network = await handleNetwork(chainId);
 
-  const collectionId = getCollectionId(network.id, event.address);
+  const collectionId = getCollectionId(networkId, event.address);
   let collection = await Collection.get(collectionId);
 
   if (!collection) {
@@ -39,7 +39,7 @@ export async function handleERC1155batch(
 
     collection = Collection.create({
       id: collectionId,
-      networkId: network.id,
+      networkId: networkId,
       contract_address: event.address,
       created_block: BigInt(event.blockNumber),
       created_timestamp: event.block.timestamp,
@@ -88,7 +88,7 @@ export async function handleERC1155batch(
     assert(event.args, 'No event args on erc1155');
 
     return handle1155Transfer(
-      network,
+      networkId,
       event,
       tokenId.toString(),
       event.args[4][idx].toBigInt(), //values

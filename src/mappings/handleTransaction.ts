@@ -7,22 +7,21 @@ import { getCollectionId } from '../utils/common';
 
 export async function handleTransaction(tx: EthereumTransaction ):Promise<void> {
   logger.info(`tx ${tx.to}`);
+
+  const network = await handleNetwork(chainId);
+
   // if tx has creates on it then that should be the address of a contract creation
   // then we must check if the contract creation is of erc721 or erc1155
   // if it is then we would create a dynamic dataSource for it.
 
   // then that dynamicDs would query with that given address
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
   logger.info(`blockHeight=${tx.blockNumber}`);
   let createsAddress =  (tx as any).creates;
 
 
   if (!createsAddress) {
-
     createsAddress = (await tx.receipt()).contractAddress;
-    // logger.info(`receritptpaaaa: ${JSON.stringify(await tx.receipt())}`);
-    // logger.info(`receipt: ${createsAddress}`);
 
     if (!createsAddress) {
       logger.warn(`creation address is undefined`);
@@ -30,8 +29,6 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
     }
   }
   const casedCreateAddress = (createsAddress as string).toLowerCase();
-  // logger.info(`creates=${casedCreateAddress}`);
-  // logger.info(`toLowerCase() =${casedCreateAddress.toString().toLowerCase()}`);
 
   let isErc1155 = false;
   let isErc721 = false;
@@ -45,15 +42,10 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
     ]);
   } catch (e) {
     if (!isErc721 && !isErc1155 ) {
-      // logger.warn(`at address: ${casedCreateAddress}`);
-      // logger.warn(`erc721: ${isErc721} || erc1155: ${isErc1155}`);
-      // logger.warn('not of any interface we want');
       return;
     }
-    // logger.info(`erc721: ${isErc721} || erc1155: ${isErc1155}`);
   }
 
-  // const network = await handleNetwork(chainId);
 
 
   if (isErc1155) {
@@ -63,6 +55,22 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
       address: casedCreateAddress ,
     });
 
+    // need to add timestamp to tx
+
+    // const collectionId = getCollectionId(chainId, casedCreateAddress);
+    // // let collection = await Collection.get(collectionId);
+    //
+    // const collection = Collection.create({
+    //   id: collectionId,
+    //   networkId: chainId,
+    //   contract_address: casedCreateAddress,
+    //   created_block: BigInt(tx.blockNumber),
+    //   created_timestamp: tx.timestamp,
+    //   creator_address: event.transaction.from,
+    //   total_supply: totalSupply,
+    // });
+    //
+    // await collection.save();
 
   }
 
@@ -72,5 +80,7 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
     await createERC721Datasource({
       address: casedCreateAddress
     });
+
+
   }
 }
