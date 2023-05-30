@@ -9,3 +9,4 @@ if (!global.atob) {
 export * from './mappings/erc721';
 export * from './mappings/erc1155';
 export * from './mappings/handleTransaction';
+export * from './mappings/handleContractUpgrade';

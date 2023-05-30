@@ -19,16 +19,13 @@ schema:
   file: "./schema.graphql"
 
 network:
-#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
-  # chainId is the EVM Chain ID, for Ethereum this is 1
-  # https://chainlist.org/chain/1
   endpoint: "https://rpc.api.moonriver.moonbeam.network"
   chainId: "1285"
   dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 414831
+    startBlock: 1
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -37,7 +34,7 @@ dataSources:
           filter:
             function: "0x60806040"
   - kind: ethereum/Runtime
-    startBlock: 414831
+    startBlock: 1
 #    startBlock: 576425
     mapping:
       file: "./dist/index.js"

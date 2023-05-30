@@ -1,10 +1,24 @@
-import { Collection, ContractType, Metadata, Network, Nft, StatusType, Transfer } from '../types';
+import {
+  Collection,
+  ContractType,
+  createERC1155Datasource,
+  createERC721Datasource,
+  Metadata,
+  Network,
+  Nft,
+  StatusType,
+  Transfer,
+} from '../types';
 import { BigNumber } from 'ethers';
-import { getNftId, getTransferId, incrementBigInt } from './common';
-import { Erc1155 } from '../types/contracts';
+import {
+  getCollectionId,
+  getNftId,
+  getTransferId,
+  incrementBigInt,
+} from './common';
+import { Erc1155, Erc1155__factory, Erc721, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
-
 
 export async function handleMetadata(id: string): Promise<void> {
   let metdata = await Metadata.get(id);
@@ -12,13 +26,13 @@ export async function handleMetadata(id: string): Promise<void> {
   if (!metdata) {
     metdata = Metadata.create({
       id,
-      metadata_status: StatusType.PENDING
+      metadata_status: StatusType.PENDING,
     });
     await metdata.save();
   }
 }
 
-export async function handleNetwork(id: string): Promise<Network> {
+export async function handleNetwork(id: string): Promise<void> {
   let network = await Network.get(id);
   if (!network) {
     network = Network.create({
@@ -26,7 +40,6 @@ export async function handleNetwork(id: string): Promise<Network> {
     });
     await network.save();
   }
-  return network;
 }
 
 // export async function handle1155Collections(
@@ -112,4 +125,99 @@ export function handle1155Transfer(
     from: event.args.from, // from
     to: event.args.to,
   });
+}
+
+export async function handleDsCreation(
+  address: string,
+  blockNumber: bigint,
+  timestamp: bigint,
+  creatorAddress: string,
+  erc1155Instance: Erc1155,
+  erc721Instance: Erc721
+): Promise<void> {
+  let isErc1155 = false;
+  let isErc721 = false;
+  // const erc1155Instance = Erc1155__factory.connect(address, api);
+  // const erc721Instance = Erc721__factory.connect(address, api);
+  await handleNetwork(chainId);
+
+  try {
+    [isErc1155, isErc721] = await Promise.all([
+      erc1155Instance.supportsInterface('0xd9b67a26'),
+      erc721Instance.supportsInterface('0x80ac58cd'),
+    ]);
+  } catch (e) {
+    if (!isErc721 && !isErc1155) {
+      return;
+    }
+  }
+
+  const collectionId = getCollectionId(chainId, address);
+  let totalSupply = BigInt(0);
+
+  if (isErc1155) {
+    logger.info(`is erc1155, address=${address}`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await createERC1155Datasource({
+      address,
+    });
+
+    const collection = Collection.create({
+      id: collectionId,
+      networkId: chainId,
+      contract_address: address,
+      created_block: blockNumber,
+      created_timestamp: timestamp,
+      creator_address: creatorAddress,
+      total_supply: totalSupply,
+    });
+    await collection.save();
+  }
+
+  if (isErc721) {
+    logger.info(`is erc721, address=${address}`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await createERC721Datasource({
+      address,
+    });
+
+    let isERC721Metadata = false;
+    let isERC721Enumerable = false;
+
+    try {
+      // interface defined: https://eips.ethereum.org/EIPS/eip-721
+      [isERC721Enumerable, isERC721Metadata] = await Promise.all([
+        erc721Instance.supportsInterface('0x780e9d63'),
+        erc721Instance.supportsInterface('0x5b5e139f'),
+      ]);
+    } catch {}
+
+    let name: string | undefined;
+    let symbol: string | undefined;
+
+    if (isERC721Metadata) {
+      [name, symbol] = await Promise.all([
+        erc721Instance.name(),
+        erc721Instance.symbol(),
+      ]);
+    }
+
+    if (isERC721Enumerable) {
+      totalSupply = (await erc721Instance.totalSupply()).toBigInt();
+    }
+
+    const collection = Collection.create({
+      id: collectionId,
+      networkId: chainId,
+      contract_address: address,
+      created_block: blockNumber,
+      created_timestamp: timestamp,
+      creator_address: creatorAddress,
+      total_supply: totalSupply,
+      name,
+      symbol,
+    });
+    await collection.save();
+  }
+  // }
 }

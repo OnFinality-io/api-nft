@@ -30,7 +30,14 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    options:
+      abi: erc721
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+      erc1155:
+        file: "./abis/erc1155.json"
+    startBlock: 1144182
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -38,15 +45,24 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             function: "0x60806040"
+
+# https://blockscout.acala.network/tx/0xecde3a63f80a1f943e0e0d8b676340dd5701517e1694134b9857cf995da0b9c7/logs
+# Contract Upgrade
   - kind: ethereum/Runtime
-    startBlock: 1
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 1144182
     mapping:
       file: "./dist/index.js"
       handlers:
         - handler: handleContractUpgrade
-          kind: ethereum/EventHandler
-          topics:
-             - "0x60806040"
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address)
 templates:
   - name: ERC721
     kind: ethereum/Runtime

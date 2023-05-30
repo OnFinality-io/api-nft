@@ -44,10 +44,10 @@ services:
       retries: 10
 
   subquery-node-moonriver:
-    image: onfinality/subql-node-ethereum:v2.1.3-6
-    depends_on:
-      "postgres":
-        condition: service_healthy
+    image: onfinality/subql-node-ethereum:latest
+#    depends_on:
+#      "postgres":
+#        condition: service_healthy
     restart: always
     environment:
       DB_USER: postgres
@@ -60,9 +60,9 @@ services:
     command:
       - --multi-chain
       - -f=/app/project-moonriver.yaml
-      - --db-schema=app
       - --disable-historical
       - --batch-size=30
+      - --workers=4
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node-moonriver:3000/ready"]
       interval: 3s
