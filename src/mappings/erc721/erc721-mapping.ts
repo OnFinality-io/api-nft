@@ -6,17 +6,12 @@ import { handleMetadata } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
-  // const network = await handleNetwork(chainId);
   const instance = Erc721__factory.connect(event.address, api);
 
   // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(chainId, event.address);
   const collection = await Collection.get(collectionId);
-  assert(collection, "Missing Collection");
-
-
-    try {
-    } catch {}
+  assert(collection, `Missing collection: ${collectionId}`);
   assert(event.args, 'No event args on erc721');
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString());

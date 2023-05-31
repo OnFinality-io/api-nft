@@ -34,6 +34,16 @@ dataSources:
           filter:
             function: "0x60806040"
   - kind: ethereum/Runtime
+    startBlock: 1
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            function: "0x60a06040"
+
+  - kind: ethereum/Runtime
     options:
       abi: erc1967
     assets:

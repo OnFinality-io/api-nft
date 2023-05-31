@@ -132,13 +132,13 @@ export async function handleDsCreation(
   blockNumber: bigint,
   timestamp: bigint,
   creatorAddress: string,
-  erc1155Instance: Erc1155,
-  erc721Instance: Erc721
 ): Promise<void> {
   let isErc1155 = false;
   let isErc721 = false;
-  // const erc1155Instance = Erc1155__factory.connect(address, api);
-  // const erc721Instance = Erc721__factory.connect(address, api);
+
+  const erc1155Instance = Erc1155__factory.connect(address, api);
+  const erc721Instance = Erc721__factory.connect(address, api);
+
   await handleNetwork(chainId);
 
   try {
@@ -152,6 +152,8 @@ export async function handleDsCreation(
     }
   }
 
+  const casedAddress = address.toLowerCase();
+
   const collectionId = getCollectionId(chainId, address);
   let totalSupply = BigInt(0);
 
@@ -159,13 +161,13 @@ export async function handleDsCreation(
     logger.info(`is erc1155, address=${address}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await createERC1155Datasource({
-      address,
+      casedAddress,
     });
 
     const collection = Collection.create({
       id: collectionId,
       networkId: chainId,
-      contract_address: address,
+      contract_address: casedAddress,
       created_block: blockNumber,
       created_timestamp: timestamp,
       creator_address: creatorAddress,
@@ -178,7 +180,7 @@ export async function handleDsCreation(
     logger.info(`is erc721, address=${address}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await createERC721Datasource({
-      address,
+      casedAddress,
     });
 
     let isERC721Metadata = false;
@@ -209,7 +211,7 @@ export async function handleDsCreation(
     const collection = Collection.create({
       id: collectionId,
       networkId: chainId,
-      contract_address: address,
+      contract_address: casedAddress,
       created_block: blockNumber,
       created_timestamp: timestamp,
       creator_address: creatorAddress,

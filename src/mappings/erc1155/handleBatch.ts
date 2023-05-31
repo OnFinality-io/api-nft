@@ -19,33 +19,8 @@ export async function handleERC1155batch(
   const collectionId = getCollectionId(chainId, event.address);
   const collection = await Collection.get(collectionId);
 
-  assert(collection, "Missing collections");
-  // if (!collection) {
-    // try {
-    //   // https://eips.ethereum.org/EIPS/eip-1155#abstract
-    //   isERC1155 = await instance.supportsInterface('0xd9b67a26');
-    //   if (!isERC1155) {
-    //     return;
-    //   }
-    // } catch (e) {
-    //   return;
-    // }
+  assert(collection, `Missing collection: ${collectionId}`);
 
-    // collection = Collection.create({
-    //   id: collectionId,
-    //   networkId: networkId,
-    //   contract_address: event.address,
-    //   created_block: BigInt(event.blockNumber),
-    //   created_timestamp: event.block.timestamp,
-    //   creator_address: event.transaction.from,
-    //   total_supply: totalSupply,
-    // });
-    //
-    // await collection.save();
-  // }
-
-
-  // assert(collection, "Collection is undefined");
   assert(event.args, 'No event args on erc1155');
   try {
     // https://eips.ethereum.org/EIPS/eip-1155#abstract
