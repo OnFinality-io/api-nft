@@ -33,7 +33,31 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             function: "0x60806040"
+  - kind: ethereum/Runtime
+    startBlock: 1
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            function: "0x60a06040"
 
+  - kind: ethereum/Runtime
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 1
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address)
 templates:
   - name: ERC721
     kind: ethereum/Runtime

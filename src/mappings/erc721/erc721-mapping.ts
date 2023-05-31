@@ -1,73 +1,17 @@
-import { Collection, ContractType, Metadata, Nft, Transfer } from '../../types';
+import { Collection, ContractType, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
-import { handleMetadata, handleNetwork } from '../../utils/utilHandlers';
+import { handleMetadata } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
-  const network = await handleNetwork(chainId);
   const instance = Erc721__factory.connect(event.address, api);
-  let totalSupply = BigInt(0);
-  // const isERC721 = false;
 
-  let isERC721Metadata = false;
-  let isERC721Enumerable = false;
-
-
-  // logger.info(`hit erc721 address=${event.address}`);
   // If collection is already in db, no need to check state.
-  const collectionId = getCollectionId(network.id, event.address);
-  let collection = await Collection.get(collectionId);
-
-
-  if (!collection) {
-    // try {
-    //   isERC721 = await instance.supportsInterface('0x80ac58cd');
-    //
-    //   if (!isERC721) {
-    //     return;
-    //   }
-    // } catch (e) {
-    //   // If it is not an ERC721 interface, should just return
-    //   return;
-    // }
-
-    assert(event.args, 'No event args on erc721');
-
-    try {
-      // interface defined: https://eips.ethereum.org/EIPS/eip-721
-      [isERC721Enumerable, isERC721Metadata] = await Promise.all([
-        instance.supportsInterface('0x780e9d63'),
-        instance.supportsInterface('0x5b5e139f'),
-      ]);
-    } catch {}
-
-    let name: string | undefined;
-    let symbol: string | undefined;
-
-    if (isERC721Metadata) {
-      [name, symbol] = await Promise.all([instance.name(), instance.symbol()]);
-    }
-
-    if (isERC721Enumerable) {
-      totalSupply = (await instance.totalSupply()).toBigInt();
-    }
-
-    collection = Collection.create({
-      id: collectionId,
-      networkId: network.id,
-      contract_address: event.address,
-      created_block: BigInt(event.blockNumber),
-      created_timestamp: event.block.timestamp,
-      creator_address: event.transaction.from,
-      total_supply: totalSupply,
-      name,
-      symbol,
-    });
-    await collection.save();
-  }
-
+  const collectionId = getCollectionId(chainId, event.address);
+  const collection = await Collection.get(collectionId);
+  assert(collection, `Missing collection: ${collectionId}`);
   assert(event.args, 'No event args on erc721');
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString());
@@ -78,7 +22,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     try {
       // metadata possibly undefined
       // nft can share same metadata
-      metadataUri = isERC721Metadata
+      // if collection.name and symbol exist, meaning there is metadata on this contract
+      metadataUri = collection.name || collection.symbol
         ? await instance.tokenURI(event.args.tokenId)
         : undefined;
     } catch (e) {}
@@ -87,7 +32,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       await handleMetadata(metadataUri);
     }
 
-    logger.info(`metaData: ${metadataUri}`);
     nft = Nft.create({
       id: nftId,
       tokenId: event.args.tokenId.toString(),
@@ -102,9 +46,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     });
 
     try {
-      collection.total_supply = isERC721Enumerable
-        ? (await instance.totalSupply()).toBigInt()
-        : incrementBigInt(collection.total_supply);
+      collection.total_supply = (await instance.totalSupply()).toBigInt();
     } catch (e) {
       collection.total_supply = incrementBigInt(collection.total_supply);
     }
@@ -113,7 +55,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   }
 
   const transferId = getTransferId(
-    network.id,
+    chainId,
     event.transactionHash,
     event.logIndex.toString(),
     0
@@ -123,7 +65,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     id: transferId,
     tokenId: event.args.tokenId.toString(),
     amount: BigInt(1),
-    networkId: network.id,
+    networkId: chainId,
     block: BigInt(event.blockNumber),
     timestamp: event.block.timestamp,
     transaction_hash: event.transactionHash,

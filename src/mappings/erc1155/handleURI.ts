@@ -2,14 +2,13 @@ import { URILog } from '../../types/abi-interfaces/Erc1155';
 import { Erc1155__factory } from '../../types/contracts';
 import { Collection, Nft } from '../../types';
 import { getCollectionId, getNftId } from '../../utils/common';
-import { handleNetwork } from '../../utils/utilHandlers';
+// import { handleNetwork } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {
   const instance = Erc1155__factory.connect(event.address, api);
 
-  const network = await handleNetwork(chainId);
-  const collectionId = getCollectionId(network.id, event.address);
+  const collectionId = getCollectionId(chainId, event.address);
 
   const collection = await Collection.get(collectionId);
 

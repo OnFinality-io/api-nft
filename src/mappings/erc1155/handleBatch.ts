@@ -3,10 +3,8 @@ import { Erc1155__factory } from '../../types/contracts';
 import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
 import {
-  // handle1155Collections,
   handle1155Nfts,
   handle1155Transfer,
-  handleNetwork,
 } from '../../utils/utilHandlers';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -18,40 +16,11 @@ export async function handleERC1155batch(
 
   let isERC1155Metadata = false;
 
-  const totalSupply = BigInt(0);
-  const networkId = chainId;
+  const collectionId = getCollectionId(chainId, event.address);
+  const collection = await Collection.get(collectionId);
 
-  // const network = await handleNetwork(chainId);
+  assert(collection, `Missing collection: ${collectionId}`);
 
-  const collectionId = getCollectionId(networkId, event.address);
-  let collection = await Collection.get(collectionId);
-
-  if (!collection) {
-    // try {
-    //   // https://eips.ethereum.org/EIPS/eip-1155#abstract
-    //   isERC1155 = await instance.supportsInterface('0xd9b67a26');
-    //   if (!isERC1155) {
-    //     return;
-    //   }
-    // } catch (e) {
-    //   return;
-    // }
-
-    collection = Collection.create({
-      id: collectionId,
-      networkId: networkId,
-      contract_address: event.address,
-      created_block: BigInt(event.blockNumber),
-      created_timestamp: event.block.timestamp,
-      creator_address: event.transaction.from,
-      total_supply: totalSupply,
-    });
-
-    await collection.save();
-  }
-
-
-  // assert(collection, "Collection is undefined");
   assert(event.args, 'No event args on erc1155');
   try {
     // https://eips.ethereum.org/EIPS/eip-1155#abstract
@@ -73,7 +42,7 @@ export async function handleERC1155batch(
         assert(event.args, 'No event args on erc1155');
 
         return handle1155Nfts(
-          collection!,
+          collection,
           tokenId,
           event.args[4][idx].toBigInt(), //values
           event,
@@ -88,7 +57,7 @@ export async function handleERC1155batch(
     assert(event.args, 'No event args on erc1155');
 
     return handle1155Transfer(
-      networkId,
+      chainId,
       event,
       tokenId.toString(),
       event.args[4][idx].toBigInt(), //values
