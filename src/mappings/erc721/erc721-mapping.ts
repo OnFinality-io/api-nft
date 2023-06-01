@@ -2,11 +2,23 @@ import { Collection, ContractType, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
-import { handleMetadata } from '../../utils/utilHandlers';
+import { handleAddress, handleMetadata } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
   const instance = Erc721__factory.connect(event.address, api);
+
+  // there should be an interface check to see if the transaction is of the correct interface
+  let isErc721 = false;
+  try {
+    isErc721 = await instance.supportsInterface('0x80ac58cd');
+  } catch (e) {
+    return;
+  }
+
+  if (!isErc721) {
+    return;
+  }
 
   // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(chainId, event.address);
@@ -74,5 +86,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     to: event.args.to.toLowerCase(),
   });
 
-  await transfer.save();
+  await Promise.all([
+    transfer.save(),
+    handleAddress(event.args.to, event.transaction.from),
+    handleAddress(event.args.from, event.transaction.from)
+  ]);
 }

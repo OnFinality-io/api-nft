@@ -21,7 +21,7 @@ schema:
 network:
   endpoint: "https://astar.api.onfinality.io/public"
   chainId: "592"
-  dictionary: "https://api.subquery.network/sq/subquery/astar-dictionary"
+#  dictionary: "https://api.subquery.network/sq/subquery/astar-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
@@ -32,16 +32,16 @@ dataSources:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            function: "0x60806040"
-  - kind: ethereum/Runtime
-    startBlock: 1
-    mapping:
-      file: "./dist/index.js"
-      handlers:
-        - handler: handleTransaction
-          kind: ethereum/TransactionHandler
-          filter:
-            function: "0x60a06040"
+            to: null
+#  - kind: ethereum/Runtime
+#    startBlock: 1
+#    mapping:
+#      file: "./dist/index.js"
+#      handlers:
+#        - handler: handleTransaction
+#          kind: ethereum/TransactionHandler
+#          filter:
+#            function: "0x60a06040"
 
   - kind: ethereum/Runtime
     options:
@@ -49,7 +49,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1
+    startBlock: 225671
     mapping:
       file: "./dist/index.js"
       handlers:

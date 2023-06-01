@@ -26,7 +26,7 @@ network:
 
   # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
   chainId: "787"
-  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
+#  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
@@ -37,14 +37,14 @@ dataSources:
         file: "./abis/erc721.json"
       erc1155:
         file: "./abis/erc1155.json"
-    startBlock: 1144182
+    startBlock: 1
     mapping:
       file: "./dist/index.js"
       handlers:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            function: "0x60806040"
+            to: null
 
 # https://blockscout.acala.network/tx/0xecde3a63f80a1f943e0e0d8b676340dd5701517e1694134b9857cf995da0b9c7/logs
 # Contract Upgrade
@@ -54,7 +54,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1144182
+    startBlock: 1
     mapping:
       file: "./dist/index.js"
       handlers:

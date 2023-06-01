@@ -32,7 +32,7 @@ dataSources:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            function: "0x60806040"
+            to: null
 #            function: "0x60806040"
   - kind: ethereum/Runtime
     options:

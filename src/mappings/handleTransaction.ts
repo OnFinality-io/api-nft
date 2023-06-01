@@ -10,20 +10,20 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
 
   // then that dynamicDs would query with that given address
 
-  logger.info(`contract creation at blockHeight=${tx.blockNumber}`);
+  // logger.info(`contract creation at blockHeight=${tx.blockNumber}`);
   // sometimes it would not follow standards
   let createsAddress =  (tx as any).creates;
-
 
   if (!createsAddress) {
     try {
       createsAddress = (await tx.receipt()).contractAddress;
+      // logger.info(`res: ${JSON.stringify(await tx.receipt())}`);
     } catch (e) {
       logger.warn(`failed to get contractAddress on block=${tx.blockNumber} tx=${tx.hash}`);
     }
 
     if (!createsAddress) {
-      logger.warn(`creation address is undefined`);
+      // logger.warn(`creation address is undefined`);
       return;
     }
   }

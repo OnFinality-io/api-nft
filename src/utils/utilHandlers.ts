@@ -1,4 +1,5 @@
 import {
+  Address,
   Collection,
   ContractType,
   createERC1155Datasource,
@@ -7,14 +8,15 @@ import {
   Network,
   Nft,
   StatusType,
-  Transfer,
+  Transfer
 } from '../types';
 import { BigNumber } from 'ethers';
 import {
+  getAddressId,
   getCollectionId,
   getNftId,
   getTransferId,
-  incrementBigInt,
+  incrementBigInt
 } from './common';
 import { Erc1155, Erc1155__factory, Erc721, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
@@ -40,6 +42,21 @@ export async function handleNetwork(id: string): Promise<void> {
     });
     await network.save();
   }
+}
+
+
+export async function handleAddress(address: string, creator: string, account?: string): Promise<void> {
+  const addressId = getAddressId(address, creator);
+  let addressEntity = await Address.get(addressId);
+
+  if(!addressEntity) {
+    addressEntity = Address.create({
+      id: addressId,
+      networkId: chainId,
+      accountId: account
+    });
+  }
+  await addressEntity.save();
 }
 
 export async function handle1155Nfts(
@@ -133,6 +150,7 @@ export async function handleDsCreation(
 
   await handleNetwork(chainId);
 
+  // Check interface
   try {
     [isErc1155, isErc721] = await Promise.all([
       erc1155Instance.supportsInterface('0xd9b67a26'),

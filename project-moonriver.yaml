@@ -21,7 +21,7 @@ schema:
 network:
   endpoint: "https://rpc.api.moonriver.moonbeam.network"
   chainId: "1285"
-  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
+#  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
@@ -32,17 +32,17 @@ dataSources:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            function: "0x60806040"
-  - kind: ethereum/Runtime
-    startBlock: 1
-#    startBlock: 576425
-    mapping:
-      file: "./dist/index.js"
-      handlers:
-        - handler: handleTransaction
-          kind: ethereum/TransactionHandler
-          filter:
-            function: "0x60016009"
+            to: null
+#  - kind: ethereum/Runtime
+#    startBlock: 1
+##    startBlock: 576425
+#    mapping:
+#      file: "./dist/index.js"
+#      handlers:
+#        - handler: handleTransaction
+#          kind: ethereum/TransactionHandler
+#          filter:
+#            function: "0x60016009"
 templates:
   - name: ERC721
     kind: ethereum/Runtime
