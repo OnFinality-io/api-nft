@@ -39,8 +39,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       collectionId: collection.id,
       minted_block: BigInt(event.blockNumber),
       minted_timestamp: event.block.timestamp,
-      minter_address: event.transaction.from,
-      current_owner: event.args.to,
+      minter_address: event.transaction.from.toLowerCase(),
+      current_owner: event.args.to.toLowerCase(),
       contract_type: ContractType.ERC721,
       metadataId: metadataUri,
     });
@@ -70,8 +70,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     timestamp: event.block.timestamp,
     transaction_hash: event.transactionHash,
     nftId: nft.id,
-    from: event.args.from,
-    to: event.args.to,
+    from: event.args.from.toLowerCase(),
+    to: event.args.to.toLowerCase(),
   });
 
   await transfer.save();

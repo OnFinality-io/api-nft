@@ -42,14 +42,6 @@ export async function handleNetwork(id: string): Promise<void> {
   }
 }
 
-// export async function handle1155Collections(
-//   network: Network,
-//   event: TransferBatchLog
-// ): Promise<Collection> {
-//
-//   return collection;
-// }
-
 export async function handle1155Nfts(
   collection: Collection,
   tokenId: BigNumber,
@@ -70,7 +62,7 @@ export async function handle1155Nfts(
       try {
         metadataUri = await instance.uri(tokenId);
       } catch {
-        logger.warn(`Contract uri instance broken at address ${event.address}`);
+        logger.warn(`Contract uri instance broken at address ${event.address.toLowerCase()}`);
       }
     }
 
@@ -89,8 +81,8 @@ export async function handle1155Nfts(
       collectionId: collection.id,
       minted_block: BigInt(event.blockNumber),
       minted_timestamp: event.block.timestamp,
-      minter_address: event.address,
-      current_owner: event.args.to,
+      minter_address: event.address.toLowerCase(),
+      current_owner: event.args.to.toLowerCase(),
       contract_type: ContractType.ERC1155,
       metadataId: metadataUri,
     });
@@ -122,8 +114,8 @@ export function handle1155Transfer(
     timestamp: event.block.timestamp,
     transaction_hash: event.transactionHash,
     nftId: nftId,
-    from: event.args.from, // from
-    to: event.args.to,
+    from: event.args.from.toLowerCase(), // from
+    to: event.args.to.toLowerCase(),
   });
 }
 
@@ -170,7 +162,7 @@ export async function handleDsCreation(
       contract_address: casedAddress,
       created_block: blockNumber,
       created_timestamp: timestamp,
-      creator_address: creatorAddress,
+      creator_address: creatorAddress.toLowerCase(),
       total_supply: totalSupply,
     });
     await collection.save();
@@ -214,12 +206,11 @@ export async function handleDsCreation(
       contract_address: casedAddress,
       created_block: blockNumber,
       created_timestamp: timestamp,
-      creator_address: creatorAddress,
+      creator_address: creatorAddress.toLowerCase(),
       total_supply: totalSupply,
       name,
       symbol,
     });
     await collection.save();
   }
-  // }
 }

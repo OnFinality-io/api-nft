@@ -2,11 +2,11 @@ import { AnyJson } from '../types';
 import { FetchError } from 'node-fetch';
 
 export function getCollectionId(networkId: string, address: string): string {
-  return `${networkId}-${address}`;
+  return `${networkId}-${address}`.toLowerCase();
 }
 
 export function getNftId(collectionId: string, tokenId: string): string {
-  return `${collectionId}-${tokenId}`;
+  return `${collectionId}-${tokenId}`.toLowerCase();
 }
 
 export function getTransferId(
