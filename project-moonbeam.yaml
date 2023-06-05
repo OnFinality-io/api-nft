@@ -21,17 +21,10 @@ schema:
 network:
   endpoint: "https://rpc.api.moonbeam.network"
   chainId: "1284"
-  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+#  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    options: # temp solution to resolve codegen not working for templates
-      abi: erc721
-    assets:
-      erc721:
-        file: "./abis/erc721.json"
-      erc1155:
-        file: "./abis/erc1155.json"
     startBlock: 1
     mapping:
       file: "./dist/index.js"
@@ -39,18 +32,21 @@ dataSources:
         - handler: handleTransaction
           kind: ethereum/TransactionHandler
           filter:
-            # for actual
-            function: "0x60806040"
-  - kind: ethereum/Runtime
-    startBlock: 1
-    mapping:
-      file: "./dist/index.js"
-      handlers:
-        - handler: handleTransaction
-          kind: ethereum/TransactionHandler
-          filter:
-            # removed 0x prefix for dictionary
-            function: "60806040"
+            to: null
+
+  #          filter:
+#            # for actual
+#            function: "0x60806040"
+#  - kind: ethereum/Runtime
+#    startBlock: 1
+#    mapping:
+#      file: "./dist/index.js"
+#      handlers:
+#        - handler: handleTransaction
+#          kind: ethereum/TransactionHandler
+#          filter:
+#            # removed 0x prefix for dictionary
+#            function: "60806040"
   - kind: ethereum/Runtime # To catch contractUpgrades
     options:
       abi: erc1967

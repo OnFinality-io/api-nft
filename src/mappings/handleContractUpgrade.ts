@@ -21,5 +21,4 @@ export async function handleContractUpgrade(event: UpgradedLog): Promise<void> {
     event.block.timestamp, // what if in the case where logs does not exist
     event.transaction.from,
   );
-
 }

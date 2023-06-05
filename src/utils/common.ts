@@ -2,11 +2,15 @@ import { AnyJson } from '../types';
 import { FetchError } from 'node-fetch';
 
 export function getCollectionId(networkId: string, address: string): string {
-  return `${networkId}-${address}`.toLowerCase();
+  return `${networkId}-${address.toLowerCase()}`;
 }
 
 export function getNftId(collectionId: string, tokenId: string): string {
-  return `${collectionId}-${tokenId}`.toLowerCase();
+  return `${collectionId}-${tokenId}`;
+}
+
+export function getAddressId(address: string, creator: string): string {
+  return `${address.toLowerCase()}-${creator.toLowerCase()}`;
 }
 
 export function getTransferId(
@@ -60,3 +64,4 @@ export async function decodeMetadata(
 export function incrementBigInt(value: bigint): bigint {
   return BigInt(1) + value;
 }
+
