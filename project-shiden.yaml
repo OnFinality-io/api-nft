@@ -21,11 +21,11 @@ schema:
 network:
   endpoint: "wss://shiden.api.onfinality.io/public-ws"
   chainId: "336"
-  dictionary: "https://api.subquery.network/sq/subquery/shiden-dictionary"
+#  dictionary: "https://api.subquery.network/sq/subquery/shiden-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 1671106
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -40,7 +40,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1
+    startBlock: 1671106
     mapping:
       file: "./dist/index.js"
       handlers:
