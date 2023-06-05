@@ -157,6 +157,7 @@ export async function handleDsCreation(
       erc721Instance.supportsInterface('0x80ac58cd'),
     ]);
   } catch (e) {
+    // if both are false then there is no point, return
     if (!isErc721 && !isErc1155) {
       return;
     }
