@@ -10,7 +10,7 @@ export function getNftId(collectionId: string, tokenId: string): string {
 }
 
 export function getAddressId(address: string, creator: string): string {
-  return `${address.toLowerCase()}-${creator}`;
+  return `${address.toLowerCase()}-${creator.toLowerCase()}`;
 }
 
 export function getTransferId(
