@@ -29,7 +29,7 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
   }
 
   await handleDsCreation(
-    createsAddress,
+    (createsAddress as string).toLowerCase(),
     BigInt(tx.blockNumber),
     tx.blockTimestamp, // what if in the case where logs does not exist
     tx.from,

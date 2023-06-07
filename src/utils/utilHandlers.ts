@@ -10,24 +10,20 @@ import {
   StatusType,
   Transfer
 } from '../types';
-import { BigNumber } from 'ethers';
-import {
-  getAddressId,
-  getCollectionId,
-  getNftId,
-  getTransferId,
-  incrementBigInt
-} from './common';
-import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
+import {BigNumber} from 'ethers';
+import {getAddressId, getCollectionId, getNftId, getTransferId, hashId, incrementBigInt} from './common';
+import {Erc1155, Erc1155__factory, Erc721__factory} from '../types/contracts';
 import assert from 'assert';
-import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
+import {TransferBatchLog} from '../types/abi-interfaces/Erc1155';
 
-export async function handleMetadata(id: string): Promise<void> {
-  let metadata = await Metadata.get(id.toString());
+export async function handleMetadata(metadataUri: string): Promise<void> {
+  const id = hashId(metadataUri);
+  let metadata = await Metadata.get(id);
 
   if (!metadata) {
     metadata = Metadata.create({
-      id: id.toString(),
+      id,
+      metadata_uri: metadataUri as any,
       metadata_status: StatusType.PENDING,
     });
     await metadata.save();
@@ -100,7 +96,6 @@ export async function handle1155Nfts(
       minted_timestamp: event.block.timestamp,
       minter_address: event.address.toLowerCase(),
       current_owner: event.args.to.toLowerCase(),
-      contract_type: ContractType.ERC1155,
       metadataId: metadataUri,
     });
   }
@@ -151,6 +146,8 @@ export async function handleDsCreation(
   await handleNetwork(chainId);
 
   // Check interface
+  logger.info(`address: ${address.toLowerCase()}`);
+  // Should this be of individual ?
   try {
     [isErc1155, isErc721] = await Promise.all([
       erc1155Instance.supportsInterface('0xd9b67a26'),
@@ -159,6 +156,7 @@ export async function handleDsCreation(
   } catch (e) {
     // if both are false then there is no point, return
     if (!isErc721 && !isErc1155) {
+      logger.warn('not any');
       return;
     }
   }
@@ -182,7 +180,8 @@ export async function handleDsCreation(
       created_block: blockNumber,
       created_timestamp: timestamp,
       creator_address: creatorAddress.toLowerCase(),
-      total_supply: totalSupply,
+      total_supply:  BigInt(0),
+      contract_type: ContractType.ERC1155
     });
     await collection.save();
   }
@@ -233,6 +232,7 @@ export async function handleDsCreation(
       total_supply: totalSupply,
       name,
       symbol,
+      contract_type: ContractType.ERC721
     });
     await collection.save();
   }

@@ -64,7 +64,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       minted_timestamp: event.block.timestamp,
       minter_address: event.transaction.from.toLowerCase(),
       current_owner: event.args.to.toLowerCase(),
-      contract_type: ContractType.ERC721,
       metadataId: metadataUri,
     });
 

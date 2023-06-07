@@ -21,6 +21,7 @@
   "author": "SubQuery Team",
   "license": "MIT",
   "dependencies": {
+    "@polkadot/util-crypto": "^12.2.2",
     "@subql/common": "latest",
     "@subql/types-ethereum": "^2.2.2",
     "@subql/validator": "latest",

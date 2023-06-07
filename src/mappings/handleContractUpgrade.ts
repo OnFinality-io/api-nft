@@ -16,7 +16,7 @@ export async function handleContractUpgrade(event: UpgradedLog): Promise<void> {
   // check if the contract that is called
 
   await handleDsCreation(
-    event.address,
+    event.address.toLowerCase(),
     BigInt(event.blockNumber),
     event.block.timestamp, // what if in the case where logs does not exist
     event.transaction.from,

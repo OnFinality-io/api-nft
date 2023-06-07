@@ -26,7 +26,6 @@ type Nft @entity {
   minted_timestamp: BigInt! # unix epoch timestamp
   minter_address: String! # event transaction from
   current_owner: String! # event args to
-  contract_type: ContractType # e.g. ERC721, RMRK Hardcode
   metadata: Metadata
 }
 
@@ -40,6 +39,7 @@ type Collection @entity {
   total_supply: BigInt!
   name: String
   symbol: String
+  contract_type: ContractType! # e.g. ERC721, RMRK Hardcode
   #  floor_price: Int # Later on
 }
 
@@ -61,14 +61,15 @@ type Network @entity {
 }
 
 type Metadata @entity {
-  id: ID! #metadata_uri
+  id: ID! # hashed metadata_uri
+  metadata_uri: AnyJson! # metadata_uri
+  raw: AnyJson
   metadata_status: StatusType!
   name: String
   symbol: String
   token_uri: String
   image_uri: String
   description: String
-  raw: AnyJson
 }
 
 type Address @entity {
