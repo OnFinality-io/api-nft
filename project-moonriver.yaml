@@ -21,11 +21,11 @@ schema:
 network:
   endpoint: "https://rpc.api.moonriver.moonbeam.network"
   chainId: "1285"
-#  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
+  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary__c3Vic"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 400487
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -33,16 +33,21 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             to: null
-#  - kind: ethereum/Runtime
-#    startBlock: 1
-##    startBlock: 576425
-#    mapping:
-#      file: "./dist/index.js"
-#      handlers:
-#        - handler: handleTransaction
-#          kind: ethereum/TransactionHandler
-#          filter:
-#            function: "0x60016009"
+  - kind: ethereum/Runtime
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 400487
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address)
 templates:
   - name: ERC721
     kind: ethereum/Runtime

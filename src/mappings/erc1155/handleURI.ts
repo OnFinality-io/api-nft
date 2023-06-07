@@ -2,7 +2,6 @@ import { URILog } from '../../types/abi-interfaces/Erc1155';
 import { Erc1155__factory } from '../../types/contracts';
 import { Collection, Nft } from '../../types';
 import { getCollectionId, getNftId } from '../../utils/common';
-// import { handleNetwork } from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {

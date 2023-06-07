@@ -172,7 +172,7 @@ export async function handleDsCreation(
     logger.info(`is erc1155, address=${address}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await createERC1155Datasource({
-      casedAddress,
+      address: casedAddress,
     });
 
     const collection = Collection.create({
@@ -191,7 +191,7 @@ export async function handleDsCreation(
     logger.info(`is erc721, address=${address}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await createERC721Datasource({
-      casedAddress,
+      address: casedAddress,
     });
 
     let isERC721Metadata = false;
@@ -209,14 +209,18 @@ export async function handleDsCreation(
     let symbol: string | undefined;
 
     if (isERC721Metadata) {
-      [name, symbol] = await Promise.all([
-        erc721Instance.name(),
-        erc721Instance.symbol(),
-      ]);
+      try {
+        [name, symbol] = await Promise.all([
+          erc721Instance.name(),
+          erc721Instance.symbol(),
+        ]);
+      } catch (e) {}
     }
 
     if (isERC721Enumerable) {
-      totalSupply = (await erc721Instance.totalSupply()).toBigInt();
+      try {
+        totalSupply = (await erc721Instance.totalSupply()).toBigInt();
+      } catch {}
     }
 
     const collection = Collection.create({

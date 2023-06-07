@@ -26,7 +26,7 @@ network:
 
   # https://evmdocs.acala.network/network/network-configuration#acala-mainnet
   chainId: "787"
-#  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary"
+  dictionary: "https://api.subquery.network/sq/subquery/acala-dictionary__c3Vic"
 
 dataSources:
   - kind: ethereum/Runtime
@@ -37,7 +37,7 @@ dataSources:
         file: "./abis/erc721.json"
       erc1155:
         file: "./abis/erc1155.json"
-    startBlock: 1
+    startBlock: 1102550 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -54,7 +54,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1
+    startBlock: 1102550 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:

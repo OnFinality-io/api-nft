@@ -21,11 +21,11 @@ schema:
 network:
   endpoint: "https://astar.api.onfinality.io/public"
   chainId: "592"
-#  dictionary: "https://api.subquery.network/sq/subquery/astar-dictionary"
+  dictionary: "https://api.subquery.network/sq/subquery/astar-dictionary__c3Vic"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1
+    startBlock: 213852 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -33,15 +33,22 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             to: null
-#  - kind: ethereum/Runtime
-#    startBlock: 1
-#    mapping:
-#      file: "./dist/index.js"
-#      handlers:
-#        - handler: handleTransaction
-#          kind: ethereum/TransactionHandler
-#          filter:
-#            function: "0x60a06040"
+  - kind: ethereum/Runtime
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 213852 # this is the first evmTransaction on the chain
+    #    startBlock: 1671106
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address)
 
   - kind: ethereum/Runtime
     options:
@@ -49,7 +56,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 225671
+    startBlock: 213852
     mapping:
       file: "./dist/index.js"
       handlers:
