@@ -1,6 +1,6 @@
 import { AnyJson } from '../types';
 import { FetchError } from 'node-fetch';
-import {blake2AsHex} from "@polkadot/util-crypto";
+import { blake2AsHex } from '@polkadot/util-crypto';
 
 export function getCollectionId(networkId: string, address: string): string {
   return `${networkId}-${address.toLowerCase()}`;
@@ -64,10 +64,9 @@ export async function decodeMetadata(
 
 export function hashId(id: string): string {
   // Postgres identifier limit is 63 bytes (chars)
-  return blake2AsHex(id, 64).substring(0,63);
+  return blake2AsHex(id, 64).substring(0, 63);
 }
 
 export function incrementBigInt(value: bigint): bigint {
   return BigInt(1) + value;
 }
-

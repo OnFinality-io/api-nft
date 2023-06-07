@@ -1,7 +1,12 @@
 import { Collection, ContractType, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
-import { getCollectionId, getNftId, getTransferId, incrementBigInt } from '../../utils/common';
+import {
+  getCollectionId,
+  getNftId,
+  getTransferId,
+  incrementBigInt,
+} from '../../utils/common';
 import { handleAddress, handleMetadata } from '../../utils/utilHandlers';
 import assert from 'assert';
 
@@ -9,7 +14,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   const instance = Erc721__factory.connect(event.address, api);
 
   // there should be an interface check to see if the transaction is of the correct interface
-
 
   // this is still needed, when the dynamic DS is created, it is looking for transfers
   // it is possible that there is a transfer event on the address that is not the desrired erc ?
@@ -46,12 +50,13 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       // metadata possibly undefined
       // nft can share same metadata
       // if collection.name and symbol exist, meaning there is metadata on this contract
-      metadataUri = collection.name || collection.symbol
-        ? await instance.tokenURI(event.args.tokenId)
-        : undefined;
+      metadataUri =
+        collection.name || collection.symbol
+          ? await instance.tokenURI(event.args.tokenId)
+          : undefined;
     } catch (e) {}
 
-    if (metadataUri){
+    if (metadataUri) {
       await handleMetadata(metadataUri);
     }
 
@@ -99,6 +104,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   await Promise.all([
     transfer.save(),
     handleAddress(event.args.to, event.transaction.from),
-    handleAddress(event.args.from, event.transaction.from)
+    handleAddress(event.args.from, event.transaction.from),
   ]);
 }

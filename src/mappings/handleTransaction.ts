@@ -1,7 +1,9 @@
 import { EthereumTransaction } from '@subql/types-ethereum';
 import { handleDsCreation } from '../utils/utilHandlers';
 
-export async function handleTransaction(tx: EthereumTransaction ):Promise<void> {
+export async function handleTransaction(
+  tx: EthereumTransaction
+): Promise<void> {
   // const network = await handleNetwork(chainId);
 
   // if tx has creates on it then that should be the address of a contract creation
@@ -12,14 +14,16 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
 
   // logger.info(`contract creation at blockHeight=${tx.blockNumber}`);
   // sometimes it would not follow standards
-  let createsAddress =  (tx as any).creates;
+  let createsAddress = (tx as any).creates;
 
   if (!createsAddress) {
     try {
       createsAddress = (await tx.receipt()).contractAddress;
       // logger.info(`res: ${JSON.stringify(await tx.receipt())}`);
     } catch (e) {
-      logger.warn(`failed to get contractAddress on block=${tx.blockNumber} tx=${tx.hash}`);
+      logger.warn(
+        `failed to get contractAddress on block=${tx.blockNumber} tx=${tx.hash}`
+      );
     }
 
     if (!createsAddress) {
@@ -32,6 +36,6 @@ export async function handleTransaction(tx: EthereumTransaction ):Promise<void> 
     (createsAddress as string).toLowerCase(),
     BigInt(tx.blockNumber),
     tx.blockTimestamp, // what if in the case where logs does not exist
-    tx.from,
+    tx.from
   );
 }

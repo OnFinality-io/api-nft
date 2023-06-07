@@ -8,13 +8,20 @@ import {
   Network,
   Nft,
   StatusType,
-  Transfer
+  Transfer,
 } from '../types';
-import {BigNumber} from 'ethers';
-import {getAddressId, getCollectionId, getNftId, getTransferId, hashId, incrementBigInt} from './common';
-import {Erc1155, Erc1155__factory, Erc721__factory} from '../types/contracts';
+import { BigNumber } from 'ethers';
+import {
+  getAddressId,
+  getCollectionId,
+  getNftId,
+  getTransferId,
+  hashId,
+  incrementBigInt,
+} from './common';
+import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
-import {TransferBatchLog} from '../types/abi-interfaces/Erc1155';
+import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
 
 export async function handleMetadata(metadataUri: string): Promise<void> {
   const id = hashId(metadataUri);
@@ -40,16 +47,19 @@ export async function handleNetwork(id: string): Promise<void> {
   }
 }
 
-
-export async function handleAddress(address: string, creator: string, account?: string): Promise<void> {
+export async function handleAddress(
+  address: string,
+  creator: string,
+  account?: string
+): Promise<void> {
   const addressId = getAddressId(address, creator);
   let addressEntity = await Address.get(addressId);
 
-  if(!addressEntity) {
+  if (!addressEntity) {
     addressEntity = Address.create({
       id: addressId,
       networkId: chainId,
-      accountId: account
+      accountId: account,
     });
   }
   await addressEntity.save();
@@ -75,7 +85,9 @@ export async function handle1155Nfts(
       try {
         metadataUri = await instance.uri(tokenId);
       } catch {
-        logger.warn(`Contract uri instance broken at address ${event.address.toLowerCase()}`);
+        logger.warn(
+          `Contract uri instance broken at address ${event.address.toLowerCase()}`
+        );
       }
     }
 
@@ -135,7 +147,7 @@ export async function handleDsCreation(
   address: string,
   blockNumber: bigint,
   timestamp: bigint,
-  creatorAddress: string,
+  creatorAddress: string
 ): Promise<void> {
   let isErc1155 = false;
   let isErc721 = false;
@@ -180,8 +192,8 @@ export async function handleDsCreation(
       created_block: blockNumber,
       created_timestamp: timestamp,
       creator_address: creatorAddress.toLowerCase(),
-      total_supply:  BigInt(0),
-      contract_type: ContractType.ERC1155
+      total_supply: BigInt(0),
+      contract_type: ContractType.ERC1155,
     });
     await collection.save();
   }
@@ -232,7 +244,7 @@ export async function handleDsCreation(
       total_supply: totalSupply,
       name,
       symbol,
-      contract_type: ContractType.ERC721
+      contract_type: ContractType.ERC721,
     });
     await collection.save();
   }

@@ -2,10 +2,7 @@ import { Collection, Nft } from '../../types';
 import { Erc1155__factory } from '../../types/contracts';
 import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
-import {
-  handle1155Nfts,
-  handle1155Transfer,
-} from '../../utils/utilHandlers';
+import { handle1155Nfts, handle1155Transfer } from '../../utils/utilHandlers';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 
