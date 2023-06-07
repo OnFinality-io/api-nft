@@ -18,19 +18,19 @@ import {
   getTransferId,
   incrementBigInt
 } from './common';
-import { Erc1155, Erc1155__factory, Erc721, Erc721__factory } from '../types/contracts';
+import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
 
 export async function handleMetadata(id: string): Promise<void> {
-  let metdata = await Metadata.get(id);
+  let metadata = await Metadata.get(id.toString());
 
-  if (!metdata) {
-    metdata = Metadata.create({
-      id,
+  if (!metadata) {
+    metadata = Metadata.create({
+      id: id.toString(),
       metadata_status: StatusType.PENDING,
     });
-    await metdata.save();
+    await metadata.save();
   }
 }
 
