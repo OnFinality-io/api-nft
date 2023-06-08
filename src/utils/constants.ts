@@ -1,3 +1,7 @@
+/*
+These addresses are blacklisted as they are proxy contracts that implements multiple interfaces, and does not upgrade to ERC721 or ERC1155
+ */
+
 export const blackListedAddresses = [
   '0x969d515486ba6133400ac9c73298586426a090f5', // 592, 1285
   '0xa5bd5c661f373256c0ccfbc628fd52de74f9bb55', // 1284
