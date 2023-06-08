@@ -11,3 +11,15 @@ export const blackListedAddresses = [
   '0x9f7ea856ba1fb88d35e000c45e75f134a756ac4f', // 1284
   '0x0a6f564c5c9bebd66f1595f1b51d1f3de6ef3b79', // 1284
 ];
+
+// Generic Errors
+export const ethersErrors = [
+  'UNKNOWN_ERROR',
+  'NOT_IMPLEMENTED',
+  'UNSUPPORTED_OPERATION',
+  'NETWORK_ERROR',
+  'SERVER_ERROR',
+  'TIMEOUT',
+  'BAD_DATA',
+  'CANCELLED',
+];

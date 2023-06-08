@@ -19,7 +19,14 @@ schema:
   file: "./schema.graphql"
 
 network:
-  endpoint: "https://rpc.api.moonbeam.network"
+  endpoint: [
+    "https://rpc.api.moonbeam.network",
+#    "https://moonbeam.public.blastapi.io", # eth_logs unavailable in public endpoint
+#    "https://1rpc.io/glmr", # eth_logs unavailable in public endpoint
+#    "https://moonbeam.unitedbloc.com",
+#    "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0"
+
+  ]
   chainId: "1284"
   dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary__c3Vic"
 

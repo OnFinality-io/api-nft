@@ -22,7 +22,7 @@ import {
 import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
-import { blackListedAddresses } from './constants';
+import { blackListedAddresses, ethersErrors } from './constants';
 
 export async function handleMetadata(
   id: string,
@@ -173,17 +173,17 @@ export async function handleDsCreation(
   await handleNetwork(chainId);
 
   // Check interface
-  logger.info(`address: ${address.toLowerCase()}`);
-  // Should this be of individual ?
   try {
     [isErc1155, isErc721] = await Promise.all([
       erc1155Instance.supportsInterface('0xd9b67a26'),
       erc721Instance.supportsInterface('0x80ac58cd'),
     ]);
-  } catch (e) {
-    // if both are false then there is no point, return
+  } catch (e: any) {
+    if (ethersErrors.includes(e?.code)) {
+      throw new Error(e);
+    }
+
     if (!isErc721 && !isErc1155) {
-      logger.warn('not any');
       return;
     }
   }

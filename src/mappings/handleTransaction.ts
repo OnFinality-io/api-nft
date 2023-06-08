@@ -23,6 +23,7 @@ export async function handleTransaction(
     }
 
     if (!createsAddress) {
+      logger.warn('No address found');
       return;
     }
   }

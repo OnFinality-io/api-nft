@@ -19,7 +19,11 @@ schema:
   file: "./schema.graphql"
 
 network:
-  endpoint: "https://astar.api.onfinality.io/public"
+  endpoint: [
+    "https://astar.api.onfinality.io/public",
+    "https://rpc.astar.network"
+    "https://evm.astar.network"
+  ]
   chainId: "592"
   dictionary: "https://api.subquery.network/sq/subquery/astar-dictionary__c3Vic"
 
@@ -56,7 +60,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 213852
+    startBlock: 241638
     mapping:
       file: "./dist/index.js"
       handlers:
