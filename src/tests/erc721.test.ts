@@ -1,6 +1,7 @@
 import { subqlTest } from '@subql/testing';
 import { Collection, ContractType } from '../types';
 
+// test for correct Total_supply
 subqlTest(
   'test collections entity',
   218985,
@@ -21,3 +22,11 @@ subqlTest(
   ],
   'handleTransaction'
 );
+
+// Test for correct new NFTs, metadata, Transfer
+
+// Test for correct updated NFTs with transfer
+
+// Correct updated Collections total_supply with increment ERC1155
+
+// Correct update Collections total_supply with state update ERC721
