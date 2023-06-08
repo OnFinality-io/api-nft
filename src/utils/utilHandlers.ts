@@ -22,7 +22,7 @@ import {
 import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
-import { blackListedAddresses, ethersErrors } from './constants';
+import { blackListedAddresses } from './constants';
 
 export async function handleMetadata(
   id: string,
@@ -179,12 +179,9 @@ export async function handleDsCreation(
       erc721Instance.supportsInterface('0x80ac58cd'),
     ]);
   } catch (e: any) {
-    if (ethersErrors.includes(e?.code)) {
-      throw new Error(e);
-    }
-
     if (!isErc721 && !isErc1155) {
-      return;
+      if (e?.code === 'CALL_EXCEPTION') return;
+      throw new Error(e);
     }
   }
 
