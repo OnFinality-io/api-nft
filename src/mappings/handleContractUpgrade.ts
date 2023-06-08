@@ -11,6 +11,7 @@ export async function handleContractUpgrade(event: UpgradedLog): Promise<void> {
   // the rest would be the same as handleTransaction
 
   // check if the contract that is called
+  logger.info(`is Contract upgrade`);
 
   await handleDsCreation(
     event.address.toLowerCase(),

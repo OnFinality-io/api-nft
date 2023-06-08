@@ -14,6 +14,7 @@ export async function handleTransaction(
 
   // logger.info(`contract creation at blockHeight=${tx.blockNumber}`);
   // sometimes it would not follow standards
+
   let createsAddress = (tx as any).creates;
 
   if (!createsAddress) {
@@ -32,6 +33,7 @@ export async function handleTransaction(
     }
   }
 
+  logger.info(`handleTransaction: ${createsAddress}`);
   await handleDsCreation(
     (createsAddress as string).toLowerCase(),
     BigInt(tx.blockNumber),

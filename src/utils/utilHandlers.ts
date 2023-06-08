@@ -22,9 +22,12 @@ import {
 import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
+import { blackListedAddresses } from './constants';
 
-export async function handleMetadata(metadataUri: string): Promise<void> {
-  const id = hashId(metadataUri);
+export async function handleMetadata(
+  id: string,
+  metadataUri: string
+): Promise<void> {
   let metadata = await Metadata.get(id);
 
   if (!metadata) {
@@ -80,6 +83,7 @@ export async function handle1155Nfts(
 
   if (!nft) {
     let metadataUri;
+    let metadataId;
 
     if (isERC1155Metadata) {
       try {
@@ -92,7 +96,8 @@ export async function handle1155Nfts(
     }
 
     if (metadataUri) {
-      await handleMetadata(metadataUri);
+      metadataId = hashId(metadataUri);
+      await handleMetadata(metadataId, metadataUri);
     }
     collection.total_supply = incrementBigInt(collection.total_supply);
 
@@ -108,8 +113,12 @@ export async function handle1155Nfts(
       minted_timestamp: event.block.timestamp,
       minter_address: event.address.toLowerCase(),
       current_owner: event.args.to.toLowerCase(),
-      metadataId: metadataUri,
+      metadataId,
     });
+  } else {
+    // If NFT exist, should update the current_owner
+    nft.current_owner = event.args.to.toLowerCase();
+    await nft.save();
   }
 }
 
@@ -149,6 +158,12 @@ export async function handleDsCreation(
   timestamp: bigint,
   creatorAddress: string
 ): Promise<void> {
+  // BlackListed Contract Address
+  if (blackListedAddresses.includes(address)) {
+    logger.warn(`Address: ${address} is blackListed`);
+    return;
+  }
+
   let isErc1155 = false;
   let isErc721 = false;
 
@@ -173,6 +188,15 @@ export async function handleDsCreation(
     }
   }
 
+  if (isErc1155 && isErc721) {
+    logger.error(
+      `Contract: ${address.toLowerCase()} implements both interfaces at ${blockNumber}`
+    );
+    throw new Error(
+      `Contract: ${address.toLowerCase()} implements both interfaces`
+    );
+  }
+
   const casedAddress = address.toLowerCase();
 
   const collectionId = getCollectionId(chainId, address);
@@ -195,6 +219,7 @@ export async function handleDsCreation(
       total_supply: BigInt(0),
       contract_type: ContractType.ERC1155,
     });
+    logger.info(`Total supply for erc1155: ${collection.total_supply}`);
     await collection.save();
   }
 
@@ -246,6 +271,7 @@ export async function handleDsCreation(
       symbol,
       contract_type: ContractType.ERC721,
     });
+    logger.info(`Total supply for erc721: ${collection.total_supply}`);
     await collection.save();
   }
 }

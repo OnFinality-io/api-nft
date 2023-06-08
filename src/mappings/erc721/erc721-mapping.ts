@@ -5,6 +5,7 @@ import {
   getCollectionId,
   getNftId,
   getTransferId,
+  hashId,
   incrementBigInt,
 } from '../../utils/common';
 import { handleAddress, handleMetadata } from '../../utils/utilHandlers';
@@ -46,6 +47,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
 
   if (!nft) {
     let metadataUri;
+    let metadataId;
     try {
       // metadata possibly undefined
       // nft can share same metadata
@@ -57,7 +59,8 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     } catch (e) {}
 
     if (metadataUri) {
-      await handleMetadata(metadataUri);
+      metadataId = hashId(metadataUri);
+      await handleMetadata(metadataId, metadataUri);
     }
 
     nft = Nft.create({
@@ -69,7 +72,7 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       minted_timestamp: event.block.timestamp,
       minter_address: event.transaction.from.toLowerCase(),
       current_owner: event.args.to.toLowerCase(),
-      metadataId: metadataUri,
+      metadataId,
     });
 
     try {
@@ -79,6 +82,10 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     }
 
     await Promise.all([collection.save(), nft.save()]);
+  } else {
+    // If NFT exist, should update the current_owner
+    nft.current_owner = event.args.to.toLowerCase();
+    await nft.save();
   }
 
   const transferId = getTransferId(
