@@ -219,7 +219,6 @@ export async function handleDsCreation(
       total_supply: BigInt(0),
       contract_type: ContractType.ERC1155,
     });
-    logger.info(`Total supply for erc1155: ${collection.total_supply}`);
     await collection.save();
   }
 
@@ -271,7 +270,6 @@ export async function handleDsCreation(
       symbol,
       contract_type: ContractType.ERC721,
     });
-    logger.info(`Total supply for erc721: ${collection.total_supply}`);
     await collection.save();
   }
 }

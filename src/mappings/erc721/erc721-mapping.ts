@@ -14,31 +14,10 @@ import assert from 'assert';
 export async function handleERC721(event: TransferLog): Promise<void> {
   const instance = Erc721__factory.connect(event.address, api);
 
-  // there should be an interface check to see if the transaction is of the correct interface
-
-  // this is still needed, when the dynamic DS is created, it is looking for transfers
-  // it is possible that there is a transfer event on the address that is not the desrired erc ?
-  // let isErc721 = false;
-  // try {
-  //   isErc721 = await instance.supportsInterface('0x80ac58cd');
-  // } catch (e) {
-  //   return;
-  // }
-  //
-  // if (!isErc721) {
-  //   logger.warn(`not a erc721 transfer, address: ${event.address.toLowerCase()}`);
-  //   return;
-  // }
-
   // If collection is already in db, no need to check state.
   const collectionId = getCollectionId(chainId, event.address);
   const collection = await Collection.get(collectionId);
 
-  // test purpose only
-  // if (!collection) {
-  //   logger.warn(`collection missing on ${collectionId}`);
-  //   return;
-  // }
   assert(collection, `Missing collection: ${collectionId}`);
   assert(event.args, 'No event args on erc721');
 

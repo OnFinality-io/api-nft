@@ -38,5 +38,4 @@ export async function handleERC1155Uri(event: URILog): Promise<void> {
   }
   nft.metadataId = event.args.value;
   await nft.save();
-  logger.info('updated metadataId for erc1155');
 }
