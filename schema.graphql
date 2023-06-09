@@ -62,7 +62,7 @@ type Network @entity {
 
 type Metadata @entity {
   id: ID! # hashed metadata_uri
-  metadata_uri: AnyJson! # metadata_uri
+  metadata_uri: String!
   raw: AnyJson
   metadata_status: StatusType!
   name: String

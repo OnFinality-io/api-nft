@@ -33,7 +33,7 @@ export async function handleMetadata(
   if (!metadata) {
     metadata = Metadata.create({
       id,
-      metadata_uri: metadataUri as any,
+      metadata_uri: metadataUri,
       metadata_status: StatusType.PENDING,
     });
     await metadata.save();

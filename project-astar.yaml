@@ -29,7 +29,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 213852 # this is the first evmTransaction on the chain
+    startBlock: 218985 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:
