@@ -21,7 +21,7 @@ schema:
 network:
   endpoint: [
     "https://astar.api.onfinality.io/public",
-    "https://rpc.astar.network"
+    "https://rpc.astar.network",
     "https://evm.astar.network"
   ]
   chainId: "592"

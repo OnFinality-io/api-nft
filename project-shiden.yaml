@@ -20,7 +20,7 @@ schema:
 
 network:
   endpoint: [
-    "wss://shiden.api.onfinality.io/public-ws",
+    "https://shiden.api.onfinality.io/public",
 #    "https://shiden.public.blastapi.io"
   ]
   chainId: "336"
