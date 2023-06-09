@@ -179,10 +179,8 @@ export async function handleDsCreation(
       erc721Instance.supportsInterface('0x80ac58cd'),
     ]);
   } catch (e: any) {
-    if (!isErc721 && !isErc1155) {
-      if (e?.code === 'CALL_EXCEPTION') return;
-      throw new Error(e);
-    }
+    if (e?.code === 'CALL_EXCEPTION') return; // Contract does not implement erc165
+    throw new Error(e);
   }
 
   if (isErc1155 && isErc721) {
