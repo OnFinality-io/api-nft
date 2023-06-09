@@ -19,14 +19,16 @@ schema:
   file: "./schema.graphql"
 
 network:
-  endpoint: "wss://shiden.api.onfinality.io/public-ws"
+  endpoint: [
+    "https://shiden.api.onfinality.io/public",
+#    "https://shiden.public.blastapi.io"
+  ]
   chainId: "336"
   dictionary: "https://api.subquery.network/sq/subquery/shiden-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 339618
-#    startBlock: 1671106
+    startBlock: 339618 # First evm transaction
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -34,15 +36,13 @@ dataSources:
           kind: ethereum/TransactionHandler
           filter:
             to: null
-#            function: "0x60806040"
   - kind: ethereum/Runtime
     options:
       abi: erc1967
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 339618
-    #    startBlock: 1671106
+    startBlock: 339618 # First evm transaction
     mapping:
       file: "./dist/index.js"
       handlers:

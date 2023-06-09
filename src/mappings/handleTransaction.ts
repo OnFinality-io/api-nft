@@ -4,16 +4,12 @@ import { handleDsCreation } from '../utils/utilHandlers';
 export async function handleTransaction(
   tx: EthereumTransaction
 ): Promise<void> {
-  // const network = await handleNetwork(chainId);
-
   // if tx has creates on it then that should be the address of a contract creation
   // then we must check if the contract creation is of erc721 or erc1155
   // if it is then we would create a dynamic dataSource for it.
 
   // then that dynamicDs would query with that given address
 
-  // logger.info(`contract creation at blockHeight=${tx.blockNumber}`);
-  // sometimes it would not follow standards
   let createsAddress = (tx as any).creates;
 
   if (!createsAddress) {
@@ -27,7 +23,7 @@ export async function handleTransaction(
     }
 
     if (!createsAddress) {
-      // logger.warn(`creation address is undefined`);
+      logger.warn('No address found');
       return;
     }
   }

@@ -11,29 +11,12 @@ export async function handleERC1155batch(
 ): Promise<void> {
   const instance = Erc1155__factory.connect(event.address, api);
 
-  // let isErc1155 = false;
-  // try {
-  //   isErc1155 = await instance.supportsInterface('0xd9b67a26');
-  // } catch (e) {
-  //   return;
-  // }
-  //
-  // if (!isErc1155) {
-  //   return;
-  // }
-
   let isERC1155Metadata = false;
 
   const collectionId = getCollectionId(chainId, event.address);
   const collection = await Collection.get(collectionId);
 
   assert(collection, `Missing collection: ${collectionId}`);
-
-  // testing purpose only
-  // if (!collection) {
-  //   logger.warn(`collection missing on ${collectionId}`);
-  //   return;
-  // }
 
   assert(event.args, 'No event args on erc1155');
   try {
