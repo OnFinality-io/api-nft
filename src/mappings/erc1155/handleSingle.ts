@@ -1,4 +1,3 @@
-import { Erc1155__factory } from '../../types/contracts';
 import {
   TransferBatchLog,
   TransferSingleLog,

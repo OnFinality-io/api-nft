@@ -63,6 +63,11 @@ dataSources:
           filter:
             topics:
               - Upgraded(address)
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - BeaconUpgraded(address)
 templates:
   - name: ERC721
     kind: ethereum/Runtime

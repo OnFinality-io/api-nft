@@ -1,4 +1,4 @@
-import { Collection, ContractType, Nft, Transfer } from '../../types';
+import { Collection, Nft, Transfer } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import {
