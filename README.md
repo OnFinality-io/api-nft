@@ -77,8 +77,29 @@ You can try to query with the following code to get a taste of how it works.
 -Get all NFTs for contract
 ````
 
+
+#### Syncing Status Query example:
 ```graphql
-query {
-        
+{
+    moonbeam: _metadata(chainId: "1284") {
+        lastProcessedHeight
+        targetHeight
+    }
+    moonriver: _metadata(chainId: "1285") {
+        lastProcessedHeight
+        targetHeight
+    }
+    astar: _metadata(chainId: "592") {
+        lastProcessedHeight
+        targetHeight
+    }
+    acala: _metadata(chainId: "787") {
+        lastProcessedHeight
+        targetHeight
+    }
+    shiden: _metadata(chainId: "336") {
+        lastProcessedHeight
+        targetHeight
+    }
 }
 ```
