@@ -54,7 +54,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1102550 # this is the first evmTransaction on the chain
+    startBlock: 1154839 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -62,12 +62,12 @@ dataSources:
           kind: ethereum/LogHandler
           filter:
             topics:
-              - Upgraded(address)
+              - Upgraded(address) # First Upgraded 1383167
         - handler: handleContractUpgrade
           kind: ethereum/LogHandler
           filter:
             topics:
-              - BeaconUpgraded(address)
+              - BeaconUpgraded(address) # First beaconUpgraded 1154839
 templates:
   - name: ERC721
     kind: ethereum/Runtime
