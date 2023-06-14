@@ -69,16 +69,148 @@ Open your browser and head to `http://localhost:3000`.
 Finally, you should see a GraphQL playground is showing in the explorer and the schemas that ready to query.
 
 You can try to query with the following code to get a taste of how it works.
-```
--Get NFTs for address (all networks)
--Get NFTs for address(one network)
--Get all transfers for address
--Get all transfers for NFT
--Get all NFTs for contract
-````
 
+#### Get NFTs for address (all network)
 ```graphql
-query {
-        
+query ($ownerAddress: String!) {
+    nfts(filter: {
+        currentOwner: {equalTo: $ownerAddress},
+    }) {
+        nodes {
+            id
+            metadataId
+            collection {
+                contractType
+            }
+        }
+    }
+}
+```
+```graphql
+# Variables
+{
+    "ownerAddress": "0x6bd25bf06f00dc2fd1540a89e044788ea68d338e"
+}
+```
+
+#### Get NFTs for address (one network)
+```graphql
+query ($networkId: String!, $ownerAddress: String!) {
+    nfts(filter: {
+        currentOwner: {equalTo: $ownerAddress},
+        collection: {network: {id: {equalTo: $networkId}}}
+    }) {
+        nodes {
+            id
+            metadataId
+            collection {
+                contractType
+            }
+        }
+    }
+}
+```
+```graphql
+# Variables
+{
+    "networkId" : "336",
+    "ownerAddress":"0x6bd25bf06f00dc2fd1540a89e044788ea68d338e"
+}
+```
+
+#### Get all transfers for address
+```graphql
+query ($address: String!) {
+    transfers(filter: {to: {equalTo: $address}}) {
+        nodes {
+            transactionHash
+            block
+            nft {
+                metadata {
+                    metadataUri
+                }
+            }
+        }
+    }
+}
+```
+```graphql
+# Variables
+{
+    "address": "0x6bd25bf06f00dc2fd1540a89e044788ea68d338e"
+}
+```
+
+#### Get all transfers for NFT
+```graphql
+query ($nftId: String!) {
+    transfers(filter: {nftId: {equalTo: $nftId}}) {
+        nodes {
+            transactionHash
+            to
+            from
+            networkId
+        }
+    }
+}
+```
+```graphql
+# Variables
+{
+    # Note: nftId is `chaindId-contract_address-tokenId`
+    "nftId": "336-0xf3720278e71161360421f5aa8458e1c48d3bc369-48"
+}
+```
+
+#### Get all NFTs for contract
+```graphql
+query ($contractAddress: String!) {
+    collections(filter: {contractAddress: {equalTo: $contractAddress}}) {
+        nodes {
+            nfts {
+                nodes {
+                    mintedBlock
+                    tokenId
+                    currentOwner
+                    metadata {
+                        metadataUri
+                    }
+                }
+            }
+        }
+    }
+}
+```
+```graphql
+# Variables
+{
+    "contractAddress": "0xa358a6e348ec4266514e707b786bad3ca1143b50"
+}
+```
+
+#### Syncing Status Query example:
+- Latest Processed Height 
+```graphql
+{
+    moonbeam: _metadata(chainId: "1284") {
+        lastProcessedHeight
+        targetHeight
+    }
+    moonriver: _metadata(chainId: "1285") {
+        lastProcessedHeight
+        targetHeight
+    }
+    astar: _metadata(chainId: "592") {
+        lastProcessedHeight
+        targetHeight
+    }
+    acala: _metadata(chainId: "787") {
+        lastProcessedHeight
+        targetHeight
+    }
+    shiden: _metadata(chainId: "336") {
+        lastProcessedHeight
+        targetHeight
+    }
 }
 ```
