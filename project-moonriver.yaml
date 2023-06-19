@@ -26,7 +26,7 @@ network:
     "https://moonriver.api.onfinality.io/public"
   ]
   chainId: "1285"
-  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary__c3Vic"
+  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
 
 dataSources:
   - kind: ethereum/Runtime
