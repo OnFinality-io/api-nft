@@ -1,7 +1,8 @@
 import { URILog } from '../../types/abi-interfaces/Erc1155';
 import { Nft } from '../../types';
-import { getCollectionId, getNftId } from '../../utils/common';
+import { getCollectionId, getNftId, hashId } from '../../utils/common';
 import assert from 'assert';
+import { handleMetadata } from '../../utils/utilHandlers';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {
   const collectionId = getCollectionId(chainId, event.address);
@@ -19,6 +20,7 @@ export async function handleERC1155Uri(event: URILog): Promise<void> {
     );
   }
 
-  nft.metadataId = event.args.value;
-  await nft.save();
+  const metadataId = hashId(event.args.value);
+  nft.metadataId = metadataId;
+  await Promise.all([handleMetadata(metadataId, event.args.value), nft.save()]);
 }
