@@ -25,21 +25,30 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   let nft = await Nft.get(nftId);
 
   if (!nft) {
-    let metadataUri;
-    let metadataId;
-    try {
-      // metadata possibly undefined
-      // nft can share same metadata
-      // if collection.name and symbol exist, meaning there is metadata on this contract
-      metadataUri =
-        collection.name || collection.symbol
-          ? await instance.tokenURI(event.args.tokenId)
-          : undefined;
-    } catch (e) {}
+    let metadataId: string | undefined;
 
-    if (metadataUri) {
-      metadataId = hashId(metadataUri);
-      await handleMetadata(metadataId, metadataUri);
+    // metadata possibly undefined
+    // nft can share same metadata
+    // if collection.name and symbol exist, meaning there is metadata on this contract
+    const [uriResult, totalSupplyResult] = await Promise.allSettled([
+      collection.name || collection.symbol
+        ? await instance.tokenURI(event.args.tokenId)
+        : undefined,
+      (await instance.totalSupply()).toBigInt(),
+    ]);
+
+    if (uriResult.status === 'fulfilled') {
+      const value = uriResult.value;
+      if (value) {
+        metadataId = hashId(value);
+        await handleMetadata(metadataId, value);
+      }
+    }
+
+    if (totalSupplyResult.status === 'fulfilled') {
+      collection.total_supply = totalSupplyResult.value;
+    } else {
+      collection.total_supply = incrementBigInt(collection.total_supply);
     }
 
     nft = Nft.create({
@@ -53,12 +62,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
       current_owner: event.args.to.toLowerCase(),
       metadataId,
     });
-
-    try {
-      collection.total_supply = (await instance.totalSupply()).toBigInt();
-    } catch (e) {
-      collection.total_supply = incrementBigInt(collection.total_supply);
-    }
 
     await Promise.all([collection.save(), nft.save()]);
   } else {
