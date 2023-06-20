@@ -1,5 +1,5 @@
 import { subqlTest } from '@subql/testing';
-import { Collection, ContractType } from '../types';
+import { Collection, ContractType, Network } from '../types';
 
 // test for correct Total_supply
 subqlTest(
@@ -14,7 +14,7 @@ subqlTest(
       created_block: BigInt(218985),
       created_timestamp: BigInt(1642483296),
       creator_address: '0xa4849f1d96b26066f9c631fcdc8f1457d27fb5ec',
-      total_supply: BigInt(0),
+      total_supply: BigInt(8144),
       contract_type: ContractType.ERC1155,
       name: undefined,
       symbol: undefined,

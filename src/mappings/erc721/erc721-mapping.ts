@@ -32,22 +32,30 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     // if collection.name and symbol exist, meaning there is metadata on this contract
     const [uriResult, totalSupplyResult] = await Promise.allSettled([
       collection.name || collection.symbol
-        ? await instance.tokenURI(event.args.tokenId)
+        ? instance.tokenURI(event.args.tokenId)
         : undefined,
-      (await instance.totalSupply()).toBigInt(),
+      instance.totalSupply(),
     ]);
 
-    if (uriResult.status === 'fulfilled') {
+    logger.info(`uri: ${uriResult.status}`);
+    logger.info(`totalSupply: ${totalSupplyResult.status}`);
+
+    if (uriResult?.status === 'fulfilled') {
       const value = uriResult.value;
       if (value) {
+        logger.info(`metadataId value=${value}`);
         metadataId = hashId(value);
         await handleMetadata(metadataId, value);
       }
+    } else {
+      logger.warn(`rejected tokenURI`);
     }
 
     if (totalSupplyResult.status === 'fulfilled') {
-      collection.total_supply = totalSupplyResult.value;
+      logger.info(`totalSupply value=${totalSupplyResult.value.toHexString()}`);
+      collection.total_supply = totalSupplyResult.value.toBigInt();
     } else {
+      logger.warn(`rejected totalSupply`);
       collection.total_supply = incrementBigInt(collection.total_supply);
     }
 
