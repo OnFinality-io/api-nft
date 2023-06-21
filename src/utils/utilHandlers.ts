@@ -224,15 +224,19 @@ export async function handleDsCreation(
     });
 
     // interface defined: https://eips.ethereum.org/EIPS/eip-721
-    const [isERC721Enumerable, isERC721Metadata] = await Promise.allSettled([
-      erc721Instance.supportsInterface('0x780e9d63'),
-      erc721Instance.supportsInterface('0x5b5e139f'),
-    ]);
+    const [isERC721EnumerableResult, isERC721MetadataResult] =
+      await Promise.allSettled([
+        erc721Instance.supportsInterface('0x780e9d63'),
+        erc721Instance.supportsInterface('0x5b5e139f'),
+      ]);
 
     let name: string | undefined;
     let symbol: string | undefined;
 
-    if (isERC721Metadata.status === 'fulfilled' && isERC721Metadata.value) {
+    if (
+      isERC721MetadataResult.status === 'fulfilled' &&
+      isERC721MetadataResult.value
+    ) {
       const [nameResult, symbolResult] = await Promise.allSettled([
         erc721Instance.name(),
         erc721Instance.symbol(),
@@ -246,7 +250,10 @@ export async function handleDsCreation(
     }
 
     let totalSupplyResult = BigNumber.from(0);
-    if (isERC721Enumerable.status === 'fulfilled' && isERC721Enumerable.value) {
+    if (
+      isERC721EnumerableResult.status === 'fulfilled' &&
+      isERC721EnumerableResult.value
+    ) {
       try {
         totalSupplyResult = await erc721Instance.totalSupply();
       } catch {
