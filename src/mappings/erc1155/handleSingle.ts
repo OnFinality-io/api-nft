@@ -3,7 +3,7 @@ import {
   TransferSingleLog,
 } from '../../types/abi-interfaces/Erc1155';
 import assert from 'assert';
-import { handleERC1155batch } from './handleBatch';
+import { handleERC1155Batch } from './handleBatch';
 import { TransferBatchEventObject } from '../../types/contracts/Erc1155';
 import { BigNumber } from 'ethers';
 
@@ -34,5 +34,5 @@ export async function handleERC1155Single(
     args: newNewArgs,
   };
 
-  await handleERC1155batch(batchEvent as TransferBatchLog);
+  await handleERC1155Batch(batchEvent as TransferBatchLog);
 }

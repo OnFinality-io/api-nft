@@ -6,7 +6,7 @@ import { handle1155Nfts, handle1155Transfer } from '../../utils/utilHandlers';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 
-export async function handleERC1155batch(
+export async function handleERC1155Batch(
   event: TransferBatchLog
 ): Promise<void> {
   const instance = Erc1155__factory.connect(event.address, api);
