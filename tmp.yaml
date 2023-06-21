@@ -1,0 +1,78 @@
+specVersion: "1.0.0"
+
+name: "multichain-erc721-erc1155"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-ethereum"
+    version: "*"
+    options:
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This project can be use as a starting point for developing your
+  new Ethereum SubQuery project"
+repository: "https://github.com/subquery/ethereum-subql-starter"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: [
+    "https://rpc.api.moonbeam.network",
+    #    "https://moonbeam.public.blastapi.io", # eth_logs unavailable in public endpoint
+    #    "https://1rpc.io/glmr", # eth_logs unavailable in public endpoint
+    #    "https://moonbeam.unitedbloc.com",
+    #    "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0"
+  ]
+  chainId: "1284"
+  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary"
+
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 171075 # this is the first evmTransaction on the chain
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            to: null
+  - kind: ethereum/Runtime # To catch contractUpgrades
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 175356 # this is the first evmTransaction on the chain # first contract Creation should be 171132
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address) # First Upgraded 175356
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - BeaconUpgraded(address) # First beaconUpgraded 956090
+  - kind: ethereum/Runtime
+    startBlock: 991041 # this is the first evmTransaction on the chain
+    options:
+      abi: erc721
+      address: "0x3208a0a405e49d971b8d11e7d7a0160f693702ad"
+#      address: "0x7d5f0398549c9fdea03bbdde388361827cb376d5"
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+        file: "./dist/index.js"
+        handlers:
+          - handler: handleERC721
+            kind: ethereum/LogHandler
+            filter:
+              topics:
+                - Transfer(address, address, uint256)

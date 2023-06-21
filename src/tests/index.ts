@@ -1,1 +1,2 @@
-export * from './erc721.test';
+export * from './moonbeam.test';
+// export * from './astar.test';

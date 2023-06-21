@@ -195,7 +195,6 @@ export async function handleDsCreation(
   const casedAddress = address.toLowerCase();
 
   const collectionId = getCollectionId(chainId, address);
-  let totalSupply = BigInt(0);
 
   if (isErc1155) {
     logger.info(`is erc1155, address=${address}`);
@@ -247,10 +246,13 @@ export async function handleDsCreation(
       } catch (e) {}
     }
 
+    let totalSupplyResult = BigNumber.from(0);
     if (isERC721Enumerable) {
       try {
-        totalSupply = (await erc721Instance.totalSupply()).toBigInt();
-      } catch {}
+        totalSupplyResult = await erc721Instance.totalSupply();
+      } catch {
+        logger.warn(`Failed to get erc721 totalSupply, totalSupply set to 0`);
+      }
     }
 
     const collection = Collection.create({
@@ -260,7 +262,7 @@ export async function handleDsCreation(
       created_block: blockNumber,
       created_timestamp: timestamp,
       creator_address: creatorAddress.toLowerCase(),
-      total_supply: totalSupply,
+      total_supply: totalSupplyResult.toBigInt(),
       name,
       symbol,
       contract_type: ContractType.ERC721,
