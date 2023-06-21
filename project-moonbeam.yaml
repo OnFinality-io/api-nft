@@ -31,7 +31,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 171075 # this is the first evmTransaction on the chain
+    startBlock: 1003258 # this is the first evmTransaction on the chain
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -45,7 +45,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 175356 # this is the first evmTransaction on the chain # first contract Creation should be 171132
+    startBlock: 1003258 # this is the first evmTransaction on the chain # first contract Creation should be 171132
     mapping:
       file: "./dist/index.js"
       handlers:
