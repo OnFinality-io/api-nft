@@ -2,7 +2,11 @@ import { Collection, Nft } from '../../types';
 import { Erc1155__factory } from '../../types/contracts';
 import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
-import { handle1155Nfts, handle1155Transfer } from '../../utils/utilHandlers';
+import {
+  handle1155Nfts,
+  handle1155Transfer,
+  handleAddress,
+} from '../../utils/utilHandlers';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 
@@ -32,7 +36,9 @@ export async function handleERC1155Batch(
   // 4 uint256 value )
 
   const tokenIds: BigNumber[] = event.args.ids;
+  // logger.info(`Handler triggered at ${event.transactionHash}`);
 
+  // logger.info(`tokenIds length: ${tokenIds.length}`);
   const nfts = (
     await Promise.all(
       tokenIds.map(async (tokenId, idx) => {
@@ -66,5 +72,7 @@ export async function handleERC1155Batch(
   await Promise.all([
     store.bulkUpdate('Nft', nfts),
     store.bulkUpdate('Transfer', transfers),
+    handleAddress(event.args.to, event.transaction.from),
+    handleAddress(event.args.from, event.transaction.from),
   ]);
 }
