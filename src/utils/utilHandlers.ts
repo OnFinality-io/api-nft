@@ -223,36 +223,37 @@ export async function handleDsCreation(
       address: casedAddress,
     });
 
-    // interface defined: https://eips.ethereum.org/EIPS/eip-721
-    const [isERC721Enumerable, isERC721Metadata] = await Promise.allSettled([
-      erc721Instance.supportsInterface('0x780e9d63'),
-      erc721Instance.supportsInterface('0x5b5e139f'),
-    ]);
+    let isERC721Metadata = false;
+    let isERC721Enumerable = false;
 
+    try {
+      // interface defined: https://eips.ethereum.org/EIPS/eip-721
+      [isERC721Enumerable, isERC721Metadata] = await Promise.all([
+        erc721Instance.supportsInterface('0x780e9d63'),
+        erc721Instance.supportsInterface('0x5b5e139f'),
+      ]);
+    } catch {}
     let name: string | undefined;
     let symbol: string | undefined;
 
-    if (isERC721Metadata.status === 'fulfilled' && isERC721Metadata.value) {
-      const [nameResult, symbolResult] = await Promise.allSettled([
-        erc721Instance.name(),
-        erc721Instance.symbol(),
-      ]);
-      if (nameResult.status === 'fulfilled') {
-        name = nameResult.value;
-      }
-      if (symbolResult.status === 'fulfilled') {
-        symbol = symbolResult.value;
+    if (isERC721Metadata) {
+      try {
+        [name, symbol] = await Promise.all([
+          erc721Instance.name(),
+          erc721Instance.symbol(),
+        ]);
+      } catch (e: any) {
+        logger.error(`Failed to get name && symbol for contract: ${address}`);
+        throw new Error(e);
       }
     }
 
     let totalSupplyResult = BigNumber.from(0);
-    if (isERC721Enumerable.status === 'fulfilled' && isERC721Enumerable.value) {
+    if (isERC721Enumerable) {
       try {
         totalSupplyResult = await erc721Instance.totalSupply();
       } catch {
-        logger.warn(
-          `Failed to get collection totalSupply, totalSupply set to 0`
-        );
+        logger.warn(`Failed to get erc721 totalSupply, totalSupply set to 0`);
       }
     }
 
