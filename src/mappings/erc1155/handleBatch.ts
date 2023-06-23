@@ -36,9 +36,7 @@ export async function handleERC1155Batch(
   // 4 uint256 value )
 
   const tokenIds: BigNumber[] = event.args.ids;
-  // logger.info(`Handler triggered at ${event.transactionHash}`);
 
-  // logger.info(`tokenIds length: ${tokenIds.length}`);
   const nfts = (
     await Promise.all(
       tokenIds.map(async (tokenId, idx) => {
