@@ -23,6 +23,7 @@ import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
 import { blackListedAddresses } from './constants';
+import { TransferLog } from '../types/abi-interfaces/Erc721';
 
 export async function handleMetadata(
   id: string,
@@ -66,6 +67,7 @@ export async function handleAddress(
     });
   }
   await addressEntity.save();
+  logger.info(` new address: ${addressId} saved`);
 }
 
 export async function handle1155Nfts(
@@ -121,15 +123,49 @@ export async function handle1155Nfts(
     await nft.save();
   }
 }
+export async function handle721Transfer(
+  networkId: string,
+  event: TransferLog,
+  nftId: string,
+  batchIndex = 0
+): Promise<void> {
+  assert(event.args, 'No event args on erc721');
+  const transferId = getTransferId(
+    chainId,
+    event.transactionHash,
+    event.logIndex.toString(),
+    batchIndex
+  );
+  let transfer = await Transfer.get(transferId);
+  if (!transfer) {
+    transfer = Transfer.create({
+      id: transferId,
+      tokenId: event.args.tokenId.toString(),
+      amount: BigInt(1),
+      networkId: chainId,
+      block: BigInt(event.blockNumber),
+      timestamp: event.block.timestamp,
+      transaction_hash: event.transactionHash,
+      nftId,
+      from: event.args.from.toLowerCase(),
+      to: event.args.to.toLowerCase(),
+    });
 
-export function handle1155Transfer(
+    await transfer.save();
+    logger.info(
+      `new transfer: ${transferId} saved, at block: ${event.blockNumber}`
+    );
+  }
+}
+
+export async function handle1155Transfer(
   networkId: string,
   event: TransferBatchLog,
   tokenId: string,
   amount: bigint,
   nftId: string,
   batchIndex = 0
-): Transfer {
+): Promise<Transfer | undefined> {
   assert(event.args, 'No event args');
 
   const transferId = getTransferId(
@@ -138,6 +174,15 @@ export function handle1155Transfer(
     event.logIndex.toString(),
     batchIndex
   );
+
+  const transfer = await Transfer.get(transferId);
+  if (transfer) {
+    logger.info(
+      `Skipping transfer: ${transferId} at block: ${event.blockNumber}`
+    );
+    return;
+  }
+
   return Transfer.create({
     id: transferId,
     tokenId,
@@ -195,6 +240,11 @@ export async function handleDsCreation(
   const casedAddress = address.toLowerCase();
 
   const collectionId = getCollectionId(chainId, address);
+  const collection = await Collection.get(collectionId);
+  if (collection) {
+    logger.info(`Skipping collection: ${collectionId} as it exists already`);
+    return;
+  }
 
   if (isErc1155) {
     logger.info(`is erc1155, address=${address}`);

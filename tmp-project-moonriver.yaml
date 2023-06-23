@@ -1,0 +1,106 @@
+specVersion: "1.0.0"
+
+name: "multichain-erc721-erc1155"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-ethereum"
+    version: "*"
+    options:
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This project can be use as a starting point for developing your
+  new Ethereum SubQuery project"
+repository: "https://github.com/subquery/ethereum-subql-starter"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: [
+    #    "https://moonriver.public.blastapi.io",
+    #    "https://moonriver-mainnet.gateway.pokt.network/v1/lb/62a74fdb123e6f003963642f",
+    #    "https://moonriver.unitedbloc.com",
+    "https://moonriver.api.onfinality.io/public"
+  ]
+  chainId: "1285"
+  dictionary: "https://api.subquery.network/sq/subquery/moonriver-dictionary"
+
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 1017076
+    options:
+      abi: erc1155
+      address: '0x7baa8ba7cb575e3c599d3bf316870ba591b6ba8e'
+    assets:
+      erc1155:
+        file: "./abis/erc1155.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC1155Single
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              # topic-: 0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62
+              - TransferSingle(address, address, address, uint256, uint256)
+        - handler: handleERC1155Batch
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              # topic0: 0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb
+              - TransferBatch(address, address, address, uint256[], uint256[])
+        - handler: handleERC1155Uri
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              # topic0: 0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b
+              - URI(string, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 568909
+    options:
+      abi: erc721
+      address: '0xb6aadea9265a49f65c8e6d6238f214bad46e58af'
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC721
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address, address, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 664201
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: ethereum/TransactionHandler
+          filter:
+            to: null
+  - kind: ethereum/Runtime
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 404177
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address) # First Upgraded 404177
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - BeaconUpgraded(address) # First beaconUpgraded 1462843
+
