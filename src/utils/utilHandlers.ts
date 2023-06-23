@@ -119,6 +119,7 @@ export async function handle1155Nfts(
     });
   } else {
     // If NFT exist, should update the current_owner
+    logger.info(`NFT(1155) already exists: ${nftId}, updating current_owner`);
     nft.current_owner = event.args.to.toLowerCase();
     await nft.save();
   }
@@ -213,6 +214,14 @@ export async function handleDsCreation(
     return;
   }
 
+  // Check collections before commiting to interface checking
+  const collectionId = getCollectionId(chainId, address);
+  const collection = await Collection.get(collectionId);
+  if (collection) {
+    logger.info(`Skipping collection: ${collectionId} as it exists already`);
+    return;
+  }
+
   let isErc1155 = false;
   let isErc721 = false;
 
@@ -242,13 +251,6 @@ export async function handleDsCreation(
   }
 
   const casedAddress = address.toLowerCase();
-
-  const collectionId = getCollectionId(chainId, address);
-  const collection = await Collection.get(collectionId);
-  if (collection) {
-    logger.info(`Skipping collection: ${collectionId} as it exists already`);
-    return;
-  }
 
   if (isErc1155) {
     logger.info(`is erc1155, address=${address}`);
