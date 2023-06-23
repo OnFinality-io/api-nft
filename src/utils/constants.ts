@@ -18,4 +18,5 @@ export const blackListedAddresses = [
   '0x8ebd92d5e6688dc390433cde329aff379bf12a46', // 1284
   '0x8f7454ac98228f3504bb91ea3d8adafe6406110a', // 1284
   '0x2f2afae1139ce54fefc03593fee8ab2adf4a85a7', // 1284
+  '0x2f9db5616fa3fad1ab06cb2c906830ba63d135e3', // 1284
 ];
