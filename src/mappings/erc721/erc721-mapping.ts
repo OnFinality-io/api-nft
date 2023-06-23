@@ -8,7 +8,11 @@ import {
   hashId,
   incrementBigInt,
 } from '../../utils/common';
-import { handleAddress, handleMetadata } from '../../utils/utilHandlers';
+import {
+  handle721Transfer,
+  handleAddress,
+  handleMetadata,
+} from '../../utils/utilHandlers';
 import assert from 'assert';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
@@ -68,29 +72,10 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     nft.current_owner = event.args.to.toLowerCase();
     await nft.save();
   }
-
-  const transferId = getTransferId(
-    chainId,
-    event.transactionHash,
-    event.logIndex.toString(),
-    0
-  );
-
-  const transfer = Transfer.create({
-    id: transferId,
-    tokenId: event.args.tokenId.toString(),
-    amount: BigInt(1),
-    networkId: chainId,
-    block: BigInt(event.blockNumber),
-    timestamp: event.block.timestamp,
-    transaction_hash: event.transactionHash,
-    nftId: nft.id,
-    from: event.args.from.toLowerCase(),
-    to: event.args.to.toLowerCase(),
-  });
+  const transfer = await handle721Transfer(chainId, event, nft.id);
 
   await Promise.all([
-    transfer.save(),
+    transfer && transfer.save(),
     handleAddress(event.args.to, event.transaction.from),
     handleAddress(event.args.from, event.transaction.from),
   ]);

@@ -1,4 +1,4 @@
-import { Collection, Nft } from '../../types';
+import { Collection, Nft, Transfer } from '../../types';
 import { Erc1155__factory } from '../../types/contracts';
 import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
@@ -36,9 +36,7 @@ export async function handleERC1155Batch(
   // 4 uint256 value )
 
   const tokenIds: BigNumber[] = event.args.ids;
-  // logger.info(`Handler triggered at ${event.transactionHash}`);
 
-  // logger.info(`tokenIds length: ${tokenIds.length}`);
   const nfts = (
     await Promise.all(
       tokenIds.map(async (tokenId, idx) => {
@@ -56,22 +54,26 @@ export async function handleERC1155Batch(
     )
   ).filter(Boolean) as Nft[];
 
-  const transfers = tokenIds.map((tokenId, idx) => {
-    assert(event.args, 'No event args on erc1155');
+  const transfers = (
+    await Promise.all(
+      tokenIds.map(async (tokenId, idx) => {
+        assert(event.args, 'No event args on erc1155');
 
-    return handle1155Transfer(
-      chainId,
-      event,
-      tokenId.toString(),
-      event.args[4][idx].toBigInt(), //values
-      getNftId(collectionId, tokenId.toString()),
-      idx
-    );
-  });
+        return handle1155Transfer(
+          chainId,
+          event,
+          tokenId.toString(),
+          event.args[4][idx].toBigInt(), //values
+          getNftId(collectionId, tokenId.toString()),
+          idx
+        );
+      })
+    )
+  ).filter(Boolean);
 
   await Promise.all([
     store.bulkUpdate('Nft', nfts),
-    store.bulkUpdate('Transfer', transfers),
+    store.bulkUpdate('Transfer', transfers as Transfer[]),
     handleAddress(event.args.to, event.transaction.from),
     handleAddress(event.args.from, event.transaction.from),
   ]);
