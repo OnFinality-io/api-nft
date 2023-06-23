@@ -72,9 +72,10 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     nft.current_owner = event.args.to.toLowerCase();
     await nft.save();
   }
+  const transfer = await handle721Transfer(chainId, event, nft.id);
 
   await Promise.all([
-    handle721Transfer(chainId, event, nft.id),
+    transfer && transfer.save(),
     handleAddress(event.args.to, event.transaction.from),
     handleAddress(event.args.from, event.transaction.from),
   ]);

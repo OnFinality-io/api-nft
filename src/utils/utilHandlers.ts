@@ -128,34 +128,37 @@ export async function handle721Transfer(
   event: TransferLog,
   nftId: string,
   batchIndex = 0
-): Promise<void> {
+): Promise<Transfer | undefined> {
   assert(event.args, 'No event args on erc721');
+
   const transferId = getTransferId(
     chainId,
     event.transactionHash,
     event.logIndex.toString(),
     batchIndex
   );
-  let transfer = await Transfer.get(transferId);
-  if (!transfer) {
-    transfer = Transfer.create({
-      id: transferId,
-      tokenId: event.args.tokenId.toString(),
-      amount: BigInt(1),
-      networkId: chainId,
-      block: BigInt(event.blockNumber),
-      timestamp: event.block.timestamp,
-      transaction_hash: event.transactionHash,
-      nftId,
-      from: event.args.from.toLowerCase(),
-      to: event.args.to.toLowerCase(),
-    });
 
-    await transfer.save();
+  const transfer = await Transfer.get(transferId);
+
+  if (transfer) {
     logger.info(
-      `new transfer: ${transferId} saved, at block: ${event.blockNumber}`
+      `Skipping transfer: ${transferId} at block: ${event.blockNumber}`
     );
+    return;
   }
+
+  return Transfer.create({
+    id: transferId,
+    tokenId: event.args.tokenId.toString(),
+    amount: BigInt(1),
+    networkId: chainId,
+    block: BigInt(event.blockNumber),
+    timestamp: event.block.timestamp,
+    transaction_hash: event.transactionHash,
+    nftId,
+    from: event.args.from.toLowerCase(),
+    to: event.args.to.toLowerCase(),
+  });
 }
 
 export async function handle1155Transfer(
@@ -176,6 +179,7 @@ export async function handle1155Transfer(
   );
 
   const transfer = await Transfer.get(transferId);
+
   if (transfer) {
     logger.info(
       `Skipping transfer: ${transferId} at block: ${event.blockNumber}`
