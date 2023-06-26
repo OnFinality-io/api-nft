@@ -20,8 +20,7 @@ schema:
 
 network:
   endpoint: [
-#    "https://rpc.api.moonbeam.network",
-    "https://moonbeam.api.onfinality.io/rpc?apikey=516b8847-1cfa-4f3c-a5d8-8bac39b2de53"
+    "https://rpc.api.moonbeam.network",
     #    "https://moonbeam.public.blastapi.io", # eth_logs unavailable in public endpoint
     #    "https://1rpc.io/glmr", # eth_logs unavailable in public endpoint
     #    "https://moonbeam.unitedbloc.com",
