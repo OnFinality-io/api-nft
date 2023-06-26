@@ -67,7 +67,6 @@ export async function handleAddress(
     });
   }
   await addressEntity.save();
-  logger.info(` new address: ${addressId} saved`);
 }
 
 export async function handle1155Nfts(
