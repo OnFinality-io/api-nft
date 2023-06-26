@@ -20,3 +20,10 @@ export const blackListedAddresses = [
   '0x2f2afae1139ce54fefc03593fee8ab2adf4a85a7', // 1284
   '0x2f9db5616fa3fad1ab06cb2c906830ba63d135e3', // 1284
 ];
+
+/*
+This consists of transactionHashes that are extremely large, in order to improve performance, the db check will no longer be implemented for these transactions
+ */
+export const erc721BigTransactions = [
+  '0xc5122385987f61ec76aad54fe5729b96996ec98cb2676bd46601cbda77ffd41f', // https://blockscout.com/astar/block/1921194/transactions#txs
+];

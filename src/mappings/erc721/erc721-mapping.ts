@@ -4,7 +4,6 @@ import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import {
   getCollectionId,
   getNftId,
-  getTransferId,
   hashId,
   incrementBigInt,
 } from '../../utils/common';
@@ -14,6 +13,7 @@ import {
   handleMetadata,
 } from '../../utils/utilHandlers';
 import assert from 'assert';
+import { erc721BigTransactions } from '../../utils/constants';
 
 export async function handleERC721(event: TransferLog): Promise<void> {
   const instance = Erc721__factory.connect(event.address, api);
@@ -26,7 +26,11 @@ export async function handleERC721(event: TransferLog): Promise<void> {
   assert(event.args, 'No event args on erc721');
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString());
-  let nft = await Nft.get(nftId);
+
+  const greenCardTx = !!erc721BigTransactions.find(
+    (t) => t === event.transactionHash
+  );
+  let nft = greenCardTx ? undefined : await Nft.get(nftId);
 
   if (!nft) {
     let metadataId: string | undefined;
