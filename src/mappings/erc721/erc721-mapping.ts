@@ -27,10 +27,9 @@ export async function handleERC721(event: TransferLog): Promise<void> {
 
   const nftId = getNftId(collection.id, event.args.tokenId.toString());
 
-  const greenCardTx = !!erc721BigTransactions.find(
-    (t) => t === event.transactionHash
-  );
-  let nft = greenCardTx ? undefined : await Nft.get(nftId);
+  let nft = erc721BigTransactions.includes(event.transactionHash)
+    ? undefined
+    : await Nft.get(nftId);
 
   if (!nft) {
     let metadataId: string | undefined;

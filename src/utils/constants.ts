@@ -22,6 +22,14 @@ export const blackListedAddresses = [
 ];
 
 /*
+Contracts that does not follow the standards
+ */
+
+export const bypassContractNfts = [
+  '0x07e26ed4ed76ba2bc6f227189f20ceb3bb9c308e', // 592 https://blockscout.com/astar/address/0x07e26ED4ED76ba2Bc6f227189F20ceb3Bb9c308E/transactions#address-tabs <- this contract sets URI within contract constructor, does not have any minted events
+];
+
+/*
 This consists of transactionHashes that are extremely large, in order to improve performance, the db check will no longer be implemented for these transactions
  */
 export const erc721BigTransactions = [

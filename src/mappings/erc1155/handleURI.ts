@@ -3,18 +3,20 @@ import { Nft } from '../../types';
 import { getCollectionId, getNftId, hashId } from '../../utils/common';
 import assert from 'assert';
 import { handleMetadata } from '../../utils/utilHandlers';
+import { bypassContractNfts } from '../../utils/constants';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {
-  const collectionId = getCollectionId(chainId, event.address);
+  if (bypassContractNfts.includes(event.address.toLowerCase())) {
+    logger.warn(`Bypassing invalid contract: ${event.address.toLowerCase()}`);
+    return;
+  }
+  const collectionId = getCollectionId(chainId, event.address.toLowerCase());
 
   assert(event.args, 'No event args on erc1155');
   const nftId = getNftId(collectionId, event && event.args.id.toString());
   const nft = await Nft.get(nftId);
 
   if (!nft) {
-    logger.error(
-      `NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`
-    );
     throw new Error(
       `NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`
     );

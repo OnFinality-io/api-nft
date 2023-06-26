@@ -1,0 +1,49 @@
+specVersion: "1.0.0"
+
+name: "multichain-erc721-erc1155"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-ethereum"
+    version: "*"
+    options:
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This project can be use as a starting point for developing your
+  new Ethereum SubQuery project"
+repository: "https://github.com/subquery/ethereum-subql-starter"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: [
+#    "https://rpc.api.moonbeam.network",
+    "https://moonbeam.api.onfinality.io/rpc?apikey=516b8847-1cfa-4f3c-a5d8-8bac39b2de53"
+    #    "https://moonbeam.public.blastapi.io", # eth_logs unavailable in public endpoint
+    #    "https://1rpc.io/glmr", # eth_logs unavailable in public endpoint
+    #    "https://moonbeam.unitedbloc.com",
+    #    "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0"
+  ]
+  chainId: "1284"
+  dictionary: "https://api.subquery.network/sq/subquery/moonbeam-dictionary__c3Vic"
+
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 2920170
+    options:
+      abi: erc721
+      address: '0x72a33394f0652e2bf15d7901f3cd46863d968424'
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC721
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address, address, uint256)
