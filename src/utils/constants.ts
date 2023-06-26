@@ -27,6 +27,7 @@ Contracts that does not follow the standards
 
 export const bypassContractNfts = [
   '0x07e26ed4ed76ba2bc6f227189f20ceb3bb9c308e', // 592 https://blockscout.com/astar/address/0x07e26ED4ED76ba2Bc6f227189F20ceb3Bb9c308E/transactions#address-tabs <- this contract sets URI within contract constructor, does not have any minted events
+  '0x7881b8263a7df9f3d3724f9b8ca9ffc763b96606', // 592 https://blockscout.com/astar/tx/0x4953765ec92b751c951f96fa3a819537a9ee04c057168c6ff7a8208f55423ba2 <- same as above
 ];
 
 /*
