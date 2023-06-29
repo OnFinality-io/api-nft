@@ -72,7 +72,6 @@ export async function handleERC721(event: TransferLog): Promise<void> {
     await Promise.all([collection.save(), nft.save()]);
   } else {
     // If NFT exist, should update the current_owner
-    logger.info(`NFT(721) already exists: ${nftId}, updating current_owner`);
     nft.current_owner = event.args.to.toLowerCase();
     await nft.save();
   }
