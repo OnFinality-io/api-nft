@@ -3,11 +3,18 @@ import { Nft } from '../../types';
 import { getCollectionId, getNftId, hashId } from '../../utils/common';
 import assert from 'assert';
 import { handleMetadata } from '../../utils/utilHandlers';
-import { bypassContractNfts } from '../../utils/constants';
+import { bypassContractNfts, bypassUnmintedUriTx } from '../../utils/constants';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {
-  if (bypassContractNfts.includes(event.address.toLowerCase())) {
-    logger.warn(`Bypassing invalid contract: ${event.address.toLowerCase()}`);
+  if (
+    bypassContractNfts.includes(event.address.toLowerCase()) ||
+    bypassUnmintedUriTx.includes(event.transactionHash)
+  ) {
+    logger.warn(
+      `Bypassing invalid contract: ${event.address.toLowerCase()} at TX: ${
+        event.transactionHash
+      }`
+    );
     return;
   }
   const collectionId = getCollectionId(chainId, event.address.toLowerCase());
