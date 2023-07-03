@@ -36,7 +36,7 @@ ERC1155 contracts that sets URI before the token is minted
 e.g. https://blockscout.com/astar/address/0x2Cbc0538954Dd0b97AA69eac25D2C19D99D8eF2d/logs#address-tabs
  */
 export const bypassUnmintedUriTx = [
-  '0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b', // URI set before minting
+  '0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a', // URI set before minting
   // URI https://blockscout.com/astar/tx/0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a/logs
   // MINT https://blockscout.com/astar/tx/0x2e2978827718d3bd79b3f63a4613bf08d670f9be329e5c9bc6c0e772a2b7c9e5
 ];
