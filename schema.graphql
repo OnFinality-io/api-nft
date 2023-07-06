@@ -19,22 +19,22 @@ type AnyJson @jsonField {
 
 type Nft @entity {
   id: ID! #CollectionID-TokenId
-  tokenId: String!
+  tokenId: String! @index
   amount: BigInt! #1 for Erc721. 1155 semi-fungible has other values
   collection: Collection!
-  minted_block: BigInt! # Should be bigInt
+  minted_block: BigInt! @index# Should be bigInt
   minted_timestamp: BigInt! # unix epoch timestamp
-  minter_address: String! # event transaction from
-  current_owner: String! # event args to
+  minter_address: String! @index # event transaction from
+  current_owner: String! @index # event args to
   metadata: Metadata
 }
 
 type Collection @entity {
   id: ID! # chainID-contract adddress
   network: Network!
-  contract_address: String! # event address
-  created_block: BigInt!
-  created_timestamp: BigInt! # unix epoch timestamp
+  contract_address: String! @index # event address
+  created_block: BigInt! @index
+  created_timestamp: BigInt! @index# unix epoch timestamp
   creator_address: String! # event transaction from
   total_supply: BigInt!
   name: String
@@ -45,15 +45,15 @@ type Collection @entity {
 
 type Transfer @entity {
   id: ID!
-  tokenId: String!
+  tokenId: String! @index
   amount: BigInt! # Same as with NFT
   network: Network!
-  block: BigInt
-  timestamp: BigInt
-  transaction_hash: String # event transaction hash
+  block: BigInt! @index
+  timestamp: BigInt! @index
+  transaction_hash: String! @index# event transaction hash
   nft: Nft
-  from: String!
-  to: String!
+  from: String! @index
+  to: String! @index
 }
 
 type Network @entity {
