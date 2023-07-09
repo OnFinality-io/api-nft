@@ -43,6 +43,7 @@ export const bypassUnmintedUriTx = [
   // URI https://blockscout.com/astar/tx/0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be/logs
   // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
   '0x5ecdc28dfa855efcde4b7831c2730626ddeca98b136f4ade554a8d11a92605ca', // MINT on 3822891 // URI on 3822640 (astar)
+  '0x33e3543c25b2e4b337af6c12d301187851af4320b4a6005b9cee4fd9f482beda', // MINT on 3822891 // URI on 3822644 (astar)
 ];
 
 /*
