@@ -1,21 +1,32 @@
-import { Collection, Nft, Transfer } from '../../types';
+import { BlacklistedAddresses, Collection, Nft } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import {
+  getBlacklistId,
   getCollectionId,
   getNftId,
   hashId,
   incrementBigInt,
 } from '../../utils/common';
 import {
+  collectionController,
   handle721Transfer,
   handleAddress,
   handleMetadata,
+  interfaceCheck,
 } from '../../utils/utilHandlers';
 import assert from 'assert';
 import { erc721BigTransactions } from '../../utils/constants';
 
-export async function handleERC721(event: TransferLog): Promise<void> {
+export async function handleERC721Transfer(event: TransferLog): Promise<void> {
+  // check interface
+  // Create collection in accordance to interface
+  try {
+    await collectionController(event);
+  } catch (e: any) {
+    if (e?.message === 'Contract does not implement erc165') return;
+  }
+
   const instance = Erc721__factory.connect(event.address, api);
 
   // If collection is already in db, no need to check state.

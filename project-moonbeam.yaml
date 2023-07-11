@@ -35,7 +35,7 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleTransaction
+        - handler: handleContractCreation
           kind: ethereum/TransactionHandler
           filter:
             to: null
@@ -59,25 +59,8 @@ dataSources:
           filter:
             topics:
               - BeaconUpgraded(address) # First beaconUpgraded 956090
-
-templates:
-  - name: ERC721
-    kind: ethereum/Runtime
-    options:
-      abi: erc721
-    assets:
-      erc721:
-        file: "./abis/erc721.json"
-    mapping:
-      file: "./dist/index.js"
-      handlers:
-        - handler: handleERC721
-          kind: ethereum/LogHandler
-          filter:
-            topics:
-              - Transfer(address, address, uint256)
-  - name: ERC1155
-    kind: ethereum/Runtime
+  - kind: ethereum/Runtime
+    startBlock: 171075 # this is the first evmTransaction on the chain
     options:
       abi: erc1155
     assets:
@@ -101,3 +84,18 @@ templates:
           filter:
             topics:
               - URI(string, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 171075 # this is the first evmTransaction on the chain
+    options:
+      abi: erc721
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC721Transfer
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address, address, uint256)

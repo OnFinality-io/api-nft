@@ -3,6 +3,7 @@ import { Erc1155__factory } from '../../types/contracts';
 import { getCollectionId, getNftId } from '../../utils/common';
 import { TransferBatchLog } from '../../types/abi-interfaces/Erc1155';
 import {
+  collectionController,
   handle1155Nfts,
   handle1155Transfer,
   handleAddress,
@@ -13,6 +14,10 @@ import { BigNumber } from 'ethers';
 export async function handleERC1155Batch(
   event: TransferBatchLog
 ): Promise<void> {
+  // check interface
+  // Create collection in accordance to interface
+  await collectionController(event);
+
   const instance = Erc1155__factory.connect(event.address, api);
 
   let isERC1155Metadata = false;

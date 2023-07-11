@@ -125,7 +125,7 @@ subqlTest(
       metadataId: '0x77ebbdaa2e8797de',
     }),
   ],
-  'handleERC721'
+  'handleERC721Transfer'
 );
 
 // If erc1155 exists, should not add/update nft
@@ -368,5 +368,5 @@ subqlTest(
       networkId: '1285',
     }),
   ],
-  'handleERC721'
+  'handleERC721Transfer'
 );
