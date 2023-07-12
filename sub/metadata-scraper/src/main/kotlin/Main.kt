@@ -83,17 +83,19 @@ fun decodeURI(metadata: Metadata): Metadata {
             val jsonString = String(decodedBytes, Charsets.UTF_8)
             metadata.raw = jsonString
             metadata.metadata_status = Status.COMPLETED.toString()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             metadata.metadata_status = Status.FAILED.toString()
         }
     } else if (metadata.metadata_uri.startsWith("{")) {
         try {
-            val obj = Json.parseToJsonElement(metadata.metadata_uri!!).jsonObject
-            getJsonField(obj, "name")!!
+            val obj = Json.parseToJsonElement(metadata.metadata_uri).jsonObject
+            if (getJsonField(obj, "name").isNullOrBlank()) {
+                metadata.metadata_status = Status.FAILED.toString()
+            }
             metadata.raw = obj.toString()
             metadata.metadata_status = Status.COMPLETED.toString()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             metadata.metadata_status = Status.FAILED.toString()
         }
