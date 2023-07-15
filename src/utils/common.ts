@@ -23,7 +23,7 @@ export function getTransferId(
   return `${transactionHash}-${logIndex}-${batchIndex}-${networkId}`;
 }
 
-export function getBlacklistId(
+export function getBlockedId(
   networkId: string,
   contractAddress: string
 ): string {

@@ -1,6 +1,6 @@
 import { subqlTest } from '@subql/testing';
 import {
-  BlacklistedAddresses,
+  BlockedAddresses,
   Collection,
   ContractType,
   Network,
@@ -14,7 +14,7 @@ subqlTest(
     Network.create({
       id: '1284',
     }),
-    BlacklistedAddresses.create({
+    BlockedAddresses.create({
       id: '1284-0xacc15dc74880c9944775448304b263d191c6077f',
     }),
   ],
@@ -44,7 +44,7 @@ subqlTest(
     }),
   ],
   [
-    BlacklistedAddresses.create({
+    BlockedAddresses.create({
       id: '1284-0xacc15dc74880c9944775448304b263d191c6077f',
     }),
   ],

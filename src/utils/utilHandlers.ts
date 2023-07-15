@@ -1,6 +1,6 @@
 import {
   Address,
-  BlacklistedAddresses,
+  BlockedAddresses,
   Collection,
   ContractType,
   Metadata,
@@ -12,7 +12,7 @@ import {
 import { BigNumber } from 'ethers';
 import {
   getAddressId,
-  getBlacklistId,
+  getBlockedId,
   getCollectionId,
   getNftId,
   getTransferId,
@@ -202,8 +202,8 @@ export async function handle1155Transfer(
 export async function interfaceCheck(
   contractAddress: string
 ): Promise<[boolean, boolean]> {
-  const blacklistId = getBlacklistId(chainId, contractAddress);
-  const nonNFTContractAddresses = await BlacklistedAddresses.get(blacklistId);
+  const blacklistId = getBlockedId(chainId, contractAddress);
+  const nonNFTContractAddresses = await BlockedAddresses.get(blacklistId);
   if (nonNFTContractAddresses) return [false, false];
 
   let isErc1155 = false;
@@ -220,9 +220,9 @@ export async function interfaceCheck(
   } catch (e: any) {
     if (e?.code === 'CALL_EXCEPTION') {
       // add to blacklist
-      const blacklistId = getBlacklistId(chainId, contractAddress);
+      const blacklistId = getBlockedId(chainId, contractAddress);
 
-      await BlacklistedAddresses.create({
+      await BlockedAddresses.create({
         id: blacklistId,
       }).save();
       return [false, false];
@@ -255,7 +255,9 @@ export async function handleCollection(
   const collectionId = getCollectionId(chainId, casedContractAddress);
 
   if (contractType === ContractType.ERC721) {
-    logger.info(`is erc721, address=${casedContractAddress}`);
+    logger.info(
+      `is erc721, collection created, address=${casedContractAddress}`
+    );
     const erc721Instance = Erc721__factory.connect(casedContractAddress, api);
 
     let isERC721Metadata = false;
@@ -310,7 +312,9 @@ export async function handleCollection(
   }
 
   if (contractType === ContractType.ERC1155) {
-    logger.info(`is erc1155, address=${casedContractAddress}`);
+    logger.info(
+      `is erc1155, collection created, address=${casedContractAddress}`
+    );
 
     const collection = Collection.create({
       id: collectionId,
@@ -348,7 +352,7 @@ export async function collectionController(event: {
   const [isErc1155, isErc721] = await interfaceCheck(event.address);
 
   if (!isErc721 && !isErc1155) {
-    throw new Error('Contract does not implement erc165');
+    throw new Error('Contract is not an NFT');
   }
 
   const contractType = isErc1155 ? ContractType.ERC1155 : ContractType.ERC721;

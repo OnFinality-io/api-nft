@@ -85,7 +85,7 @@ type Account @entity {
 }
 
 
-type BlacklistedAddresses @entity {
+type BlockedAddresses @entity {
   """Addresses that does not implement desired interfaces"""
   id: ID! # networkId-contractAddress
 }

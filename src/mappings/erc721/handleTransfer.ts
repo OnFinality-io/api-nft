@@ -1,8 +1,7 @@
-import { BlacklistedAddresses, Collection, Nft } from '../../types';
+import { Collection, Nft } from '../../types';
 import { Erc721__factory } from '../../types/contracts';
 import { TransferLog } from '../../types/abi-interfaces/Erc721';
 import {
-  getBlacklistId,
   getCollectionId,
   getNftId,
   hashId,
@@ -13,7 +12,6 @@ import {
   handle721Transfer,
   handleAddress,
   handleMetadata,
-  interfaceCheck,
 } from '../../utils/utilHandlers';
 import assert from 'assert';
 import { erc721BigTransactions } from '../../utils/constants';
