@@ -22,7 +22,8 @@ export async function handleERC721Transfer(event: TransferLog): Promise<void> {
   try {
     await collectionController(event);
   } catch (e: any) {
-    if (e?.message === 'Contract does not implement erc165') return;
+    if (e?.message === 'Contract is not an NFT') return;
+    throw new Error(e);
   }
 
   const instance = Erc721__factory.connect(event.address, api);
