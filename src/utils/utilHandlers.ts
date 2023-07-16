@@ -23,6 +23,7 @@ import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
 import { TransferLog } from '../types/abi-interfaces/Erc721';
+import { blackListedAddresses } from './constants';
 
 export async function handleMetadata(
   id: string,
@@ -338,6 +339,11 @@ export async function collectionController(event: {
 }): Promise<void> {
   // check if apart from blacklist table
   const casedContractAddress = event.address.toLowerCase();
+
+  if (blackListedAddresses.includes(casedContractAddress)) {
+    logger.warn(`Address: ${casedContractAddress} is blackListed`);
+    return;
+  }
 
   await handleNetwork(chainId);
 
