@@ -203,10 +203,6 @@ export async function handle1155Transfer(
 export async function interfaceCheck(
   contractAddress: string
 ): Promise<[boolean, boolean]> {
-  const blacklistId = getBlockedId(chainId, contractAddress);
-  const nonNFTContractAddresses = await BlockedAddresses.get(blacklistId);
-  if (nonNFTContractAddresses) return [false, false];
-
   let isErc1155 = false;
   let isErc721 = false;
 
@@ -220,12 +216,6 @@ export async function interfaceCheck(
     ]);
   } catch (e: any) {
     if (e?.code === 'CALL_EXCEPTION') {
-      // add to blacklist
-      const blacklistId = getBlockedId(chainId, contractAddress);
-
-      await BlockedAddresses.create({
-        id: blacklistId,
-      }).save();
       return [false, false];
     } // Contract does not implement erc165
     throw new Error(e);

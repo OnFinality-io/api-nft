@@ -97,3 +97,6 @@ dataSources:
           filter:
             topics:
               - Transfer(address, address, uint256)
+              -
+              -
+              - '!null'
