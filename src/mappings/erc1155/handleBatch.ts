@@ -16,7 +16,12 @@ export async function handleERC1155Batch(
 ): Promise<void> {
   // check interface
   // Create collection in accordance to interface
-  await collectionController(event);
+  try {
+    await collectionController(event);
+  } catch (e: any) {
+    if (e?.message === 'Contract is not an NFT') return;
+    throw new Error(e);
+  }
 
   const instance = Erc1155__factory.connect(event.address, api);
 
