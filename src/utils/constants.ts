@@ -44,6 +44,8 @@ export const bypassUnmintedUriTx = [
   // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
   '0x5ecdc28dfa855efcde4b7831c2730626ddeca98b136f4ade554a8d11a92605ca', // MINT on 3822891 // URI on 3822640 (astar)
   '0x33e3543c25b2e4b337af6c12d301187851af4320b4a6005b9cee4fd9f482beda', // MINT on 3822891 // URI on 3822644 (astar)
+  '0x8595f536e8434c6ee46e5fed23599b2804c50f748d12024cffef922979e70a95', // MINT ? // URI on 3145008 (moonriver)
+  '0xd1ba35dd5bd51f57aaee96b66e1ac9ed4de2ce8069d4dd16a29f4338ffeadb72', // MINT ? // URI on 3145057 (moonriver)
 ];
 
 /*
