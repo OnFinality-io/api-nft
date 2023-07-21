@@ -1,9 +1,8 @@
 import {
   Address,
+  BlockedAddresses,
   Collection,
   ContractType,
-  createERC1155Datasource,
-  createERC721Datasource,
   Metadata,
   Network,
   Nft,
@@ -13,6 +12,7 @@ import {
 import { BigNumber } from 'ethers';
 import {
   getAddressId,
+  getBlockedId,
   getCollectionId,
   getNftId,
   getTransferId,
@@ -22,8 +22,8 @@ import {
 import { Erc1155, Erc1155__factory, Erc721__factory } from '../types/contracts';
 import assert from 'assert';
 import { TransferBatchLog } from '../types/abi-interfaces/Erc1155';
-import { blackListedAddresses } from './constants';
 import { TransferLog } from '../types/abi-interfaces/Erc721';
+import { blackListedAddresses } from './constants';
 
 export async function handleMetadata(
   id: string,
@@ -200,82 +200,56 @@ export async function handle1155Transfer(
   });
 }
 
-export async function handleDsCreation(
-  address: string,
-  blockNumber: bigint,
-  timestamp: bigint,
-  creatorAddress: string
-): Promise<void> {
-  // BlackListed Contract Address
-  if (blackListedAddresses.includes(address)) {
-    logger.warn(`Address: ${address} is blackListed`);
-    return;
-  }
-
-  // Check collections before commiting to interface checking
-  const collectionId = getCollectionId(chainId, address);
-  const collection = await Collection.get(collectionId);
-  if (collection) {
-    logger.info(`Skipping collection: ${collectionId} as it exists already`);
-    return;
-  }
-
+export async function interfaceCheck(
+  contractAddress: string
+): Promise<[boolean, boolean]> {
   let isErc1155 = false;
   let isErc721 = false;
 
-  const erc1155Instance = Erc1155__factory.connect(address, api);
-  const erc721Instance = Erc721__factory.connect(address, api);
+  const erc1155Instance = Erc1155__factory.connect(contractAddress, api);
+  const erc721Instance = Erc721__factory.connect(contractAddress, api);
 
-  await handleNetwork(chainId);
-
-  // Check interface
   try {
     [isErc1155, isErc721] = await Promise.all([
       erc1155Instance.supportsInterface('0xd9b67a26'),
       erc721Instance.supportsInterface('0x80ac58cd'),
     ]);
   } catch (e: any) {
-    if (e?.code === 'CALL_EXCEPTION') return; // Contract does not implement erc165
+    if (e?.code === 'CALL_EXCEPTION') {
+      return [false, false];
+    } // Contract does not implement erc165
     throw new Error(e);
   }
 
   if (isErc1155 && isErc721) {
     logger.error(
-      `Contract: ${address.toLowerCase()} implements both interfaces at ${blockNumber}`
+      `Contract: ${contractAddress.toLowerCase()} implements both interfaces`
     );
     throw new Error(
-      `Contract: ${address.toLowerCase()} implements both interfaces`
+      `Contract: ${contractAddress.toLowerCase()} implements both interfaces`
     );
   }
 
-  const casedAddress = address.toLowerCase();
+  return [isErc1155, isErc721];
+}
 
-  if (isErc1155) {
-    logger.info(`is erc1155, address=${address}`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    await createERC1155Datasource({
-      address: casedAddress,
-    });
+export async function handleCollection(
+  contractType: ContractType,
+  contractAddress: string,
+  blockNumber: bigint,
+  timestamp: bigint,
+  creatorAddress: string
+): Promise<void> {
+  const casedContractAddress = contractAddress.toLowerCase();
+  const casedCreatorAddress = creatorAddress.toLowerCase();
 
-    const collection = Collection.create({
-      id: collectionId,
-      networkId: chainId,
-      contract_address: casedAddress,
-      created_block: blockNumber,
-      created_timestamp: timestamp,
-      creator_address: creatorAddress.toLowerCase(),
-      total_supply: BigInt(0),
-      contract_type: ContractType.ERC1155,
-    });
-    await collection.save();
-  }
+  const collectionId = getCollectionId(chainId, casedContractAddress);
 
-  if (isErc721) {
-    logger.info(`is erc721, address=${address}`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    await createERC721Datasource({
-      address: casedAddress,
-    });
+  if (contractType === ContractType.ERC721) {
+    logger.info(
+      `is erc721, collection created, address=${casedContractAddress}`
+    );
+    const erc721Instance = Erc721__factory.connect(casedContractAddress, api);
 
     let isERC721Metadata = false;
     let isERC721Enumerable = false;
@@ -297,7 +271,9 @@ export async function handleDsCreation(
           erc721Instance.symbol(),
         ]);
       } catch (e: any) {
-        logger.error(`Failed to get name && symbol for contract: ${address}`);
+        logger.error(
+          `Failed to get name && symbol for contract: ${casedContractAddress}`
+        );
         throw new Error(e);
       }
     }
@@ -314,15 +290,75 @@ export async function handleDsCreation(
     const collection = Collection.create({
       id: collectionId,
       networkId: chainId,
-      contract_address: casedAddress,
+      contract_address: casedContractAddress,
       created_block: blockNumber,
       created_timestamp: timestamp,
-      creator_address: creatorAddress.toLowerCase(),
+      creator_address: casedCreatorAddress,
       total_supply: totalSupplyResult.toBigInt(),
       name,
       symbol,
-      contract_type: ContractType.ERC721,
+      contract_type: contractType,
     });
     await collection.save();
   }
+
+  if (contractType === ContractType.ERC1155) {
+    logger.info(
+      `is erc1155, collection created, address=${casedContractAddress}`
+    );
+
+    const collection = Collection.create({
+      id: collectionId,
+      networkId: chainId,
+      contract_address: casedContractAddress,
+      created_block: blockNumber,
+      created_timestamp: timestamp,
+      creator_address: casedCreatorAddress,
+      total_supply: BigInt(0),
+      contract_type: contractType,
+    });
+    await collection.save();
+  }
+}
+
+export async function collectionController(event: {
+  address: string;
+  blockNumber: number;
+  block: { timestamp: bigint };
+  transaction: { from: string };
+}): Promise<void> {
+  // check if apart from blacklist table
+  const casedContractAddress = event.address.toLowerCase();
+
+  if (blackListedAddresses.includes(casedContractAddress)) {
+    logger.warn(`Address: ${casedContractAddress} is blackListed`);
+    return;
+  }
+
+  await handleNetwork(chainId);
+
+  const collectionId = getCollectionId(chainId, casedContractAddress);
+  const collection = await Collection.get(collectionId);
+  if (collection) {
+    logger.info(`Skipping collection: ${collectionId} as it exists already`);
+    return;
+  }
+
+  // Check if desired interface
+  const [isErc1155, isErc721] = await interfaceCheck(event.address);
+
+  if (!isErc721 && !isErc1155) {
+    throw new Error('Contract is not an NFT');
+  }
+
+  const contractType = isErc1155 ? ContractType.ERC1155 : ContractType.ERC721;
+
+  // HandleCollections
+  await handleCollection(
+    contractType,
+    event.address,
+    BigInt(event.blockNumber),
+    event.block.timestamp,
+    event.transaction.from
+  );
 }

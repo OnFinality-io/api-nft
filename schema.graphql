@@ -83,3 +83,9 @@ type Account @entity {
   id: ID! # base58 encoded public key (only substrate chains ?)
   addresses: [Address] @derivedFrom(field: "account") # addresses
 }
+
+
+type BlockedAddresses @entity {
+  """Addresses that does not implement desired interfaces"""
+  id: ID! # networkId-contractAddress
+}

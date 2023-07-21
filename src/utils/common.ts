@@ -23,43 +23,11 @@ export function getTransferId(
   return `${transactionHash}-${logIndex}-${batchIndex}-${networkId}`;
 }
 
-export function extractIpfsHash(metadataUri: string): string {
-  const hashStartIndex = 'ipfs://'.length;
-  return metadataUri.slice(hashStartIndex);
-}
-
-export async function decodeMetadata(
-  metadataUri: string
-): Promise<AnyJson | undefined> {
-  const metadataHost =
-    'https://unauthipfs.subquery.network/ipfs/api/v0/cat?arg=';
-
-  if (metadataUri.startsWith('ipfs://')) {
-    const metadataCID = extractIpfsHash(metadataUri);
-    const url = `${metadataHost}${metadataCID}`;
-    try {
-      const response = await fetch(url, {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return (await response.json()) as AnyJson;
-    } catch (e: unknown) {
-      const fetchError: FetchError = e as FetchError;
-      logger.error(
-        `Failed to fetch metadata from ipfs URI: ${metadataUri}, ${fetchError.message}`
-      );
-    }
-  }
-  try {
-    return (await fetch(metadataUri)) as AnyJson;
-  } catch (e) {
-    const fetchError: FetchError = e as FetchError;
-    logger.error(
-      `Failed to fetch metadata from URI: ${metadataUri}, ${fetchError.message}`
-    );
-  }
+export function getBlockedId(
+  networkId: string,
+  contractAddress: string
+): string {
+  return `${networkId}-${contractAddress.toLowerCase()}`;
 }
 
 export function hashId(id: string): string {
