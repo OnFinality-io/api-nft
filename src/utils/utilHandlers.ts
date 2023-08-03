@@ -1,6 +1,5 @@
 import {
   Address,
-  BlockedAddresses,
   Collection,
   ContractType,
   Metadata,
@@ -12,7 +11,6 @@ import {
 import { BigNumber } from 'ethers';
 import {
   getAddressId,
-  getBlockedId,
   getCollectionId,
   getNftId,
   getTransferId,
@@ -340,7 +338,6 @@ export async function collectionController(event: {
   const collectionId = getCollectionId(chainId, casedContractAddress);
   const collection = await Collection.get(collectionId);
   if (collection) {
-    logger.info(`Skipping collection: ${collectionId} as it exists already`);
     return;
   }
 

@@ -29,6 +29,7 @@ export const bypassContractNfts = [
   '0x07e26ed4ed76ba2bc6f227189f20ceb3bb9c308e', // 592 https://blockscout.com/astar/address/0x07e26ED4ED76ba2Bc6f227189F20ceb3Bb9c308E/transactions#address-tabs <- this contract sets URI within contract constructor, does not have any minted events
   '0x7881b8263a7df9f3d3724f9b8ca9ffc763b96606', // 592 https://blockscout.com/astar/tx/0x4953765ec92b751c951f96fa3a819537a9ee04c057168c6ff7a8208f55423ba2 <- same as above
   '0x70edb0995662158f96defe1db9b070a237f70d68', // 592 https://blockscout.com/astar/address/0x70EdB0995662158f96defe1DB9b070A237F70D68
+  '0x1b30a3b5744e733d8d2f19f0812e3f79152a8777', // 1285 Does not implement erc1155 or erc721 https://moonriver.moonscan.io/address/0x1b30a3b5744e733d8d2f19f0812e3f79152a8777
 ];
 
 /*
@@ -36,17 +37,13 @@ ERC1155 contracts that sets URI before the token is minted
 e.g. https://blockscout.com/astar/address/0x2Cbc0538954Dd0b97AA69eac25D2C19D99D8eF2d/logs#address-tabs
  */
 export const bypassUnmintedUriTx = [
-  '0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a', // URI set before minting
-  // URI https://blockscout.com/astar/tx/0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a/logs
-  // MINT https://blockscout.com/astar/tx/0x2e2978827718d3bd79b3f63a4613bf08d670f9be329e5c9bc6c0e772a2b7c9e5
-  '0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be',
-  // URI https://blockscout.com/astar/tx/0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be/logs
-  // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
+  '0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a', // URI set before minting // URI https://blockscout.com/astar/tx/0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a/logs // MINT https://blockscout.com/astar/tx/0x2e2978827718d3bd79b3f63a4613bf08d670f9be329e5c9bc6c0e772a2b7c9e5
+  '0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be', // URI https://blockscout.com/astar/tx/0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be/logs // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
   '0x5ecdc28dfa855efcde4b7831c2730626ddeca98b136f4ade554a8d11a92605ca', // MINT on 3822891 // URI on 3822640 (astar)
   '0x33e3543c25b2e4b337af6c12d301187851af4320b4a6005b9cee4fd9f482beda', // MINT on 3822891 // URI on 3822644 (astar)
   '0x8595f536e8434c6ee46e5fed23599b2804c50f748d12024cffef922979e70a95', // MINT ? // URI on 3145008 (moonriver)
   '0xd1ba35dd5bd51f57aaee96b66e1ac9ed4de2ce8069d4dd16a29f4338ffeadb72', // MINT ? // URI on 3145057 (moonriver)
-  '0x59d89ac1df040e672ef9bfd33a1216f8443c31f71000eb57b937c24a7a3b2fe3', // MINT ? // URI on 1448505 (moonriver)
+  '0x02efe3707b36a1d8f302fc0a037229e1ae3e08303715ecaeba90656195ca928e', // MINT ? // URI on 3474293 (moonriver)
 ];
 
 /*
