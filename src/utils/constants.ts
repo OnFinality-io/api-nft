@@ -51,4 +51,5 @@ This consists of transactionHashes that are extremely large, in order to improve
  */
 export const erc721BigTransactions = [
   '0xc5122385987f61ec76aad54fe5729b96996ec98cb2676bd46601cbda77ffd41f', // https://blockscout.com/astar/block/1921194/transactions#txs
+  '0x4ce0989450d3520d514254166c245d2c290d2b2039f42cb12be86e74ec28e866', // https://blockscout.com/astar/tx/0x4ce0989450d3520d514254166c245d2c290d2b2039f42cb12be86e74ec28e866
 ];
