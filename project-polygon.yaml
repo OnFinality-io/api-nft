@@ -1,0 +1,100 @@
+specVersion: "1.0.0"
+
+name: "multichain-erc721-erc1155"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-ethereum"
+    version: "*"
+    options:
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This project can be use as a starting point for developing your
+  new Ethereum SubQuery project"
+repository: "https://github.com/subquery/ethereum-subql-starter"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: [
+    "https://polygon.api.onfinality.io/public"
+  ]
+  chainId: "137"
+  dictionary: "https://gx.api.subquery.network/sq/subquery/polygon-dictionary"
+
+dataSources:
+  - kind: ethereum/Runtime
+    startBlock: 1 # First EVM transaction
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractCreation
+          kind: ethereum/TransactionHandler
+          filter:
+            to: null
+  - kind: ethereum/Runtime
+    options:
+      abi: erc1967
+    assets:
+      erc1967:
+        file: "./abis/erc1967.json"
+    startBlock: 1
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Upgraded(address) # First Upgraded 404177
+        - handler: handleContractUpgrade
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - BeaconUpgraded(address) # First beaconUpgraded 1462843
+  - kind: ethereum/Runtime
+    startBlock: 1 # this is the first evmTransaction on the chain
+    options:
+      abi: erc1155
+    assets:
+      erc1155:
+        file: "./abis/erc1155.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC1155Single
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferSingle(address, address, address, uint256, uint256)
+        - handler: handleERC1155Batch
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - TransferBatch(address, address, address, uint256[], uint256[])
+        - handler: handleERC1155Uri
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - URI(string, uint256)
+  - kind: ethereum/Runtime
+    startBlock: 1 # this is the first evmTransaction on the chain
+    options:
+      abi: erc721
+    assets:
+      erc721:
+        file: "./abis/erc721.json"
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleERC721Transfer
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address, address, uint256)
+              -
+              -
+              - '!null'
