@@ -45,6 +45,9 @@ export const bypassUnmintedUriTx = [
   '0xd1ba35dd5bd51f57aaee96b66e1ac9ed4de2ce8069d4dd16a29f4338ffeadb72', // MINT ? // URI on 3145057 (moonriver)
   '0x02efe3707b36a1d8f302fc0a037229e1ae3e08303715ecaeba90656195ca928e', // MINT ? // URI on 3474293 (moonriver)
   '0x203b16ed2a19155742e2d352c0c708abc73e98215ff9d9dff9e27fdbf32398cd', // MINT 4138589 // URI on 4138335 (astar)
+  '0x84fa1258492314a63542d148ffac46f16fc40cb97282bd7a2dbd1d0275bb5b32', // MINT 4362881 // URI on 4362869  (astar)
+  '0xba66dd972c374ee46b91b1e0da1c51bbad79a7c088a3f120e458e73d1b968090', // MINT 4412842 // URI on 4354219 (moonbeam)
+    '0x3685638b436e78940302f26beefbd6418bccc3baf23e431fe3a672a4e5b8c844' // MINT 4362959 // URI on 4362935 (astar)
 ];
 
 /*
