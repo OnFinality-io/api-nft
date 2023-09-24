@@ -50,6 +50,7 @@ export const bypassUnmintedUriTx = [
   '0x3685638b436e78940302f26beefbd6418bccc3baf23e431fe3a672a4e5b8c844', // MINT 4362959 // URI on 4362935 (astar)
   '0x605c0c4c2764702ff4dc61a5ab4c0b6d140002820ca3c27b1a8f6b76a7ea9445', // MINT 4457062 // URI on 4454493 (astar)
   '0xb4f3923af6eae866935b49ae89ac910d6f96db85ea039ffc7ff3d13e8a8f0169', // MINT 4389982 // URI on 4389980 (moonbeam)
+  '0x6e5d6674d5462292c05dc8d757664b919183908e54c714da7aa6186332b503cf' // MINT 4412842 // URI on 4412840 (moonbeam)
 ];
 
 /*
