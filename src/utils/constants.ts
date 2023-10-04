@@ -36,22 +36,23 @@ export const bypassContractNfts = [
 ERC1155 contracts that sets URI before the token is minted
 e.g. https://blockscout.com/astar/address/0x2Cbc0538954Dd0b97AA69eac25D2C19D99D8eF2d/logs#address-tabs
  */
-export const bypassUnmintedUriTx = [
-  '0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a', // URI set before minting // URI https://blockscout.com/astar/tx/0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a/logs // MINT https://blockscout.com/astar/tx/0x2e2978827718d3bd79b3f63a4613bf08d670f9be329e5c9bc6c0e772a2b7c9e5
-  '0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be', // URI https://blockscout.com/astar/tx/0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be/logs // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
-  '0x5ecdc28dfa855efcde4b7831c2730626ddeca98b136f4ade554a8d11a92605ca', // MINT on 3822891 // URI on 3822640 (astar)
-  '0x33e3543c25b2e4b337af6c12d301187851af4320b4a6005b9cee4fd9f482beda', // MINT on 3822891 // URI on 3822644 (astar)
-  '0x8595f536e8434c6ee46e5fed23599b2804c50f748d12024cffef922979e70a95', // MINT ? // URI on 3145008 (moonriver)
-  '0xd1ba35dd5bd51f57aaee96b66e1ac9ed4de2ce8069d4dd16a29f4338ffeadb72', // MINT ? // URI on 3145057 (moonriver)
-  '0x02efe3707b36a1d8f302fc0a037229e1ae3e08303715ecaeba90656195ca928e', // MINT ? // URI on 3474293 (moonriver)
-  '0x203b16ed2a19155742e2d352c0c708abc73e98215ff9d9dff9e27fdbf32398cd', // MINT 4138589 // URI on 4138335 (astar)
-  '0x84fa1258492314a63542d148ffac46f16fc40cb97282bd7a2dbd1d0275bb5b32', // MINT 4362881 // URI on 4362869  (astar)
-  '0xba66dd972c374ee46b91b1e0da1c51bbad79a7c088a3f120e458e73d1b968090', // MINT 4412842 // URI on 4354219 (moonbeam)
-  '0x3685638b436e78940302f26beefbd6418bccc3baf23e431fe3a672a4e5b8c844', // MINT 4362959 // URI on 4362935 (astar)
-  '0x605c0c4c2764702ff4dc61a5ab4c0b6d140002820ca3c27b1a8f6b76a7ea9445', // MINT 4457062 // URI on 4454493 (astar)
-  '0xb4f3923af6eae866935b49ae89ac910d6f96db85ea039ffc7ff3d13e8a8f0169', // MINT 4389982 // URI on 4389980 (moonbeam)
-  '0x6e5d6674d5462292c05dc8d757664b919183908e54c714da7aa6186332b503cf' // MINT 4412842 // URI on 4412840 (moonbeam)
-];
+// export const bypassUnmintedUriTx = [
+//   '0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a', // URI set before minting // URI https://blockscout.com/astar/tx/0x7c092ef6fdad566786c632576fcf01ddfa089db0251d85ff02cb69cb2c44580a/logs // MINT https://blockscout.com/astar/tx/0x2e2978827718d3bd79b3f63a4613bf08d670f9be329e5c9bc6c0e772a2b7c9e5
+//   '0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be', // URI https://blockscout.com/astar/tx/0x12211a9663f5ea2b7d46ec7b4ccf4181494cd75b53caafc86ad92926c557f1be/logs // MINT https://blockscout.com/astar/tx/0x4897682c6ab81f49bf4328cd03364ea3d370c34ad72d75bfe6a5479bb8fb5132
+//   '0x5ecdc28dfa855efcde4b7831c2730626ddeca98b136f4ade554a8d11a92605ca', // MINT on 3822891 // URI on 3822640 (astar)
+//   '0x33e3543c25b2e4b337af6c12d301187851af4320b4a6005b9cee4fd9f482beda', // MINT on 3822891 // URI on 3822644 (astar)
+//   '0x8595f536e8434c6ee46e5fed23599b2804c50f748d12024cffef922979e70a95', // MINT ? // URI on 3145008 (moonriver)
+//   '0xd1ba35dd5bd51f57aaee96b66e1ac9ed4de2ce8069d4dd16a29f4338ffeadb72', // MINT ? // URI on 3145057 (moonriver)
+//   '0x02efe3707b36a1d8f302fc0a037229e1ae3e08303715ecaeba90656195ca928e', // MINT ? // URI on 3474293 (moonriver)
+//   '0x203b16ed2a19155742e2d352c0c708abc73e98215ff9d9dff9e27fdbf32398cd', // MINT 4138589 // URI on 4138335 (astar)
+//   '0x84fa1258492314a63542d148ffac46f16fc40cb97282bd7a2dbd1d0275bb5b32', // MINT 4362881 // URI on 4362869  (astar)
+//   '0xba66dd972c374ee46b91b1e0da1c51bbad79a7c088a3f120e458e73d1b968090', // MINT 4412842 // URI on 4354219 (moonbeam)
+//   '0x3685638b436e78940302f26beefbd6418bccc3baf23e431fe3a672a4e5b8c844', // MINT 4362959 // URI on 4362935 (astar)
+//   '0x605c0c4c2764702ff4dc61a5ab4c0b6d140002820ca3c27b1a8f6b76a7ea9445', // MINT 4457062 // URI on 4454493 (astar)
+//   '0xb4f3923af6eae866935b49ae89ac910d6f96db85ea039ffc7ff3d13e8a8f0169', // MINT 4389982 // URI on 4389980 (moonbeam)
+//   '0x6e5d6674d5462292c05dc8d757664b919183908e54c714da7aa6186332b503cf', // MINT 4412842 // URI on 4412840 (moonbeam)
+//   '0x731b7d926e6616fc8cca4907adce44e6fed1995909cc812f8ff72b9ad5eb0b07'
+// ];
 
 /*
 This consists of transactionHashes that are extremely large, in order to improve performance, the db check will no longer be implemented for these transactions

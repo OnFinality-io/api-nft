@@ -3,12 +3,11 @@ import { Nft } from '../../types';
 import { getCollectionId, getNftId, hashId } from '../../utils/common';
 import assert from 'assert';
 import { handleMetadata } from '../../utils/utilHandlers';
-import { bypassContractNfts, bypassUnmintedUriTx } from '../../utils/constants';
+import { bypassContractNfts } from '../../utils/constants';
 
 export async function handleERC1155Uri(event: URILog): Promise<void> {
   if (
-    bypassContractNfts.includes(event.address.toLowerCase()) ||
-    bypassUnmintedUriTx.includes(event.transactionHash)
+    bypassContractNfts.includes(event.address.toLowerCase())
   ) {
     logger.warn(
       `Bypassing invalid contract: ${event.address.toLowerCase()} at TX: ${
@@ -24,9 +23,12 @@ export async function handleERC1155Uri(event: URILog): Promise<void> {
   const nft = await Nft.get(nftId);
 
   if (!nft) {
-    throw new Error(
-      `NFT: ${nftId} does not exist in db, tx: ${event.transactionHash}`
+    // Many of NFT contracts sets URI prior to the NFT mint
+    // Hence, it is more efficient to skip rather than to throw
+    logger.warn(
+        `NFT: ${nftId} has not been minted, skipping setURI event`
     );
+    return;
   }
 
   const metadataId = hashId(event.args.value);
