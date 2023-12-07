@@ -50,7 +50,7 @@ export async function handleERC1155Batch(
   const nfts = (
     await Promise.all(
       tokenIds.map(async (tokenId, idx) => {
-        assert(event.args, 'No event args on erc1155');
+      assert(event.args, `No event args on erc1155 tx: ${event.transactionHash}`);
 
         return handle1155Nfts(
           collection,

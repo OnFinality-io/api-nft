@@ -20,6 +20,9 @@ export const blackListedAddresses = [
   '0x2f2afae1139ce54fefc03593fee8ab2adf4a85a7', // 1284
   '0x2f9db5616fa3fad1ab06cb2c906830ba63d135e3', // 1284
 ];
+export const nonStandardAddresses= [
+  '0x176577b395f51fdee6e1c81851e69aa83ec5ab54', // 1 this contract does not follow erc1155 standards
+]
 
 /*
 Contracts that does not follow the standards

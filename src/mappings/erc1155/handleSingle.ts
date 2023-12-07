@@ -6,11 +6,16 @@ import assert from 'assert';
 import { handleERC1155Batch } from './handleBatch';
 import { TransferBatchEventObject } from '../../types/contracts/Erc1155';
 import { BigNumber } from 'ethers';
+import {nonStandardAddresses} from "../../utils/constants";
 
 export async function handleERC1155Single(
   event: TransferSingleLog
 ): Promise<void> {
-  assert(event.args, 'No event args on erc1155');
+  if (nonStandardAddresses.includes(event.address.toLowerCase())) {
+    logger.warn(`Contract: ${event.address.toLowerCase()} does not follow erc1155 standards`)
+    return
+  }
+  assert(event.args, `No event args on erc1155 tx: ${event.transactionHash}`);
   const [operator, from, to, id, value] = event.args;
   const newArgs: [string, string, string, BigNumber[], BigNumber[]] = [
     operator,

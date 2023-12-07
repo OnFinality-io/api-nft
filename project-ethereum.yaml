@@ -32,7 +32,7 @@ network:
 
 dataSources:
   - kind: ethereum/Runtime
-    startBlock: 1 # First EVM transaction
+    startBlock: 7540996 # First EVM transaction
     mapping:
       file: "./dist/index.js"
       handlers:
@@ -46,7 +46,7 @@ dataSources:
     assets:
       erc1967:
         file: "./abis/erc1967.json"
-    startBlock: 1
+    startBlock: 7540996
     mapping:
       file: "./dist/index.js"
       handlers:
