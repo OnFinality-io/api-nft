@@ -36,6 +36,7 @@ export async function handleERC1155Single(
 
   const batchEvent = {
     ...event,
+    transaction: event.transaction,
     args: newNewArgs,
   };
 
